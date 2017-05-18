@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.tony.dao.AdminDao">
+    <sql id="all">
+        id id,
+        code code,
+        user_name userName,
+        password password,
+        last_login lastLogin,
+        create_time createTime,
+        modify_time modifyTime,
+        version version,
+        deleted deleted
+    </sql>
+    <select id="listAdmin" resultType="com.tony.entity.Admin">
+        SELECT
+         <include refid="all"/>
+        FROM t_admin
+    </select>
+</mapper>

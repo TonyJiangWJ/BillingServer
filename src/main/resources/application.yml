@@ -1,0 +1,48 @@
+# Server settings
+server:
+    port:8080
+    address:localhost
+
+# SPRING PROFILES
+spring:
+#    spring.jackson.default-property-inclusion=NON_NULL
+    # HTTP ENCODING
+    http:
+        encoding.charset: UTF-8
+        encoding.enable: true
+        encoding.force: true
+    datasource:
+      dataSourceClassName: com.mchange.v2.c3p0.ComboPooledDataSource
+      url: jdbc:mysql://localhost:3306/newtourism?useUnicode=true&characterEncoding=utf8&useSSL=false
+      databaseName: newtourism
+      serverName: 127.0.0.1
+      username: root
+      password: fixture
+      cachePrepStmts: true
+      prepStmtsSize: 250
+      prepStmtsCacheSqlLimit: 2048
+      userServerPrepStmts: true
+
+## DATASOURCE
+#jdbc:
+#    dataSourceClassName: com.mysql.jdbc.Driver
+#    url: jdbc:mysql://localhost:3306/newtourism?useUnicode=true&characterEncoding=utf8
+#    databaseName: newtourism
+#    serverName: 127.0.0.1
+#    username: root
+#    password: fixture
+#    cachePrepStmts: true
+#    prepStmtsSize: 250
+#    prepStmtsCacheSqlLimit: 2048
+#    userServerPrepStmts: true
+
+# MyBatis
+mybatis:
+    typeAliasesPackage: com.tony.entity
+    mapperLocations: classpath:/sqlMapper/*SqlMap.xml
+    configLocation: classpath:/mybatis-config.xml
+
+# LOGGING
+logging:
+    level:
+       com.tony.test:INFO
