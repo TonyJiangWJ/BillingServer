@@ -20,7 +20,7 @@ public class CostRecord {
     private Long refundMoney;
     private String memo;
     private String tradeStatus;
-    private String isDelete;
+    private Integer isDelete;
     private Long id;
 
     public String getTradeNo() {
@@ -151,11 +151,11 @@ public class CostRecord {
         this.tradeStatus = tradeStatus;
     }
 
-    public String getIsDelete() {
+    public Integer getIsDelete() {
         return isDelete;
     }
 
-    public void setIsDelete(String isDelete) {
+    public void setIsDelete(Integer isDelete) {
         this.isDelete = isDelete;
     }
 
