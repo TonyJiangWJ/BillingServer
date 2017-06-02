@@ -29,6 +29,7 @@ public class HelloWorld {
     public Admin hello() {
 //        System.out.println(JSON.toJSONString(adminService.listAdmin()));
         List<Admin> adminList = adminService.listAdmin();
+
         logger.info("result:{}", JSON.toJSONString(adminList));
         return adminList.get(0);
     }

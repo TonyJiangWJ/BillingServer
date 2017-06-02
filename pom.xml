@@ -14,6 +14,7 @@
         <fastjson.version>1.2.9</fastjson.version>
         <mysql-connector.version>6.0.6</mysql-connector.version>
         <slf4j-log4j.version>1.7.25</slf4j-log4j.version>
+        <log4j-core.version>2.8.2</log4j-core.version>
     </properties>
 
     <dependencies>
@@ -36,12 +37,6 @@
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
             <version>${mysql-connector.version}</version>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-log4j12 -->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>${slf4j-log4j.version}</version>
         </dependency>
 
         <!--
