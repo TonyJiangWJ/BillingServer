@@ -11,12 +11,19 @@ import java.util.Date;
  */
 public class StaticCodeGeneratorUtil {
     public static void main(String[] args) {
-        System.out.println(allSqlGenerator(CostRecord.class, false));
-        System.out.println(insertSqlGenerator(CostRecord.class, true));
-        System.out.println(updateSqlGenerator(CostRecord.class, true));
-        System.out.println(whereCaseGenerator(CostRecord.class, true));
+        generateAll(CostRecord.class, true);
+
+//        System.out.println("under_score_case SQL:");
+//        generateAll(CostRecord.class, false);
     }
 
+    public static void generateAll(Class clz, boolean isSqlCamelCase) {
+        System.out.println(allSqlGenerator(clz, isSqlCamelCase));
+        System.out.println(insertSqlGenerator(clz, isSqlCamelCase));
+        System.out.println(updateSqlGenerator(clz, isSqlCamelCase));
+        System.out.println(whereCaseGenerator(clz, isSqlCamelCase));
+        System.out.println(pageSqlGenerator(clz, isSqlCamelCase));
+    }
 
     public static String allSqlGenerator(Class clz, Boolean isSqlCamelCase) {
         Field[] fields = clz.getDeclaredFields();
@@ -95,23 +102,20 @@ public class StaticCodeGeneratorUtil {
     }
 
     private static String generatorMyBatisCode(Field field) {
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("#{").append(field.getName()).append(",jdbcType=");
-        stringBuilder.append(getJDBCType(field));
-        stringBuilder.append("},\n");
-        return stringBuilder.toString();
+        return "#{" + field.getName() + ",jdbcType=" +
+                getJDBCType(field) +
+                "},\n";
     }
 
     public static String updateSqlGenerator(Class clz, boolean isCamelCase) {
         StringBuilder sb = new StringBuilder();
         Field[] fields = clz.getDeclaredFields();
-        sb.append("UPDATE tableName SET ");
+        sb.append("UPDATE tableName \n");
+        sb.append("<trim prefix=\"SET\" suffixOverrides=\",\">\n");
         for (Field field : fields) {
             sb.append(dynamicSqlUpdateGenerator(field, isCamelCase));
         }
-        if (sb.lastIndexOf(",") > 0) {
-            sb.deleteCharAt(sb.lastIndexOf(","));
-        }
+        sb.append("</trim>\n");
         return sb.toString();
     }
 
@@ -130,14 +134,12 @@ public class StaticCodeGeneratorUtil {
 
     public static String whereCaseGenerator(Class clz, boolean isCamelCase) {
         StringBuilder sb = new StringBuilder();
-        sb.append("WHERE 1=1 \n");
+        sb.append("<trim prefix=\"WHERE\" prefixOverrides=\"and\">\n");
         Field[] fields = clz.getDeclaredFields();
         for (Field field : fields) {
             sb.append(dynamicSqlWhereGenerator(field, isCamelCase));
         }
-        if (sb.lastIndexOf(",") > 0) {
-            sb.deleteCharAt(sb.lastIndexOf(","));
-        }
+        sb.append("</trim>\n");
         return sb.toString();
     }
 
@@ -155,6 +157,15 @@ public class StaticCodeGeneratorUtil {
         return sb.toString();
     }
 
+    public static String pageSqlGenerator(Class clz, boolean isCamelCase) {
+        return whereCaseGenerator(clz, isCamelCase) +
+                "ORDER BY\n" +
+                "<if test=\"orderBy != null\">\n" +
+                "#{orderBy} #{sort}\n" + "</if>" +
+                "<if test=\"orderBy == null or orderBy == '' \">\n" +
+                "id #{sort}\n</if>\nLIMIT #{index} , #{offset}\n";
+    }
+
     //  几种常用类型的JDBCType转换，新加的要在这个里面加上
     private static String getJDBCType(Field field) {
         if (field.getType().getName().equals(Integer.class.getName())) {
@@ -170,6 +181,5 @@ public class StaticCodeGeneratorUtil {
         } else {
             throw new RuntimeException("还没有定义这个类型");
         }
-
     }
 }

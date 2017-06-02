@@ -131,56 +131,60 @@
     </insert>
 
     <update id="updateById" parameterType="com.tony.entity.CostRecord">
-        UPDATE tableName SET
-        <if test=" tradeNo!=null and tradeNo!='' ">
-            tradeNo=#{tradeNo,jdbcType=VARCHAR},
-        </if>
-        <if test=" orderNo!=null and orderNo!='' ">
-            orderNo=#{orderNo,jdbcType=VARCHAR},
-        </if>
-        <if test=" createTime!=null and createTime!='' ">
-            createTime=#{createTime,jdbcType=VARCHAR},
-        </if>
-        <if test=" paidTime!=null and paidTime!='' ">
-            paidTime=#{paidTime,jdbcType=VARCHAR},
-        </if>
-        <if test=" modifyTime!=null and modifyTime!='' ">
-            modifyTime=#{modifyTime,jdbcType=VARCHAR},
-        </if>
-        <if test=" location!=null and location!='' ">
-            location=#{location,jdbcType=VARCHAR},
-        </if>
-        <if test=" orderType!=null and orderType!='' ">
-            orderType=#{orderType,jdbcType=VARCHAR},
-        </if>
-        <if test=" target!=null and target!='' ">
-            target=#{target,jdbcType=VARCHAR},
-        </if>
-        <if test=" goodsName!=null and goodsName!='' ">
-            goodsName=#{goodsName,jdbcType=VARCHAR},
-        </if>
-        <if test=" money!=null ">
-            money=#{money,jdbcType=BIGINT},
-        </if>
-        <if test=" inOutType!=null and inOutType!='' ">
-            inOutType=#{inOutType,jdbcType=VARCHAR},
-        </if>
-        <if test=" orderStatus!=null and orderStatus!='' ">
-            orderStatus=#{orderStatus,jdbcType=VARCHAR},
-        </if>
-        <if test=" serviceCost!=null ">
-            serviceCost=#{serviceCost,jdbcType=BIGINT},
-        </if>
-        <if test=" refundMoney!=null ">
-            refundMoney=#{refundMoney,jdbcType=BIGINT},
-        </if>
-        <if test=" memo!=null and memo!='' ">
-            memo=#{memo,jdbcType=VARCHAR},
-        </if>
-        <if test=" tradeStatus!=null and tradeStatus!='' ">
-            tradeStatus=#{tradeStatus,jdbcType=VARCHAR},
-        </if>
-        isDelete='0'
+        UPDATE t_cost_info SET
+        <trim suffixOverrides=",">
+            <if test=" tradeNo!=null and tradeNo!='' ">
+                tradeNo=#{tradeNo,jdbcType=VARCHAR},
+            </if>
+            <if test=" orderNo!=null and orderNo!='' ">
+                orderNo=#{orderNo,jdbcType=VARCHAR},
+            </if>
+            <if test=" createTime!=null and createTime!='' ">
+                createTime=#{createTime,jdbcType=VARCHAR},
+            </if>
+            <if test=" paidTime!=null and paidTime!='' ">
+                paidTime=#{paidTime,jdbcType=VARCHAR},
+            </if>
+            <if test=" modifyTime!=null and modifyTime!='' ">
+                modifyTime=#{modifyTime,jdbcType=VARCHAR},
+            </if>
+            <if test=" location!=null and location!='' ">
+                location=#{location,jdbcType=VARCHAR},
+            </if>
+            <if test=" orderType!=null and orderType!='' ">
+                orderType=#{orderType,jdbcType=VARCHAR},
+            </if>
+            <if test=" target!=null and target!='' ">
+                target=#{target,jdbcType=VARCHAR},
+            </if>
+            <if test=" goodsName!=null and goodsName!='' ">
+                goodsName=#{goodsName,jdbcType=VARCHAR},
+            </if>
+            <if test=" money!=null ">
+                money=#{money,jdbcType=BIGINT},
+            </if>
+            <if test=" inOutType!=null and inOutType!='' ">
+                inOutType=#{inOutType,jdbcType=VARCHAR},
+            </if>
+            <if test=" orderStatus!=null and orderStatus!='' ">
+                orderStatus=#{orderStatus,jdbcType=VARCHAR},
+            </if>
+            <if test=" serviceCost!=null ">
+                serviceCost=#{serviceCost,jdbcType=BIGINT},
+            </if>
+            <if test=" refundMoney!=null ">
+                refundMoney=#{refundMoney,jdbcType=BIGINT},
+            </if>
+            <if test=" memo!=null and memo!='' ">
+                memo=#{memo,jdbcType=VARCHAR},
+            </if>
+            <if test=" tradeStatus!=null and tradeStatus!='' ">
+                tradeStatus=#{tradeStatus,jdbcType=VARCHAR},
+            </if>
+            <if test=" isDelete!=null ">
+                isDelete=#{isDelete,jdbcType=INTEGER},
+            </if>
+        </trim>
         WHERE id=#{id,jdbcType=BIGINT}
     </update>
 
@@ -188,60 +192,131 @@
         SELECT
         <include refid="all"/>
         FROM t_cost_info
-        WHERE 1=1
-        <if test=" tradeNo!=null and tradeNo!='' ">
-            and tradeNo=#{tradeNo,jdbcType=VARCHAR}
+        <trim prefix="WHERE" prefixOverrides="and">
+            <if test=" tradeNo!=null and tradeNo!='' ">
+                and tradeNo=#{tradeNo,jdbcType=VARCHAR}
+            </if>
+            <if test=" orderNo!=null and orderNo!='' ">
+                and orderNo=#{orderNo,jdbcType=VARCHAR}
+            </if>
+            <if test=" createTime!=null and createTime!='' ">
+                and createTime=#{createTime,jdbcType=VARCHAR}
+            </if>
+            <if test=" paidTime!=null and paidTime!='' ">
+                and paidTime=#{paidTime,jdbcType=VARCHAR}
+            </if>
+            <if test=" modifyTime!=null and modifyTime!='' ">
+                and modifyTime=#{modifyTime,jdbcType=VARCHAR}
+            </if>
+            <if test=" location!=null and location!='' ">
+                and location=#{location,jdbcType=VARCHAR}
+            </if>
+            <if test=" orderType!=null and orderType!='' ">
+                and orderType=#{orderType,jdbcType=VARCHAR}
+            </if>
+            <if test=" target!=null and target!='' ">
+                and target=#{target,jdbcType=VARCHAR}
+            </if>
+            <if test=" goodsName!=null and goodsName!='' ">
+                and goodsName=#{goodsName,jdbcType=VARCHAR}
+            </if>
+            <if test=" money!=null ">
+                and money=#{money,jdbcType=BIGINT}
+            </if>
+            <if test=" inOutType!=null and inOutType!='' ">
+                and inOutType=#{inOutType,jdbcType=VARCHAR}
+            </if>
+            <if test=" orderStatus!=null and orderStatus!='' ">
+                and orderStatus=#{orderStatus,jdbcType=VARCHAR}
+            </if>
+            <if test=" serviceCost!=null ">
+                and serviceCost=#{serviceCost,jdbcType=BIGINT}
+            </if>
+            <if test=" refundMoney!=null ">
+                and refundMoney=#{refundMoney,jdbcType=BIGINT}
+            </if>
+            <if test=" memo!=null and memo!='' ">
+                and memo=#{memo,jdbcType=VARCHAR}
+            </if>
+            <if test=" tradeStatus!=null and tradeStatus!='' ">
+                and tradeStatus=#{tradeStatus,jdbcType=VARCHAR}
+            </if>
+            <if test=" isDelete!=null ">
+                and isDelete=#{isDelete,jdbcType=INTEGER}
+            </if>
+            <if test=" id!=null ">
+                and id=#{id,jdbcType=BIGINT}
+            </if>
+        </trim>
+    </select>
+
+    <select id="page" parameterType="java.util.Map" resultType="com.tony.entity.CostRecord">
+        SELECT
+        <include refid="all"/>
+        FROM t_cost_info
+        <trim prefix="WHERE" prefixOverrides="and">
+            <if test=" tradeNo!=null and tradeNo!='' ">
+                and tradeNo=#{tradeNo,jdbcType=VARCHAR}
+            </if>
+            <if test=" orderNo!=null and orderNo!='' ">
+                and orderNo=#{orderNo,jdbcType=VARCHAR}
+            </if>
+            <if test=" createTime!=null and createTime!='' ">
+                and createTime=#{createTime,jdbcType=VARCHAR}
+            </if>
+            <if test=" paidTime!=null and paidTime!='' ">
+                and paidTime=#{paidTime,jdbcType=VARCHAR}
+            </if>
+            <if test=" modifyTime!=null and modifyTime!='' ">
+                and modifyTime=#{modifyTime,jdbcType=VARCHAR}
+            </if>
+            <if test=" location!=null and location!='' ">
+                and location=#{location,jdbcType=VARCHAR}
+            </if>
+            <if test=" orderType!=null and orderType!='' ">
+                and orderType=#{orderType,jdbcType=VARCHAR}
+            </if>
+            <if test=" target!=null and target!='' ">
+                and target=#{target,jdbcType=VARCHAR}
+            </if>
+            <if test=" goodsName!=null and goodsName!='' ">
+                and goodsName=#{goodsName,jdbcType=VARCHAR}
+            </if>
+            <if test=" money!=null ">
+                and money=#{money,jdbcType=BIGINT}
+            </if>
+            <if test=" inOutType!=null and inOutType!='' ">
+                and inOutType=#{inOutType,jdbcType=VARCHAR}
+            </if>
+            <if test=" orderStatus!=null and orderStatus!='' ">
+                and orderStatus=#{orderStatus,jdbcType=VARCHAR}
+            </if>
+            <if test=" serviceCost!=null ">
+                and serviceCost=#{serviceCost,jdbcType=BIGINT}
+            </if>
+            <if test=" refundMoney!=null ">
+                and refundMoney=#{refundMoney,jdbcType=BIGINT}
+            </if>
+            <if test=" memo!=null and memo!='' ">
+                and memo=#{memo,jdbcType=VARCHAR}
+            </if>
+            <if test=" tradeStatus!=null and tradeStatus!='' ">
+                and tradeStatus=#{tradeStatus,jdbcType=VARCHAR}
+            </if>
+            <if test=" isDelete!=null ">
+                and isDelete=#{isDelete,jdbcType=INTEGER}
+            </if>
+            <if test=" id!=null ">
+                and id=#{id,jdbcType=BIGINT}
+            </if>
+        </trim>
+        ORDER BY
+        <if test="orderBy != null">
+            #{orderBy} #{sort}
         </if>
-        <if test=" orderNo!=null and orderNo!='' ">
-            and orderNo=#{orderNo,jdbcType=VARCHAR}
+        <if test="orderBy == null or orderBy == '' ">
+            id #{sort}
         </if>
-        <if test=" createTime!=null and createTime!='' ">
-            and createTime=#{createTime,jdbcType=VARCHAR}
-        </if>
-        <if test=" paidTime!=null and paidTime!='' ">
-            and paidTime=#{paidTime,jdbcType=VARCHAR}
-        </if>
-        <if test=" modifyTime!=null and modifyTime!='' ">
-            and modifyTime=#{modifyTime,jdbcType=VARCHAR}
-        </if>
-        <if test=" location!=null and location!='' ">
-            and location=#{location,jdbcType=VARCHAR}
-        </if>
-        <if test=" orderType!=null and orderType!='' ">
-            and orderType=#{orderType,jdbcType=VARCHAR}
-        </if>
-        <if test=" target!=null and target!='' ">
-            and target=#{target,jdbcType=VARCHAR}
-        </if>
-        <if test=" goodsName!=null and goodsName!='' ">
-            and goodsName=#{goodsName,jdbcType=VARCHAR}
-        </if>
-        <if test=" money!=null ">
-            and money=#{money,jdbcType=BIGINT}
-        </if>
-        <if test=" inOutType!=null and inOutType!='' ">
-            and inOutType=#{inOutType,jdbcType=VARCHAR}
-        </if>
-        <if test=" orderStatus!=null and orderStatus!='' ">
-            and orderStatus=#{orderStatus,jdbcType=VARCHAR}
-        </if>
-        <if test=" serviceCost!=null ">
-            and serviceCost=#{serviceCost,jdbcType=BIGINT}
-        </if>
-        <if test=" refundMoney!=null ">
-            and refundMoney=#{refundMoney,jdbcType=BIGINT}
-        </if>
-        <if test=" memo!=null and memo!='' ">
-            and memo=#{memo,jdbcType=VARCHAR}
-        </if>
-        <if test=" tradeStatus!=null and tradeStatus!='' ">
-            and tradeStatus=#{tradeStatus,jdbcType=VARCHAR}
-        </if>
-        <if test=" isDelete!=null ">
-            and isDelete=#{isDelete,jdbcType=INTEGER}
-        </if>
-        <if test=" id!=null ">
-            and id=#{idjdbcType=BIGINT}
-        </if>
+        LIMIT #{index} , #{offset}
     </select>
 </mapper>
