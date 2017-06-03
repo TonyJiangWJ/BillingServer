@@ -11,8 +11,8 @@ import java.util.Date;
  */
 public class StaticCodeGeneratorUtil {
     public static void main(String[] args) {
-        generateAll(CostRecord.class, true);
-
+//        generateAll(CostRecord.class, true);
+        System.out.println(insertSqlGenerator(CostRecord.class, true));
 //        System.out.println("under_score_case SQL:");
 //        generateAll(CostRecord.class, false);
     }
@@ -59,20 +59,18 @@ public class StaticCodeGeneratorUtil {
         StringBuilder sb = new StringBuilder();
         Field[] fields = clz.getDeclaredFields();
         sb.append("INSERT INTO (\n");
+        sb.append("<trim suffixOverrides=\",\">");
         for (Field field : fields) {
             sb.append(dynamicSqlColumnGenerator(isCamelCaseCode, field));
         }
-        if (sb.lastIndexOf(",") > 0) {
-            sb.deleteCharAt(sb.lastIndexOf(","));
-        }
+        sb.append("</trim>\n");
         sb.append(") VALUES (\n");
         int l = sb.length();
+        sb.append("<trim suffixOverrides=\",\">");
         for (Field field : fields) {
             sb.append(dynamicSqlValueGenerator(isCamelCaseCode, field));
         }
-        if (sb.lastIndexOf(",") > l) {
-            sb.deleteCharAt(sb.lastIndexOf(","));
-        }
+        sb.append("</trim>\n");
         sb.append(")");
         return sb.toString();
     }
@@ -84,7 +82,7 @@ public class StaticCodeGeneratorUtil {
             sb.append(" and ").append(field.getName()).append("!=''");
         }
         sb.append(" \">\n");
-        sb.append(isCamelCase ? getCamelCaseCode(field) : getUnderScoreCaseCode(field)).append("\n");
+        sb.append(isCamelCase ? getCamelCaseCode(field) : getUnderScoreCaseCode(field)).append(",\n");
         sb.append("</if>\n");
         return sb.toString();
     }
@@ -161,9 +159,9 @@ public class StaticCodeGeneratorUtil {
         return whereCaseGenerator(clz, isCamelCase) +
                 "ORDER BY\n" +
                 "<if test=\"orderBy != null\">\n" +
-                "#{orderBy} #{sort}\n" + "</if>" +
+                "${orderBy} ${sort}\n" + "</if>" +
                 "<if test=\"orderBy == null or orderBy == '' \">\n" +
-                "id #{sort}\n</if>\nLIMIT #{index} , #{offset}\n";
+                "id ${sort}\n</if>\nLIMIT #{index} , #{offset}\n";
     }
 
     //  几种常用类型的JDBCType转换，新加的要在这个里面加上
