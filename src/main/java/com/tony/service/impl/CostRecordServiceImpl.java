@@ -53,4 +53,12 @@ public class CostRecordServiceImpl implements CostRecordService {
     public Integer toggleDeleteStatus(Map<String, Object> params) {
         return costRecordDao.toggleDeleteStatus(params);
     }
+
+    public Long orderPut(CostRecord record) {
+        if (costRecordDao.findByTradeNo(record.getTradeNo()) != null) {
+            return -1L;
+        } else {
+            return costRecordDao.insert(record);
+        }
+    }
 }

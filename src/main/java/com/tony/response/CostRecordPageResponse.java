@@ -13,6 +13,7 @@ public class CostRecordPageResponse extends BaseResponse {
     private Integer pageSize;
     private Integer pageNo;
     private Integer totalItem;
+    private String currentAmount;
 
     public Integer getTotalItem() {
         return totalItem;
@@ -52,5 +53,13 @@ public class CostRecordPageResponse extends BaseResponse {
 
     public void setPageNo(Integer pageNo) {
         this.pageNo = pageNo;
+    }
+
+    public String getCurrentAmount() {
+        return currentAmount;
+    }
+
+    public void setCurrentAmount(String currentAmount) {
+        this.currentAmount = currentAmount;
     }
 }

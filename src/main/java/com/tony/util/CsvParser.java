@@ -1,8 +1,6 @@
 package com.tony.util;
 
 import com.alibaba.fastjson.JSON;
-import com.sun.istack.internal.NotNull;
-import com.sun.istack.internal.Nullable;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.*;
@@ -74,7 +72,7 @@ public class CsvParser {
         return cvsLines.subList(2, cvsLines.size());
     }
 
-    public List getListCustom(@NotNull Integer start, @Nullable Integer end) {
+    public List getListCustom(Integer start, Integer end) {
         return cvsLines.subList(start, end == null ? cvsLines.size() : end);
     }
 
@@ -446,7 +444,7 @@ public class CsvParser {
                     records.add(recordRefUtil.convertCsv2Record(csvLine));
                 }
                 System.out.println(JSON.toJSONString(records));
-                for(Record record:records){
+                for (Record record : records) {
                     generatorInsertSQL(record);
                 }
             } catch (IllegalAccessException e) {

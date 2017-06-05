@@ -2,7 +2,8 @@
 server:
     port: 1310
     address: localhost
-
+    tomcat:
+        uri-encoding: utf-8
 # SPRING PROFILES
 spring:
 #    spring.jackson.default-property-inclusion=NON_NULL
@@ -10,6 +11,7 @@ spring:
     http:
         encoding.charset: UTF-8
         encoding.force: true
+        encoding.enabled: true
     datasource:
       driver-class-name: com.mysql.cj.jdbc.Driver
       url: jdbc:mysql://localhost:3306/my_2017_cost?serverTimezone=UTC&characterEncoding=utf8&useUnicode=true&useSSL=false

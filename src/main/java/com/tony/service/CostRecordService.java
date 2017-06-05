@@ -17,4 +17,6 @@ public interface CostRecordService {
     CostRecord findByTradeNo(String tradeNo);
 
     Integer toggleDeleteStatus(Map<String, Object> params);
+
+    Long orderPut(CostRecord record);
 }

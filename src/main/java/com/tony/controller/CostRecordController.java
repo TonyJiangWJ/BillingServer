@@ -1,6 +1,5 @@
 package com.tony.controller;
 
-import com.alibaba.fastjson.JSON;
 import com.tony.entity.CostRecord;
 import com.tony.entity.PagerGrid;
 import com.tony.model.CostRecordDetailModel;
@@ -8,6 +7,8 @@ import com.tony.model.CostRecordModel;
 import com.tony.request.CostRecordDeleteRequest;
 import com.tony.request.CostRecordDetailRequest;
 import com.tony.request.CostRecordPageRequest;
+import com.tony.request.CostRecordPutRequest;
+import com.tony.response.BaseResponse;
 import com.tony.response.CostRecordDeleteResponse;
 import com.tony.response.CostRecordDetailResponse;
 import com.tony.response.CostRecordPageResponse;
@@ -23,16 +24,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * Author jiangwj20966 on 2017/6/2.
  */
 @RestController
-@RequestMapping("/bootDemo")
+@RequestMapping(value = "/bootDemo")
 public class CostRecordController {
     private Logger logger = LoggerFactory.getLogger(CostRecordController.class);
     @Resource
@@ -55,8 +55,9 @@ public class CostRecordController {
             pagerGrid.setOrderBy("createTime");
             pagerGrid.setSort("desc");
             pagerGrid = costRecordService.page(pagerGrid);
-            logger.info(JSON.toJSONString(pagerGrid.getResult()));
+//            logger.info(JSON.toJSONString(pagerGrid.getResult()));
             response.setCostRecordList(formatModelList(pagerGrid.getResult()));
+            response.setCurrentAmount(calculeCurrentAmount(pagerGrid.getResult()));
             response.setPageNo(pagerGrid.getPage());
             response.setPageSize(pagerGrid.getOffset());
             response.setTotalPage(pagerGrid.getTotalPage());
@@ -69,6 +70,14 @@ public class CostRecordController {
         }
 
         return response;
+    }
+
+    private String calculeCurrentAmount(List<CostRecord> result) {
+        long total = 0L;
+        for (CostRecord entity : result) {
+            total += entity.getMoney();
+        }
+        return MoneyUtil.fen2Yuan(total);
     }
 
     @RequestMapping(value = "/detail/get")
@@ -112,6 +121,53 @@ public class CostRecordController {
             ResponseUtil.sysError(response);
         }
         return response;
+    }
+
+    @RequestMapping(value = "/record/put")
+    public BaseResponse putDetail(@ModelAttribute("request") CostRecordPutRequest request) {
+
+        BaseResponse response = new BaseResponse();
+        try {
+            if (StringUtils.isEmpty(request.getCreateTime())
+                    || StringUtils.isEmpty(request.getInOutType())
+                    || StringUtils.isEmpty(request.getMoney())
+                    || StringUtils.isEmpty(request.getTarget())) {
+                return ResponseUtil.paramError(response);
+            }
+
+            CostRecord record = new CostRecord();
+            record.setTradeStatus("交易成功");
+            record.setTradeNo(generateTradeNo(request.getCreateTime()));
+            record.setTarget(request.getTarget());
+            record.setPaidTime(request.getCreateTime());
+            record.setOrderType(request.getOrderType());
+            record.setMoney(MoneyUtil.yuan2fen(request.getMoney()));
+            record.setCreateTime(request.getCreateTime());
+            record.setIsDelete(0);
+            record.setOrderStatus("交易成功");
+            record.setInOutType(request.getInOutType());
+            record.setMemo(request.getMemo());
+            record.setGoodsName(request.getMemo());
+            record.setLocation(request.getLocation());
+            if (costRecordService.orderPut(record) > 0) {
+                ResponseUtil.success(response);
+            } else {
+                ResponseUtil.error(response);
+            }
+        } catch (Exception e) {
+            logger.error("/record/put error", e);
+            ResponseUtil.sysError(response);
+        }
+        return response;
+    }
+
+    private String generateTradeNo(String createTime) throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date datetime = sdf.parse(createTime);
+        SimpleDateFormat sf = new SimpleDateFormat("yyyyMMddHHmmss");
+        String dateCode = sf.format(datetime);
+
+        return dateCode + String.valueOf(datetime.getTime() / 1000 % 1000000000);
     }
 
     private CostRecordDetailModel formatDetailModel(CostRecord record) {
