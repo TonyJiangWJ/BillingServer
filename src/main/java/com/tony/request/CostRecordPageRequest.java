@@ -7,6 +7,15 @@ public class CostRecordPageRequest extends BaseRequest {
     private Integer pageNo;
     private Integer pageSize;
     private Integer isDelete;
+    private String inOutType;
+
+    public String getInOutType() {
+        return inOutType;
+    }
+
+    public void setInOutType(String inOutType) {
+        this.inOutType = inOutType;
+    }
 
     public Integer getIsDelete() {
         return isDelete;

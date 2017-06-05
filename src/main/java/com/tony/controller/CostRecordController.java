@@ -47,6 +47,9 @@ public class CostRecordController {
             if (request.getIsDelete() != null) {
                 costRecord.setIsDelete(request.getIsDelete());
             }
+            if(StringUtils.isNotEmpty(request.getInOutType())){
+                costRecord.setInOutType(request.getInOutType());
+            }
             PagerGrid<CostRecord> pagerGrid = new PagerGrid<CostRecord>(costRecord);
             if (request.getPageSize() != null && !request.getPageSize().equals(0)) {
                 pagerGrid.setOffset(request.getPageSize());
@@ -208,6 +211,7 @@ public class CostRecordController {
                 model.setOrderStatus(entity.getOrderStatus());
                 model.setOrderType(entity.getOrderType());
                 model.setTradeNo(entity.getTradeNo());
+                model.setTarget(entity.getTarget());
                 models.add(model);
             }
             return models;

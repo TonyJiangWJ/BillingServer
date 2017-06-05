@@ -13,6 +13,15 @@ public class CostRecordModel {
     private String inOutType;
     private String orderStatus;
     private Integer isDelete;
+    private String target;
+
+    public String getTarget() {
+        return target;
+    }
+
+    public void setTarget(String target) {
+        this.target = target;
+    }
 
     public String getTradeNo() {
         return tradeNo;
