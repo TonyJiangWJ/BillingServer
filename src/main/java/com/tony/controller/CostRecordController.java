@@ -1,5 +1,6 @@
 package com.tony.controller;
 
+import com.tony.constants.TradeStatus;
 import com.tony.entity.CostRecord;
 import com.tony.entity.PagerGrid;
 import com.tony.model.CostRecordDetailModel;
@@ -139,7 +140,7 @@ public class CostRecordController {
             }
 
             CostRecord record = new CostRecord();
-            record.setTradeStatus("交易成功");
+            record.setTradeStatus(TradeStatus.TRADE_SUCCESS);
             record.setTradeNo(generateTradeNo(request.getCreateTime()));
             record.setTarget(request.getTarget());
             record.setPaidTime(request.getCreateTime());
@@ -147,7 +148,7 @@ public class CostRecordController {
             record.setMoney(MoneyUtil.yuan2fen(request.getMoney()));
             record.setCreateTime(request.getCreateTime());
             record.setIsDelete(0);
-            record.setOrderStatus("交易成功");
+            record.setOrderStatus(TradeStatus.TRADE_SUCCESS);
             record.setInOutType(request.getInOutType());
             record.setMemo(request.getMemo());
             record.setGoodsName(request.getMemo());
