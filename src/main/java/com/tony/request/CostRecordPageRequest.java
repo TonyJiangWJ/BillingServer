@@ -8,6 +8,26 @@ public class CostRecordPageRequest extends BaseRequest {
     private Integer pageSize;
     private Integer isDelete;
     private String inOutType;
+    private String startDate;
+    private String endDate;
+    private String sort;
+    private String orderBy;
+
+    public String getSort() {
+        return sort;
+    }
+
+    public void setSort(String sort) {
+        this.sort = sort;
+    }
+
+    public String getOrderBy() {
+        return orderBy;
+    }
+
+    public void setOrderBy(String orderBy) {
+        this.orderBy = orderBy;
+    }
 
     public String getInOutType() {
         return inOutType;
@@ -39,5 +59,21 @@ public class CostRecordPageRequest extends BaseRequest {
 
     public void setPageSize(Integer pageSize) {
         this.pageSize = pageSize;
+    }
+
+    public String getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(String startDate) {
+        this.startDate = startDate;
+    }
+
+    public String getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(String endDate) {
+        this.endDate = endDate;
     }
 }

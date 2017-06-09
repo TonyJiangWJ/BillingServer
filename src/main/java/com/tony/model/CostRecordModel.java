@@ -9,6 +9,7 @@ public class CostRecordModel {
     private String location;
     private String orderType;
     private String goodsName;
+    private String memo;
     private String money;
     private String inOutType;
     private String orderStatus;
@@ -93,5 +94,13 @@ public class CostRecordModel {
 
     public void setIsDelete(Integer isDelete) {
         this.isDelete = isDelete;
+    }
+
+    public String getMemo() {
+        return memo;
+    }
+
+    public void setMemo(String memo) {
+        this.memo = memo;
     }
 }

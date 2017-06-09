@@ -2,6 +2,7 @@ package com.tony.dao;
 
 import com.tony.entity.CostRecord;
 import com.tony.entity.PagerGrid;
+import com.tony.entity.query.CostRecordQuery;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -14,7 +15,7 @@ import java.util.Map;
 public interface CostRecordDao {
     List<CostRecord> find(CostRecord record);
 
-    List<CostRecord> page(Map<String,Object> param);
+    List<CostRecordQuery> page(Map<String,Object> param);
 
     Integer count(Map<String, Object> params);
 

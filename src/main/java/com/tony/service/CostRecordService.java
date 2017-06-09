@@ -2,6 +2,7 @@ package com.tony.service;
 
 import com.tony.entity.CostRecord;
 import com.tony.entity.PagerGrid;
+import com.tony.entity.query.CostRecordQuery;
 
 import java.util.List;
 import java.util.Map;
@@ -12,7 +13,7 @@ import java.util.Map;
 public interface CostRecordService {
     List<CostRecord> find(CostRecord record);
 
-    PagerGrid<CostRecord> page(PagerGrid<CostRecord> pagerGrid);
+    PagerGrid<CostRecordQuery> page(PagerGrid<CostRecordQuery> pagerGrid);
 
     CostRecord findByTradeNo(String tradeNo);
 

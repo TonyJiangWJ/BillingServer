@@ -381,6 +381,9 @@
             <if test=" id!=null ">
                 and id=#{id,jdbcType=BIGINT}
             </if>
+            <if test=" startDate!=null and endDate!=null and startDate!='' and endDate!='' ">
+                and (createTime between #{startDate,jdbcType=VARCHAR} and #{endDate,jdbcType=VARCHAR})
+            </if>
         </trim>
 
     </select>
@@ -443,6 +446,9 @@
             </if>
             <if test=" id!=null ">
                 and id=#{id,jdbcType=BIGINT}
+            </if>
+            <if test=" startDate!=null and endDate!=null and startDate!='' and endDate!='' ">
+                and (createTime between #{startDate,jdbcType=VARCHAR} and #{endDate,jdbcType=VARCHAR})
             </if>
         </trim>
         ORDER BY

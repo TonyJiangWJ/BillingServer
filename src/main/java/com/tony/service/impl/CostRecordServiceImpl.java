@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.tony.dao.CostRecordDao;
 import com.tony.entity.CostRecord;
 import com.tony.entity.PagerGrid;
+import com.tony.entity.query.CostRecordQuery;
 import com.tony.service.CostRecordService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -26,7 +27,7 @@ public class CostRecordServiceImpl implements CostRecordService {
         return costRecordDao.find(record);
     }
 
-    public PagerGrid<CostRecord> page(PagerGrid<CostRecord> pagerGrid) {
+    public PagerGrid<CostRecordQuery> page(PagerGrid<CostRecordQuery> pagerGrid) {
         Map<String, Object> params;
         if (pagerGrid.getT() == null)
             params = new HashMap<String, Object>();
@@ -39,7 +40,7 @@ public class CostRecordServiceImpl implements CostRecordService {
         if (StringUtils.isNoneBlank(pagerGrid.getSort()))
             params.put("sort", pagerGrid.getSort());
 
-        List<CostRecord> list = costRecordDao.page(params);
+        List<CostRecordQuery> list = costRecordDao.page(params);
         Integer count = costRecordDao.count(params);
         pagerGrid.setResult(list);
         pagerGrid.setCount(count);

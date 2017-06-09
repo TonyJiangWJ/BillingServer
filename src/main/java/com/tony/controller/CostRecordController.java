@@ -3,6 +3,7 @@ package com.tony.controller;
 import com.tony.constants.TradeStatus;
 import com.tony.entity.CostRecord;
 import com.tony.entity.PagerGrid;
+import com.tony.entity.query.CostRecordQuery;
 import com.tony.model.CostRecordDetailModel;
 import com.tony.model.CostRecordModel;
 import com.tony.request.*;
@@ -47,20 +48,37 @@ public class CostRecordController {
     public CostRecordPageResponse getPage(@ModelAttribute("request") CostRecordPageRequest request) {
         CostRecordPageResponse response = new CostRecordPageResponse();
         try {
-            CostRecord costRecord = new CostRecord();
+            CostRecordQuery costRecord = new CostRecordQuery();
             if (request.getIsDelete() != null) {
                 costRecord.setIsDelete(request.getIsDelete());
             }
             if (StringUtils.isNotEmpty(request.getInOutType())) {
                 costRecord.setInOutType(request.getInOutType());
             }
-            PagerGrid<CostRecord> pagerGrid = new PagerGrid<CostRecord>(costRecord);
+            if (StringUtils.isNotEmpty(request.getEndDate())) {
+                String endDate = request.getEndDate();
+                Integer value = Integer.valueOf(endDate.substring(8));
+                endDate = endDate.substring(0, 8) + String.format("%02d", ++value);
+                costRecord.setEndDate(endDate);
+            }
+
+            costRecord.setStartDate(request.getStartDate());
+            PagerGrid<CostRecordQuery> pagerGrid = new PagerGrid<CostRecordQuery>(costRecord);
             if (request.getPageSize() != null && !request.getPageSize().equals(0)) {
                 pagerGrid.setOffset(request.getPageSize());
             }
             pagerGrid.setPage(request.getPageNo() == null ? 0 : request.getPageNo());
-            pagerGrid.setOrderBy("createTime");
-            pagerGrid.setSort("desc");
+            if (StringUtils.isNotEmpty(request.getSort())) {
+                pagerGrid.setSort(request.getSort());
+            } else {
+                pagerGrid.setSort("desc");
+            }
+            if (StringUtils.isNotEmpty(request.getOrderBy())) {
+                pagerGrid.setOrderBy(request.getOrderBy());
+            } else {
+                pagerGrid.setOrderBy("createTime");
+            }
+
             pagerGrid = costRecordService.page(pagerGrid);
 //            logger.info(JSON.toJSONString(pagerGrid.getResult()));
             response.setCostRecordList(formatModelList(pagerGrid.getResult()));
@@ -79,7 +97,7 @@ public class CostRecordController {
         return response;
     }
 
-    private String calculateCurrentAmount(List<CostRecord> result) {
+    private String calculateCurrentAmount(List<CostRecordQuery> result) {
         long total = 0L;
         for (CostRecord entity : result) {
             total += entity.getMoney();
@@ -115,6 +133,7 @@ public class CostRecordController {
 
     /**
      * 修改消费记录
+     *
      * @param request
      * @return
      */
@@ -240,7 +259,7 @@ public class CostRecordController {
     }
 
 
-    private List<CostRecordModel> formatModelList(List<CostRecord> list) {
+    private List<CostRecordModel> formatModelList(List<CostRecordQuery> list) {
         if (!CollectionUtils.isEmpty(list)) {
             List<CostRecordModel> models = new ArrayList<CostRecordModel>();
             CostRecordModel model;
@@ -256,6 +275,7 @@ public class CostRecordController {
                 model.setOrderType(entity.getOrderType());
                 model.setTradeNo(entity.getTradeNo());
                 model.setTarget(entity.getTarget());
+                model.setMemo(entity.getMemo());
                 models.add(model);
             }
             return models;
