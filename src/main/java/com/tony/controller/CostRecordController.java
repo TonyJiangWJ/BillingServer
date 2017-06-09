@@ -5,10 +5,7 @@ import com.tony.entity.CostRecord;
 import com.tony.entity.PagerGrid;
 import com.tony.model.CostRecordDetailModel;
 import com.tony.model.CostRecordModel;
-import com.tony.request.CostRecordDeleteRequest;
-import com.tony.request.CostRecordDetailRequest;
-import com.tony.request.CostRecordPageRequest;
-import com.tony.request.CostRecordPutRequest;
+import com.tony.request.*;
 import com.tony.response.BaseResponse;
 import com.tony.response.CostRecordDeleteResponse;
 import com.tony.response.CostRecordDetailResponse;
@@ -40,6 +37,12 @@ public class CostRecordController {
     private CostRecordService costRecordService;
 
 
+    /**
+     * 获取分页数据
+     *
+     * @param request
+     * @return
+     */
     @RequestMapping(value = "/page/get")
     public CostRecordPageResponse getPage(@ModelAttribute("request") CostRecordPageRequest request) {
         CostRecordPageResponse response = new CostRecordPageResponse();
@@ -48,7 +51,7 @@ public class CostRecordController {
             if (request.getIsDelete() != null) {
                 costRecord.setIsDelete(request.getIsDelete());
             }
-            if(StringUtils.isNotEmpty(request.getInOutType())){
+            if (StringUtils.isNotEmpty(request.getInOutType())) {
                 costRecord.setInOutType(request.getInOutType());
             }
             PagerGrid<CostRecord> pagerGrid = new PagerGrid<CostRecord>(costRecord);
@@ -61,7 +64,7 @@ public class CostRecordController {
             pagerGrid = costRecordService.page(pagerGrid);
 //            logger.info(JSON.toJSONString(pagerGrid.getResult()));
             response.setCostRecordList(formatModelList(pagerGrid.getResult()));
-            response.setCurrentAmount(calculeCurrentAmount(pagerGrid.getResult()));
+            response.setCurrentAmount(calculateCurrentAmount(pagerGrid.getResult()));
             response.setPageNo(pagerGrid.getPage());
             response.setPageSize(pagerGrid.getOffset());
             response.setTotalPage(pagerGrid.getTotalPage());
@@ -76,7 +79,7 @@ public class CostRecordController {
         return response;
     }
 
-    private String calculeCurrentAmount(List<CostRecord> result) {
+    private String calculateCurrentAmount(List<CostRecord> result) {
         long total = 0L;
         for (CostRecord entity : result) {
             total += entity.getMoney();
@@ -84,6 +87,12 @@ public class CostRecordController {
         return MoneyUtil.fen2Yuan(total);
     }
 
+    /**
+     * 获取详情
+     *
+     * @param request
+     * @return
+     */
     @RequestMapping(value = "/detail/get")
     public CostRecordDetailResponse getDetail(@ModelAttribute("request") CostRecordDetailRequest request) {
         CostRecordDetailResponse response = new CostRecordDetailResponse();
@@ -104,6 +113,34 @@ public class CostRecordController {
 
     }
 
+    /**
+     * 修改消费记录
+     * @param request
+     * @return
+     */
+    @RequestMapping(value = "/record/update")
+    public BaseResponse updateRecord(@ModelAttribute("request") CostRecordUpdateRequest request) {
+        BaseResponse response = new BaseResponse();
+        if (StringUtils.isEmpty(request.getTradeNo())) {
+            return ResponseUtil.paramError(response);
+        }
+        CostRecord record = new CostRecord();
+        record.setLocation(request.getLocation());
+        record.setGoodsName(request.getGoodsName());
+        record.setMemo(request.getMemo());
+        record.setTradeNo(request.getTradeNo());
+        if (costRecordService.updateByTradeNo(record) > 0) {
+            return ResponseUtil.success(response);
+        }
+        return ResponseUtil.error(response);
+    }
+
+    /**
+     * 标记删除
+     *
+     * @param request
+     * @return
+     */
     @RequestMapping(value = "/delete")
     public CostRecordDeleteResponse deleteRecord(@ModelAttribute("request") CostRecordDeleteRequest request) {
         CostRecordDeleteResponse response = new CostRecordDeleteResponse();
@@ -127,6 +164,12 @@ public class CostRecordController {
         return response;
     }
 
+    /**
+     * 添加消费记录
+     *
+     * @param request
+     * @return
+     */
     @RequestMapping(value = "/record/put")
     public BaseResponse putDetail(@ModelAttribute("request") CostRecordPutRequest request) {
 

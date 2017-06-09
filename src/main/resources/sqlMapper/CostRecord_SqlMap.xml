@@ -197,6 +197,64 @@
         WHERE id=#{id,jdbcType=BIGINT}
     </update>
 
+    <update id="updateByTradeNo" parameterType="com.tony.entity.CostRecord">
+        UPDATE t_cost_info SET
+        <trim suffixOverrides=",">
+            <if test=" tradeNo!=null and tradeNo!='' ">
+                tradeNo=#{tradeNo,jdbcType=VARCHAR},
+            </if>
+            <if test=" orderNo!=null and orderNo!='' ">
+                orderNo=#{orderNo,jdbcType=VARCHAR},
+            </if>
+            <if test=" createTime!=null and createTime!='' ">
+                createTime=#{createTime,jdbcType=VARCHAR},
+            </if>
+            <if test=" paidTime!=null and paidTime!='' ">
+                paidTime=#{paidTime,jdbcType=VARCHAR},
+            </if>
+            <if test=" modifyTime!=null and modifyTime!='' ">
+                modifyTime=#{modifyTime,jdbcType=VARCHAR},
+            </if>
+            <if test=" location!=null and location!='' ">
+                location=#{location,jdbcType=VARCHAR},
+            </if>
+            <if test=" orderType!=null and orderType!='' ">
+                orderType=#{orderType,jdbcType=VARCHAR},
+            </if>
+            <if test=" target!=null and target!='' ">
+                target=#{target,jdbcType=VARCHAR},
+            </if>
+            <if test=" goodsName!=null and goodsName!='' ">
+                goodsName=#{goodsName,jdbcType=VARCHAR},
+            </if>
+            <if test=" money!=null ">
+                money=#{money,jdbcType=BIGINT},
+            </if>
+            <if test=" inOutType!=null and inOutType!='' ">
+                inOutType=#{inOutType,jdbcType=VARCHAR},
+            </if>
+            <if test=" orderStatus!=null and orderStatus!='' ">
+                orderStatus=#{orderStatus,jdbcType=VARCHAR},
+            </if>
+            <if test=" serviceCost!=null ">
+                serviceCost=#{serviceCost,jdbcType=BIGINT},
+            </if>
+            <if test=" refundMoney!=null ">
+                refundMoney=#{refundMoney,jdbcType=BIGINT},
+            </if>
+            <if test=" memo!=null and memo!='' ">
+                memo=#{memo,jdbcType=VARCHAR},
+            </if>
+            <if test=" tradeStatus!=null and tradeStatus!='' ">
+                tradeStatus=#{tradeStatus,jdbcType=VARCHAR},
+            </if>
+            <if test=" isDelete!=null ">
+                isDelete=#{isDelete,jdbcType=INTEGER},
+            </if>
+        </trim>
+        WHERE tradeNo=#{tradeNo,jdbcType=VARCHAR}
+    </update>
+
     <update id="toggleDeleteStatus" parameterType="java.util.Map">
         UPDATE t_cost_info SET
             isDelete=#{isDelete,jdbcType=INTEGER}

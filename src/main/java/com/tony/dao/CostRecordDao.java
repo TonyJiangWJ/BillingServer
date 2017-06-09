@@ -23,4 +23,6 @@ public interface CostRecordDao {
     Long insert(CostRecord record);
 
     Integer toggleDeleteStatus(Map<String, Object> params);
+
+    Integer updateByTradeNo(CostRecord record);
 }

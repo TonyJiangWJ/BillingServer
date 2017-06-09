@@ -58,7 +58,16 @@ public class CostRecordServiceImpl implements CostRecordService {
         if (costRecordDao.findByTradeNo(record.getTradeNo()) != null) {
             return -1L;
         } else {
-            return costRecordDao.insert(record);
+            if (costRecordDao.insert(record) > 0) {
+                return record.getId();
+            } else {
+                return -1L;
+            }
         }
+    }
+
+    @Override
+    public Integer updateByTradeNo(CostRecord record) {
+        return costRecordDao.updateByTradeNo(record);
     }
 }
