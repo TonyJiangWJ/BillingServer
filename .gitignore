@@ -35,4 +35,3 @@ logs/
 .DS_Store
 Thumbs.db
 sentrycache.data
-StaticCodeGeneratorUtil.java

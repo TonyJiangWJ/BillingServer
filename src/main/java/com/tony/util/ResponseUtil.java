@@ -6,33 +6,46 @@ import com.tony.response.BaseResponse;
  * Author jiangwj20966 on 2017/6/2.
  */
 public class ResponseUtil {
+    private static final String CODE_SUCCESS = "0001";
+    private static final String CODE_PARAM_ERROR = "0002";
+    private static final String CODE_SYS_ERROR = "0003";
+    private static final String CODE_DATA_NOT_EXIST = "0004";
+    private static final String CODE_ERROR = "0005";
+
+    private static final String MSG_SUCCESS = "成功";
+    private static final String MSG_PARAM_ERROR = "参数错误";
+    private static final String MSG_SYS_ERROR = "系统异常";
+    private static final String MSG_DATA_NOT_EXIST = "数据不存在";
+    private static final String MSG_ERROR = "失败";
+
+
     public static BaseResponse sysError(BaseResponse response) {
-        response.setCode("0003");
-        response.setMsg("系统异常");
+        response.setCode(CODE_SYS_ERROR);
+        response.setMsg(MSG_SYS_ERROR);
         return response;
     }
 
     public static BaseResponse success(BaseResponse response) {
-        response.setCode("0001");
-        response.setMsg("成功");
+        response.setCode(CODE_SUCCESS);
+        response.setMsg(MSG_SUCCESS);
         return response;
     }
 
     public static BaseResponse paramError(BaseResponse response) {
-        response.setCode("0002");
-        response.setMsg("参数错误");
+        response.setCode(CODE_PARAM_ERROR);
+        response.setMsg(MSG_PARAM_ERROR);
         return response;
     }
 
     public static BaseResponse dataNotExisting(BaseResponse response) {
-        response.setMsg("数据不存在");
-        response.setCode("0004");
+        response.setMsg(MSG_DATA_NOT_EXIST);
+        response.setCode(CODE_DATA_NOT_EXIST);
         return response;
     }
 
     public static BaseResponse error(BaseResponse response) {
-        response.setMsg("失败");
-        response.setCode("0005");
+        response.setMsg(MSG_ERROR);
+        response.setCode(CODE_ERROR);
         return response;
     }
 }

@@ -19,14 +19,16 @@
         memo memo,
         tradeStatus tradeStatus,
         isDelete isDelete,
-        id id
+        id id,
+        isHidden isHidden
     </sql>
 
     <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.tony.entity.CostRecord">
         INSERT INTO t_cost_info (
-        <trim suffixOverrides=","><if test=" tradeNo!=null and tradeNo!='' ">
-            tradeNo,
-        </if>
+        <trim suffixOverrides=",">
+            <if test=" tradeNo!=null and tradeNo!='' ">
+                tradeNo,
+            </if>
             <if test=" orderNo!=null and orderNo!='' ">
                 orderNo,
             </if>
@@ -80,9 +82,10 @@
             </if>
         </trim>
         ) VALUES (
-        <trim suffixOverrides=","><if test=" tradeNo!=null and tradeNo!='' ">
-            #{tradeNo,jdbcType=VARCHAR},
-        </if>
+        <trim suffixOverrides=",">
+            <if test=" tradeNo!=null and tradeNo!='' ">
+                #{tradeNo,jdbcType=VARCHAR},
+            </if>
             <if test=" orderNo!=null and orderNo!='' ">
                 #{orderNo,jdbcType=VARCHAR},
             </if>
@@ -193,6 +196,9 @@
             <if test=" isDelete!=null ">
                 isDelete=#{isDelete,jdbcType=INTEGER},
             </if>
+            <if test=" isHidden!=null ">
+                isHidden=#{isHidden,jdbcType=INTEGER},
+            </if>
         </trim>
         WHERE id=#{id,jdbcType=BIGINT}
     </update>
@@ -251,15 +257,27 @@
             <if test=" isDelete!=null ">
                 isDelete=#{isDelete,jdbcType=INTEGER},
             </if>
+            <if test=" isHidden!=null ">
+                isHidden=#{isHidden,jdbcType=INTEGER},
+            </if>
         </trim>
         WHERE tradeNo=#{tradeNo,jdbcType=VARCHAR}
     </update>
 
     <update id="toggleDeleteStatus" parameterType="java.util.Map">
-        UPDATE t_cost_info SET
-            isDelete=#{isDelete,jdbcType=INTEGER}
-        WHERE tradeNo=#{tradeNo,jdbcType=VARCHAR}
-        AND isDelete=#{nowStatus,jdbcType=INTEGER}
+        UPDATE t_cost_info
+        SET
+            isDelete = #{isDelete,jdbcType=INTEGER}
+        WHERE tradeNo = #{tradeNo,jdbcType=VARCHAR}
+              AND isDelete = #{nowStatus,jdbcType=INTEGER}
+    </update>
+
+    <update id="toggleHideStatus" parameterType="java.util.Map">
+        UPDATE t_cost_info
+        SET
+            isHidden = #{isHidden,jdbcType=INTEGER}
+        WHERE tradeNo = #{tradeNo,jdbcType=VARCHAR}
+              AND isHidden = #{nowStatus,jdbcType=INTEGER}
     </update>
 
     <select id="find" parameterType="com.tony.entity.CostRecord" resultType="com.tony.entity.CostRecord">
@@ -320,6 +338,9 @@
             </if>
             <if test=" id!=null ">
                 and id=#{id,jdbcType=BIGINT}
+            </if>
+            <if test=" isHidden!=null ">
+                and isHidden=#{isHidden,jdbcType=INTEGER}
             </if>
         </trim>
     </select>
@@ -383,6 +404,13 @@
             </if>
             <if test=" startDate!=null and endDate!=null and startDate!='' and endDate!='' ">
                 and (createTime between #{startDate,jdbcType=VARCHAR} and #{endDate,jdbcType=VARCHAR})
+            </if>
+            <if test=" isHidden!=null ">
+                and isHidden=#{isHidden,jdbcType=INTEGER}
+            </if>
+            <if test=" content!=null and content!=''">
+                and (target like CONCAT('%',#{content,jdbcType=VARCHAR},'%') or goodsName like
+                CONCAT('%',#{content,jdbcType=VARCHAR},'%') or memo like CONCAT('%',#{content,jdbcType=VARCHAR},'%'))
             </if>
         </trim>
 
@@ -450,6 +478,13 @@
             <if test=" startDate!=null and endDate!=null and startDate!='' and endDate!='' ">
                 and (createTime between #{startDate,jdbcType=VARCHAR} and #{endDate,jdbcType=VARCHAR})
             </if>
+            <if test=" isHidden!=null ">
+                and isHidden=#{isHidden,jdbcType=INTEGER}
+            </if>
+            <if test=" content!=null and content!=''">
+                and (target like CONCAT('%',#{content,jdbcType=VARCHAR},'%') or goodsName like
+                CONCAT('%',#{content,jdbcType=VARCHAR},'%') or memo like CONCAT('%',#{content,jdbcType=VARCHAR},'%'))
+            </if>
         </trim>
         ORDER BY
         <if test="orderBy != null">
@@ -463,7 +498,7 @@
 
     <select id="findByTradeNo" resultType="com.tony.entity.CostRecord" parameterType="String">
         SELECT
-            <include refid="all"/>
+        <include refid="all"/>
         FROM t_cost_info
         WHERE tradeNo=#{tradeNo,jdbcType=VARCHAR}
     </select>

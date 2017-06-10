@@ -19,6 +19,8 @@ public interface CostRecordService {
 
     Integer toggleDeleteStatus(Map<String, Object> params);
 
+    Integer toggleHideStatus(Map<String, Object> params);
+
     Long orderPut(CostRecord record);
 
     Integer updateByTradeNo(CostRecord record);

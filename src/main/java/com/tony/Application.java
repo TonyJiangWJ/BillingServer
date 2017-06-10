@@ -7,19 +7,14 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.web.filter.OrderedCharacterEncodingFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.web.filter.CharacterEncodingFilter;
 
 /**
  * Author by TonyJiang on 2017/5/18.
  */
 @SpringBootApplication
-@SpringBootConfiguration
 @ComponentScan
-@EnableAutoConfiguration
 @MapperScan("com.tony.dao")
 public class Application {
     public static void main(String[] args) {

@@ -22,6 +22,15 @@ public class CostRecord {
     private String tradeStatus;
     private Integer isDelete;
     private Long id;
+    private Integer isHidden;
+
+    public Integer getIsHidden() {
+        return isHidden;
+    }
+
+    public void setIsHidden(Integer isHidden) {
+        this.isHidden = isHidden;
+    }
 
     public String getTradeNo() {
         return tradeNo;

@@ -7,11 +7,21 @@ public class CostRecordPageRequest extends BaseRequest {
     private Integer pageNo;
     private Integer pageSize;
     private Integer isDelete;
+    private Integer isHidden;
     private String inOutType;
     private String startDate;
     private String endDate;
     private String sort;
     private String orderBy;
+    private String content;
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
 
     public String getSort() {
         return sort;
@@ -27,6 +37,14 @@ public class CostRecordPageRequest extends BaseRequest {
 
     public void setOrderBy(String orderBy) {
         this.orderBy = orderBy;
+    }
+
+    public Integer getIsHidden() {
+        return isHidden;
+    }
+
+    public void setIsHidden(Integer isHidden) {
+        this.isHidden = isHidden;
     }
 
     public String getInOutType() {

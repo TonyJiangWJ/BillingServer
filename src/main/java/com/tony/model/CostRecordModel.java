@@ -14,7 +14,16 @@ public class CostRecordModel {
     private String inOutType;
     private String orderStatus;
     private Integer isDelete;
+    private String isHidden;
     private String target;
+
+    public String getIsHidden() {
+        return isHidden;
+    }
+
+    public void setIsHidden(String isHidden) {
+        this.isHidden = isHidden;
+    }
 
     public String getTarget() {
         return target;

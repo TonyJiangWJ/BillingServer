@@ -21,6 +21,15 @@ public class CostRecordDetailModel {
     private String memo;
     private String tradeStatus;
     private Integer isDelete;
+    private String isHidden;
+
+    public String getIsHidden() {
+        return isHidden;
+    }
+
+    public void setIsHidden(String isHidden) {
+        this.isHidden = isHidden;
+    }
 
     public String getTradeNo() {
         return tradeNo;

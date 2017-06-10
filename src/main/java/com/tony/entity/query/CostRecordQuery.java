@@ -8,6 +8,15 @@ import com.tony.entity.CostRecord;
 public class CostRecordQuery extends CostRecord {
     private String startDate;
     private String endDate;
+    private String content;
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
 
     public String getStartDate() {
         return startDate;

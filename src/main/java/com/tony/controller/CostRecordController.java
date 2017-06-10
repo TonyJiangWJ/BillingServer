@@ -1,5 +1,6 @@
 package com.tony.controller;
 
+import com.tony.constants.EnumHidden;
 import com.tony.constants.TradeStatus;
 import com.tony.entity.CostRecord;
 import com.tony.entity.PagerGrid;
@@ -61,7 +62,12 @@ public class CostRecordController {
                 endDate = endDate.substring(0, 8) + String.format("%02d", ++value);
                 costRecord.setEndDate(endDate);
             }
-
+            if (request.getIsHidden() != null) {
+                costRecord.setIsHidden(request.getIsHidden());
+            }
+            if(StringUtils.isNotEmpty(request.getContent())){
+                costRecord.setContent(request.getContent());
+            }
             costRecord.setStartDate(request.getStartDate());
             PagerGrid<CostRecordQuery> pagerGrid = new PagerGrid<CostRecordQuery>(costRecord);
             if (request.getPageSize() != null && !request.getPageSize().equals(0)) {
@@ -183,6 +189,31 @@ public class CostRecordController {
         return response;
     }
 
+    @RequestMapping(value = "/toggle/hide")
+    public BaseResponse toggleHiddenStatus(@ModelAttribute("request") CostRecordHideRequest request) {
+        BaseResponse response = new BaseResponse();
+        try {
+            if (StringUtils.isEmpty(request.getNowStatus()) || StringUtils.isEmpty(request.getTradeNo())) {
+                return ResponseUtil.paramError(response);
+            }
+            Map<String, Object> params = new HashMap<>();
+            params.put("tradeNo", request.getTradeNo());
+            params.put("nowStatus", EnumHidden.getHiddenEnum(request.getNowStatus()).val());
+            params.put("isHidden",
+                    EnumHidden.getHiddenEnum(request.getNowStatus()).val().equals(EnumHidden.HIDDEN.val())
+                            ? EnumHidden.NOT_HIDDEN.val() : EnumHidden.HIDDEN.val());
+            if (costRecordService.toggleHideStatus(params) > 0) {
+                ResponseUtil.success(response);
+            } else {
+                ResponseUtil.error(response);
+            }
+        } catch (Exception e) {
+            logger.error("/toggle/hide error", e);
+            ResponseUtil.sysError(response);
+        }
+        return response;
+    }
+
     /**
      * 添加消费记录
      *
@@ -255,6 +286,7 @@ public class CostRecordController {
         model.setTarget(record.getTarget());
         model.setTradeNo(record.getTradeNo());
         model.setTradeStatus(record.getTradeStatus());
+        model.setIsHidden(EnumHidden.getHiddenEnum(record.getIsHidden()).desc());
         return model;
     }
 
@@ -276,6 +308,7 @@ public class CostRecordController {
                 model.setTradeNo(entity.getTradeNo());
                 model.setTarget(entity.getTarget());
                 model.setMemo(entity.getMemo());
+                model.setIsHidden(EnumHidden.getHiddenEnum(entity.getIsHidden()).desc());
                 models.add(model);
             }
             return models;

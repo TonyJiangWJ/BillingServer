@@ -55,6 +55,11 @@ public class CostRecordServiceImpl implements CostRecordService {
         return costRecordDao.toggleDeleteStatus(params);
     }
 
+    @Override
+    public Integer toggleHideStatus(Map<String, Object> params) {
+        return costRecordDao.toggleHideStatus(params);
+    }
+
     public Long orderPut(CostRecord record) {
         if (costRecordDao.findByTradeNo(record.getTradeNo()) != null) {
             return -1L;
