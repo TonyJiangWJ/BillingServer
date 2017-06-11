@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tony.dao.CostReportDao">
+    <select id="getReportAmountByCondition" parameterType="com.tony.entity.query.ReportEntityQuery"
+            resultType="Long">
+        SELECT sum(money) AS amount
+        FROM t_cost_info
+        WHERE inOutType = #{inOutType,jdbcType=VARCHAR}
+            AND createTime LIKE CONCAT(#{month,jdbcType=VARCHAR}, '%')
+        <if test="isHidden!=null">
+            AND isHidden = #{isHidden,jdbcType=INTEGER}
+        </if>
+        <if test="isDeleted!=null">
+            AND isDelete = #{isDeleted,jdbcType=INTEGER}
+        </if>
+    </select>
+</mapper>

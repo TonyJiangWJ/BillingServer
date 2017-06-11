@@ -1,9 +1,9 @@
-package com.tony.model;
+package com.tony.entity;
 
 /**
- * Author by TonyJiang on 2017/6/10.
+ * Author by TonyJiang on 2017/6/11.
  */
-public class ReportModel {
+public class ReportEntity {
     private String month;
     private String totalCost;
     private String totalCostExceptDeleted;
@@ -19,6 +19,30 @@ public class ReportModel {
     private String totalIncomeHidden;
     private String totalIncomeDeleted;
     private String totalIncomeDeletedAndHidden;
+
+    public String getMonth() {
+        return month;
+    }
+
+    public void setMonth(String month) {
+        this.month = month;
+    }
+
+    public String getTotalCost() {
+        return totalCost;
+    }
+
+    public void setTotalCost(String totalCost) {
+        this.totalCost = totalCost;
+    }
+
+    public String getTotalIncome() {
+        return totalIncome;
+    }
+
+    public void setTotalIncome(String totalIncome) {
+        this.totalIncome = totalIncome;
+    }
 
     public String getTotalCostExceptDeleted() {
         return totalCostExceptDeleted;
@@ -50,30 +74,6 @@ public class ReportModel {
 
     public void setTotalIncomeExceptHidden(String totalIncomeExceptHidden) {
         this.totalIncomeExceptHidden = totalIncomeExceptHidden;
-    }
-
-    public String getMonth() {
-        return month;
-    }
-
-    public void setMonth(String month) {
-        this.month = month;
-    }
-
-    public String getTotalCost() {
-        return totalCost;
-    }
-
-    public void setTotalCost(String totalCost) {
-        this.totalCost = totalCost;
-    }
-
-    public String getTotalIncome() {
-        return totalIncome;
-    }
-
-    public void setTotalIncome(String totalIncome) {
-        this.totalIncome = totalIncome;
     }
 
     public String getTotalCostExceptDeletedAndHidden() {

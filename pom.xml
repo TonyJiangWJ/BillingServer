@@ -19,6 +19,7 @@
         <log4j-core.version>2.8.2</log4j-core.version>
         <commons-lang3.version>3.5</commons-lang3.version>
         <start.class>com.tony.Application</start.class>
+        <beanutils.version>1.9.3</beanutils.version>
     </properties>
 
     <dependencies>
@@ -47,6 +48,13 @@
             <artifactId>commons-lang3</artifactId>
             <version>${commons-lang3.version}</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/commons-beanutils/commons-beanutils -->
+        <dependency>
+            <groupId>commons-beanutils</groupId>
+            <artifactId>commons-beanutils</artifactId>
+            <version>${beanutils.version}</version>
+        </dependency>
+
         <!--
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>

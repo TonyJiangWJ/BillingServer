@@ -3,26 +3,26 @@ package com.tony.constants;
 import java.util.HashMap;
 
 /**
- * Author by TonyJiang on 2017/6/10.
+ * Author by TonyJiang on 2017/6/11.
  */
-public enum EnumHidden {
+public enum EnumDeleted {
     NOT_FILTER(null, "不筛选"),
-    HIDDEN(1, "隐藏"),
-    NOT_HIDDEN(0, "显示");
+    DELETED(1, "已删除"),
+    NOT_DELETED(0, "未删除");
     private Integer val;
     private String desc;
 
-    private static HashMap<String, EnumHidden> pool = new HashMap<>();
-    private static HashMap<Integer, EnumHidden> poolVal = new HashMap<>();
+    private static HashMap<String, EnumDeleted> pool = new HashMap<>();
+    private static HashMap<Integer, EnumDeleted> poolVal = new HashMap<>();
 
     static {
-        for (EnumHidden enumType : EnumHidden.values()) {
+        for (EnumDeleted enumType : EnumDeleted.values()) {
             pool.put(enumType.desc(), enumType);
             poolVal.put(enumType.val(), enumType);
         }
     }
 
-    EnumHidden(Integer val, String desc) {
+    EnumDeleted(Integer val, String desc) {
         this.val = val;
         this.desc = desc;
     }
@@ -35,11 +35,11 @@ public enum EnumHidden {
         return desc;
     }
 
-    public static EnumHidden getHiddenEnum(String desc) {
+    public static EnumDeleted getDeletedEnum(String desc) {
         return pool.get(desc);
     }
 
-    public static EnumHidden getHiddenEnum(Integer val) {
+    public static EnumDeleted getDeletedEnum(Integer val) {
         return poolVal.get(val);
     }
 }

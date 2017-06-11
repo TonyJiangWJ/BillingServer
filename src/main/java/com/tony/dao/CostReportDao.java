@@ -1,5 +1,7 @@
 package com.tony.dao;
 
+import com.tony.entity.SimpleReportEntity;
+import com.tony.entity.query.ReportEntityQuery;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -8,4 +10,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface CostReportDao {
 
+    Long getReportAmountByCondition(ReportEntityQuery query);
 }
