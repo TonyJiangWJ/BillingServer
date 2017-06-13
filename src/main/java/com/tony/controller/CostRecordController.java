@@ -1,5 +1,7 @@
 package com.tony.controller;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.tony.constants.EnumHidden;
 import com.tony.constants.TradeStatus;
 import com.tony.entity.CostRecord;
@@ -12,6 +14,7 @@ import com.tony.response.BaseResponse;
 import com.tony.response.CostRecordDeleteResponse;
 import com.tony.response.CostRecordDetailResponse;
 import com.tony.response.CostRecordPageResponse;
+import com.tony.service.AlipayBillCsvConvertService;
 import com.tony.service.CostRecordService;
 import com.tony.util.MoneyUtil;
 import com.tony.util.ResponseUtil;
@@ -22,6 +25,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.text.ParseException;
@@ -37,7 +41,8 @@ public class CostRecordController {
     private Logger logger = LoggerFactory.getLogger(CostRecordController.class);
     @Resource
     private CostRecordService costRecordService;
-
+    @Resource
+    private AlipayBillCsvConvertService alipayBillCsvConvertService;
 
     /**
      * 获取分页数据
@@ -257,7 +262,16 @@ public class CostRecordController {
         }
         return response;
     }
-
+    @RequestMapping("/csv/convert")
+    public JSON doConvert(@ModelAttribute("file") MultipartFile file) {
+        JSONObject json = new JSONObject();
+        if (alipayBillCsvConvertService.convertToPOJO(file)) {
+            json.put("msg", "转换成功");
+        } else {
+            json.put("msg", "转换失败");
+        }
+        return json;
+    }
     private String generateTradeNo(String createTime) throws ParseException {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date datetime = sdf.parse(createTime);
