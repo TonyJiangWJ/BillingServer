@@ -1,10 +1,12 @@
 package com.tony.entity.query;
 
+import com.tony.annotation.Table;
 import com.tony.entity.CostRecord;
 
 /**
  * Author by TonyJiang on 2017/6/9.
  */
+@Table("t_sjf_sb")
 public class CostRecordQuery extends CostRecord {
     private String startDate;
     private String endDate;

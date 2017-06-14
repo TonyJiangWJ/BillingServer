@@ -1,8 +1,11 @@
 package com.tony.entity;
 
+import com.tony.annotation.Table;
+
 /**
  * Author jiangwj20966 on 2017/6/2.
  */
+@Table("t_cost_info")
 public class CostRecord {
     private String tradeNo;
     private String orderNo;
