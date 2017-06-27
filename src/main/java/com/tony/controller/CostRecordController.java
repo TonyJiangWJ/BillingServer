@@ -28,6 +28,11 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -70,7 +75,7 @@ public class CostRecordController {
             if (request.getIsHidden() != null) {
                 costRecord.setIsHidden(request.getIsHidden());
             }
-            if(StringUtils.isNotEmpty(request.getContent())){
+            if (StringUtils.isNotEmpty(request.getContent())) {
                 costRecord.setContent(request.getContent());
             }
             costRecord.setStartDate(request.getStartDate());
@@ -262,16 +267,66 @@ public class CostRecordController {
         }
         return response;
     }
+
     @RequestMapping("/csv/convert")
     public JSON doConvert(@ModelAttribute("file") MultipartFile file) {
         JSONObject json = new JSONObject();
-        if (alipayBillCsvConvertService.convertToPOJO(file)) {
-            json.put("msg", "转换成功");
-        } else {
-            json.put("msg", "转换失败");
+        try {
+            if (alipayBillCsvConvertService.convertToPOJO(file)) {
+                json.put("msg", "转换成功");
+            } else {
+                json.put("msg", "转换失败");
+            }
+        } catch (Exception e) {
+            logger.error("backup/csv/put error", e);
+            json.put("msg", "文件错误请检查");
         }
         return json;
     }
+
+    @RequestMapping("/backup/csv/get")
+    public void backUp(HttpServletResponse response) {
+        List<CostRecord> records = costRecordService.find(new CostRecord());
+        List<String> result = alipayBillCsvConvertService.convertPOJO2String(records);
+
+        OutputStreamWriter outputStreamWriter = null;
+        BufferedWriter bufferedWriter = null;
+        SimpleDateFormat sf = new SimpleDateFormat("yyyyMMddHHmmss");
+        try {
+            response.reset();
+            response.setContentType("application/octet-stream; charset=utf-8");
+            response.setHeader("Content-Disposition", "attachment; filename=" + "backup" + sf.format(new Date()) + ".csv");
+            OutputStream outputStream = response.getOutputStream();
+            outputStreamWriter = new OutputStreamWriter(outputStream, "GBK");
+            bufferedWriter = new BufferedWriter(outputStreamWriter);
+            for (String rs : result) {
+                bufferedWriter.write(rs);
+                bufferedWriter.newLine();
+            }
+            bufferedWriter.flush();
+            bufferedWriter.close();
+            outputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @RequestMapping("/backup/csv/put")
+    public JSON getFromBackUp(@ModelAttribute("file") MultipartFile file) {
+        JSONObject json = new JSONObject();
+        try {
+            if (alipayBillCsvConvertService.getFromBackUp(file)) {
+                json.put("msg", "备份恢复成功");
+            } else {
+                json.put("msg", "转换失败");
+            }
+        } catch (Exception e) {
+            logger.error("backup/csv/put error", e);
+            json.put("msg", "文件错误请检查");
+        }
+        return json;
+    }
+
     private String generateTradeNo(String createTime) throws ParseException {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date datetime = sdf.parse(createTime);

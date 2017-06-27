@@ -1,22 +1,20 @@
-package com.tony.dao;
+package com.tony.service;
 
 import com.tony.entity.TagCostRef;
 import com.tony.entity.TagInfo;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Map;
 
 /**
- * Author by TonyJiang on 2017/6/14.
+ * Author by TonyJiang on 2017/6/15.
  */
-@Repository
-public interface TagInfoDao {
-    Long insert(TagInfo tagInfo);
+public interface TagInfoService {
+    List<TagInfo> listTagInfo(TagInfo tagInfo);
 
-    Long updateById(TagInfo tagInfo);
+    Long putTagInfo(TagInfo tagInfo);
 
-    List<TagInfo> find(TagInfo tagInfo);
+    TagInfo findTagInfoByName(String tagName);
 
     List<TagInfo> listTagInfoByTradeNo(String tradeNo);
 

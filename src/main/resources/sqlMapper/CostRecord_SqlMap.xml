@@ -77,6 +77,9 @@
             <if test=" isDelete!=null ">
                 isDelete,
             </if>
+            <if test=" isHidden!=null ">
+                isHidden,
+            </if>
             <if test=" id!=null ">
                 id,
             </if>
@@ -133,6 +136,9 @@
             </if>
             <if test=" isDelete!=null ">
                 #{isDelete,jdbcType=INTEGER},
+            </if>
+            <if test=" isHidden!=null ">
+                #{isHidden,jdbcType=INTEGER},
             </if>
             <if test=" id!=null ">
                 #{id,jdbcType=BIGINT},

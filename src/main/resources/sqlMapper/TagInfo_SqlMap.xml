@@ -68,7 +68,7 @@
         </trim>
         WHERE id=#{id,jdbcType=BIGINT}
     </update>
-    <select id="find" parameterMap="com.tony.entity.TagInfo" resultType="com.tony.entity.TagInfo">
+    <select id="find" parameterType="com.tony.entity.TagInfo" resultType="com.tony.entity.TagInfo">
         SELECT
         <include refid="all"/>
         FROM t_tag_info
@@ -90,4 +90,74 @@
             </if>
         </trim>
     </select>
+
+    <select id="getTagInfoById" parameterType="Long" resultType="com.tony.entity.TagInfo">
+        SELECT
+        <include refid="all"/>
+        FROM t_tag_info
+        WHERE id=#{id,jdbcType=BIGINT} AND isDelete='0'
+    </select>
+
+    <select id="listTagInfoByTradeNo" resultType="com.tony.entity.TagInfo" parameterType="String">
+        SELECT
+        <include refid="all"/>
+        FROM t_tag_info
+        WHERE id IN (
+        SELECT tagId FROM t_cost_tag t_ct JOIN t_cost_info t_c ON t_ct.costId = t_c.id
+        WHERE t_c.tradeNo = #{tradeNo,jdbcType=VARCHAR} AND t_ct.isDelete = '0'
+        )
+    </select>
+
+    <insert id="insertTagCostRef" useGeneratedKeys="true" keyProperty="id" parameterType="com.tony.entity.TagCostRef">
+        INSERT INTO t_cost_tag (
+        <trim suffixOverrides=",">
+            <if test=" id!=null ">
+                id,
+            </if>
+            <if test=" tagId!=null ">
+                tagId,
+            </if>
+            <if test=" costId!=null ">
+                costId,
+            </if>
+            <if test=" createTime!=null ">
+                createTime,
+            </if>
+            <if test=" modifyTime!=null ">
+                modifyTime,
+            </if>
+            <if test=" isDelete!=null ">
+                isDelete,
+            </if>
+        </trim>
+        ) VALUES (
+        <trim suffixOverrides=",">
+            <if test=" id!=null ">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test=" tagId!=null ">
+                #{tagId,jdbcType=BIGINT},
+            </if>
+            <if test=" costId!=null ">
+                #{costId,jdbcType=BIGINT},
+            </if>
+            <if test=" createTime!=null ">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test=" modifyTime!=null ">
+                #{modifyTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test=" isDelete!=null ">
+                #{isDelete,jdbcType=INTEGER},
+            </if>
+        </trim>
+        )
+    </insert>
+
+    <update id="deleteCostTag" parameterType="java.util.Map">
+        UPDATE t_cost_tag
+        SET isDelete   = 1,
+            modifyTime = #{modifyTime,jdbcType=TIMESTAMP}
+        WHERE isDelete = 1 AND costId = #{costId,jdbcType=BIGINT} AND tagId = #{tagId,jdbcType=BIGINT}
+    </update>
 </mapper>

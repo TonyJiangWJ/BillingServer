@@ -2,6 +2,7 @@ package com.tony.util;
 
 
 import com.tony.annotation.Table;
+import com.tony.entity.TagCostRef;
 import com.tony.entity.TagInfo;
 import com.tony.entity.query.CostRecordQuery;
 
@@ -17,7 +18,7 @@ public class StaticCodeGeneratorUtil {
 //        generateAll(CostRecord.class, true);
 //        System.out.println(insertSqlGenerator(CostRecord.class, true));
 //        System.out.println("under_score_case SQL:");
-        generateAll(TagInfo.class, true);
+        generateAll(TagCostRef.class, true);
     }
 
     public static void generateAll(Class clz, boolean isSqlCamelCase) {
@@ -177,7 +178,7 @@ public class StaticCodeGeneratorUtil {
 
     public static String pageSqlGenerator(Class clz, boolean isCamelCase) {
         String tableName = getTableName(clz);
-        return "<select id=\"page\" parameterMap=\"java.util.Map\" resultType=\"" + clz.getName() + "\">\n" +
+        return "<select id=\"page\" parameterType=\"java.util.Map\" resultType=\"" + clz.getName() + "\">\n" +
                 "SELECT <include refid=\"all\"/> FROM " + (tableName == null ? "" : getTableName(clz)) + "\n"
                 + whereCaseGenerator(clz, isCamelCase) +
                 "ORDER BY\n" +
