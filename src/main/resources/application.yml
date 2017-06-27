@@ -14,7 +14,7 @@ spring:
         encoding.enabled: true
     datasource:
       driver-class-name: com.mysql.cj.jdbc.Driver
-      url: jdbc:mysql://localhost:3306/my_test?serverTimezone=UTC&characterEncoding=utf8&useUnicode=true&useSSL=false
+      url: jdbc:mysql://localhost:3306/my_2017_cost?serverTimezone=UTC&characterEncoding=utf8&useUnicode=true&useSSL=false
       username: root
       password: fixture
 
