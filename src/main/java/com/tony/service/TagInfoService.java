@@ -23,4 +23,6 @@ public interface TagInfoService {
     Long insertTagCostRef(TagCostRef tagCostRef);
 
     Long deleteCostTag(Map param);
+
+    Long deleteTagById(Long id);
 }

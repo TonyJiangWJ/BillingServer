@@ -4,10 +4,7 @@ import com.tony.entity.CostRecord;
 import com.tony.entity.TagCostRef;
 import com.tony.entity.TagInfo;
 import com.tony.model.TagInfoModel;
-import com.tony.request.CostTagDelRequest;
-import com.tony.request.CostTagListRequest;
-import com.tony.request.CostTagPutRequest;
-import com.tony.request.TagInfoPutRequest;
+import com.tony.request.*;
 import com.tony.response.BaseResponse;
 import com.tony.response.CostTagListResponse;
 import com.tony.response.TagInfoListResponse;
@@ -77,6 +74,26 @@ public class TagInfoController extends BaseController {
             }
         } catch (Exception e) {
             logger.error("/tag/put error", e);
+            ResponseUtil.sysError(response);
+        }
+        return response;
+    }
+
+    // 删除标签
+    @RequestMapping(value = "/tag/delete")
+    public BaseResponse delTag(@ModelAttribute("request") TagInfoDelRequest request) {
+        BaseResponse response = new BaseResponse();
+        if (request.getTagId() == null) {
+            return ResponseUtil.paramError(response);
+        }
+        try {
+            if (tagInfoService.deleteTagById(request.getTagId()) > 0) {
+                ResponseUtil.success(response);
+            } else {
+                ResponseUtil.error(response);
+            }
+        } catch (Exception e) {
+            logger.error("/tag/delete error ", e);
             ResponseUtil.sysError(response);
         }
         return response;

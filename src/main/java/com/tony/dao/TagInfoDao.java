@@ -25,4 +25,10 @@ public interface TagInfoDao {
     Long insertTagCostRef(TagCostRef tagCostRef);
 
     Long deleteCostTag(Map param);
+
+    Long deleteTagById(Map param);
+
+    Long deleteCostTagByTagId(Map param);
+
+    List<TagInfo> queryTagByName(String tagName);
 }

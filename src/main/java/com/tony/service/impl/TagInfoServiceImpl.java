@@ -5,11 +5,12 @@ import com.tony.dao.TagInfoDao;
 import com.tony.entity.TagCostRef;
 import com.tony.entity.TagInfo;
 import com.tony.service.TagInfoService;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -28,6 +29,9 @@ public class TagInfoServiceImpl implements TagInfoService {
 
     @Override
     public Long putTagInfo(TagInfo tagInfo) {
+        if (CollectionUtils.isNotEmpty(tagInfoDao.find(tagInfo))) {
+            return -1L;
+        }
         tagInfo.setCreateTime(new Date());
         tagInfo.setModifyTime(new Date());
         tagInfo.setIsDelete(EnumDeleted.NOT_DELETED.val());
@@ -78,4 +82,14 @@ public class TagInfoServiceImpl implements TagInfoService {
         param.put("modifyTime", new Date());
         return tagInfoDao.deleteCostTag(param);
     }
+
+    @Override
+    public Long deleteTagById(Long id) {
+        Map<String, Object> param = new HashMap<>();
+        param.put("tagId", id);
+        param.put("modifyTime", new Date());
+        tagInfoDao.deleteCostTagByTagId(param);
+        return tagInfoDao.deleteTagById(param);
+    }
+
 }

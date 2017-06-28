@@ -85,9 +85,7 @@
             <if test=" modifyTime!=null ">
                 and modifyTime=#{modifyTime,jdbcType=TIMESTAMP}
             </if>
-            <if test=" isDelete!=null ">
-                and isDelete=#{isDelete,jdbcType=INTEGER}
-            </if>
+            and isDelete=0
         </trim>
     </select>
 
@@ -158,6 +156,28 @@
         UPDATE t_cost_tag
         SET isDelete   = 1,
             modifyTime = #{modifyTime,jdbcType=TIMESTAMP}
-        WHERE isDelete = 1 AND costId = #{costId,jdbcType=BIGINT} AND tagId = #{tagId,jdbcType=BIGINT}
+        WHERE isDelete = 0 AND costId = #{costId,jdbcType=BIGINT} AND tagId = #{tagId,jdbcType=BIGINT}
     </update>
+
+    <update id="deleteTagById" parameterType="java.util.Map">
+        UPDATE t_tag_info
+        SET isDelete   = 1,
+            modifyTime = #{modifyTime,jdbcType=TIMESTAMP}
+        WHERE id = #{tagId,jdbcType=BIGINT}
+    </update>
+
+    <update id="deleteCostTagByTagId" parameterType="java.util.Map">
+        UPDATE t_cost_tag
+        SET isDelete   = 1,
+            modifyTime = #{modifyTime,jdbcType=TIMESTAMP}
+        WHERE isDelete = 0 AND tagId = #{tagId,jdbcType=BIGINT}
+    </update>
+
+    <select id="queryTagByName" parameterType="String" resultType="com.tony.entity.TagInfo">
+        SELECT
+        <include refid="all"/>
+        FROM t_tag_info
+        WHERE isDelete = 0
+        AND tagName LIKE CONCAT('%',#{tagName,jdbcType=VARCHAR},'%')
+    </select>
 </mapper>

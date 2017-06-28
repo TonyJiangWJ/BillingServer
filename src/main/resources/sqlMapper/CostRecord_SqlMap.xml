@@ -492,6 +492,10 @@
                 CONCAT('%',#{content,jdbcType=VARCHAR},'%') or memo like CONCAT('%',#{content,jdbcType=VARCHAR},'%'))
             </if>
         </trim>
+        union
+        select <include refid="all"/> from t_cost_info a where a.id in  (
+        select distinct ct.costId id from t_cost_tag ct join t_tag_info t on ct.tagId=t.id
+        where t.tagName like CONCAT('%',#{content,jdbcType=VARCHAR},'%'))
         ORDER BY
         <if test="orderBy != null">
             ${orderBy} ${sort}
