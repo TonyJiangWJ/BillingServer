@@ -428,6 +428,18 @@
         <if test=" startDate!=null and endDate!=null and startDate!='' and endDate!='' ">
             and (tci.createTime between #{startDate,jdbcType=VARCHAR} and #{endDate,jdbcType=VARCHAR})
         </if>
+        <if test=" orderType!=null and orderType!='' ">
+            and tci.orderType=#{orderType,jdbcType=VARCHAR}
+        </if>
+        <if test=" inOutType!=null and inOutType!='' ">
+            and tci.inOutType=#{inOutType,jdbcType=VARCHAR}
+        </if>
+        <if test=" isDelete!=null ">
+            and tci.isDelete=#{isDelete,jdbcType=INTEGER}
+        </if>
+        <if test=" isHidden!=null ">
+            and tci.isHidden=#{isHidden,jdbcType=INTEGER}
+        </if>
         )tcount
     </select>
 
@@ -510,6 +522,18 @@
         )
         <if test=" startDate!=null and endDate!=null and startDate!='' and endDate!='' ">
             and (a.createTime between #{startDate,jdbcType=VARCHAR} and #{endDate,jdbcType=VARCHAR})
+        </if>
+        <if test=" orderType!=null and orderType!='' ">
+            and a.orderType=#{orderType,jdbcType=VARCHAR}
+        </if>
+        <if test=" inOutType!=null and inOutType!='' ">
+            and a.inOutType=#{inOutType,jdbcType=VARCHAR}
+        </if>
+        <if test=" isDelete!=null ">
+            and a.isDelete=#{isDelete,jdbcType=INTEGER}
+        </if>
+        <if test=" isHidden!=null ">
+            and a.isHidden=#{isHidden,jdbcType=INTEGER}
         </if>
         ORDER BY
         <if test="orderBy != null">
