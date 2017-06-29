@@ -352,7 +352,8 @@
     </select>
 
     <select id="count" parameterType="java.util.Map" resultType="Integer">
-        SELECT COUNT(1) FROM t_cost_info
+        SELECT COUNT(1) FROM (
+        SELECT id FROM t_cost_info
         <trim prefix="WHERE" prefixOverrides="and">
             <if test=" tradeNo!=null and tradeNo!='' ">
                 and tradeNo=#{tradeNo,jdbcType=VARCHAR}
@@ -419,7 +420,10 @@
                 CONCAT('%',#{content,jdbcType=VARCHAR},'%') or memo like CONCAT('%',#{content,jdbcType=VARCHAR},'%'))
             </if>
         </trim>
-
+        union
+        select distinct ct.costId id from t_cost_tag ct join t_tag_info t on ct.tagId=t.id
+        where t.tagName like CONCAT('%',#{content,jdbcType=VARCHAR},'%') and t.isDelete='0' and ct.isDelete='0'
+        ) tcount
     </select>
 
     <select id="page" parameterType="java.util.Map" resultType="com.tony.entity.CostRecord">
@@ -493,9 +497,11 @@
             </if>
         </trim>
         union
-        select <include refid="all"/> from t_cost_info a where a.id in  (
+        select
+        <include refid="all"/>
+        from t_cost_info a where a.id in (
         select distinct ct.costId id from t_cost_tag ct join t_tag_info t on ct.tagId=t.id
-        where t.tagName like CONCAT('%',#{content,jdbcType=VARCHAR},'%'))
+        where t.tagName like CONCAT('%',#{content,jdbcType=VARCHAR},'%') and t.isDelete='0' and ct.isDelete='0')
         ORDER BY
         <if test="orderBy != null">
             ${orderBy} ${sort}
