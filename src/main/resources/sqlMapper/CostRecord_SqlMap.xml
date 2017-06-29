@@ -421,9 +421,14 @@
             </if>
         </trim>
         union
+        select id from t_cost_info tci where id in(
         select distinct ct.costId id from t_cost_tag ct join t_tag_info t on ct.tagId=t.id
         where t.tagName like CONCAT('%',#{content,jdbcType=VARCHAR},'%') and t.isDelete='0' and ct.isDelete='0'
-        ) tcount
+        )
+        <if test=" startDate!=null and endDate!=null and startDate!='' and endDate!='' ">
+            and (tci.createTime between #{startDate,jdbcType=VARCHAR} and #{endDate,jdbcType=VARCHAR})
+        </if>
+        )tcount
     </select>
 
     <select id="page" parameterType="java.util.Map" resultType="com.tony.entity.CostRecord">
@@ -501,7 +506,11 @@
         <include refid="all"/>
         from t_cost_info a where a.id in (
         select distinct ct.costId id from t_cost_tag ct join t_tag_info t on ct.tagId=t.id
-        where t.tagName like CONCAT('%',#{content,jdbcType=VARCHAR},'%') and t.isDelete='0' and ct.isDelete='0')
+        where t.tagName like CONCAT('%',#{content,jdbcType=VARCHAR},'%') and t.isDelete='0' and ct.isDelete='0'
+        )
+        <if test=" startDate!=null and endDate!=null and startDate!='' and endDate!='' ">
+            and (a.createTime between #{startDate,jdbcType=VARCHAR} and #{endDate,jdbcType=VARCHAR})
+        </if>
         ORDER BY
         <if test="orderBy != null">
             ${orderBy} ${sort}
