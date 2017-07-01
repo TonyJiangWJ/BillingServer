@@ -1,10 +1,13 @@
 package com.tony.configuration;
 
+import com.tony.interceptors.InterceptorDemo;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import java.nio.charset.Charset;
@@ -15,6 +18,9 @@ import java.util.List;
  */
 @Configuration
 public class CustomMVCConfiguration extends WebMvcConfigurerAdapter {
+
+    @Autowired
+    private InterceptorDemo interceptorDemo;
 
     @Bean
     public HttpMessageConverter<String> responseBodyConverter() {
@@ -34,5 +40,11 @@ public class CustomMVCConfiguration extends WebMvcConfigurerAdapter {
     public void configureContentNegotiation(
             ContentNegotiationConfigurer configurer) {
         configurer.favorPathExtension(false);
+    }
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(interceptorDemo).addPathPatterns("/**");
+        super.addInterceptors(registry);
     }
 }
