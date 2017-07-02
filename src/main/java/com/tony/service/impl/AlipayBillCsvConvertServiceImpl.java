@@ -33,7 +33,7 @@ public class AlipayBillCsvConvertServiceImpl implements AlipayBillCsvConvertServ
     @Resource
     private CostRecordDao costRecordDao;
 
-    public boolean convertToPOJO(MultipartFile multipartFile) {
+    public boolean convertToPOJO(MultipartFile multipartFile, Long userId) {
         if (multipartFile != null) {
             try {
                 InputStream inputStream = multipartFile.getInputStream();
@@ -55,7 +55,7 @@ public class AlipayBillCsvConvertServiceImpl implements AlipayBillCsvConvertServ
                         System.out.println(JSON.toJSONString(records));
                         if (!CollectionUtils.isEmpty(records)) {
                             for (Record entity : records) {
-                                convertToDBJOAndInsert(entity);
+                                convertToDBJOAndInsert(entity, userId);
                             }
                         }
                         return true;
@@ -88,7 +88,7 @@ public class AlipayBillCsvConvertServiceImpl implements AlipayBillCsvConvertServ
     }
 
     @Override
-    public boolean getFromBackUp(MultipartFile multipartFile) {
+    public boolean getFromBackUp(MultipartFile multipartFile, Long userId) {
 
         if (multipartFile != null) {
             try {
@@ -112,7 +112,7 @@ public class AlipayBillCsvConvertServiceImpl implements AlipayBillCsvConvertServ
                         System.out.println(JSON.toJSONString(records));
                         if (!CollectionUtils.isEmpty(records)) {
                             for (CostRecord entity : records) {
-                                convertToDBJOAndInsertCostRecord(entity);
+                                convertToDBJOAndInsertCostRecord(entity, userId);
                             }
                         }
                         return true;
@@ -128,8 +128,11 @@ public class AlipayBillCsvConvertServiceImpl implements AlipayBillCsvConvertServ
         return false;
     }
 
-    private void convertToDBJOAndInsertCostRecord(CostRecord entity) {
-        CostRecord record = costRecordDao.findByTradeNo(entity.getTradeNo());
+    private void convertToDBJOAndInsertCostRecord(CostRecord entity, Long userId) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("tradeNo", entity.getTradeNo());
+        params.put("userId", userId);
+        CostRecord record = costRecordDao.findByTradeNo(params);
         if (record == null) {
             entity.setId(null);
             if (costRecordDao.insert(entity) > 0) {
@@ -143,8 +146,11 @@ public class AlipayBillCsvConvertServiceImpl implements AlipayBillCsvConvertServ
     }
 
 
-    private void convertToDBJOAndInsert(Record entity) {
-        CostRecord record = costRecordDao.findByTradeNo(entity.getTradeNo());
+    private void convertToDBJOAndInsert(Record entity, Long userId) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("tradeNo", entity.getTradeNo());
+        params.put("userId", userId);
+        CostRecord record = costRecordDao.findByTradeNo(params);
         if (record == null) {
             record = new CostRecord();
 

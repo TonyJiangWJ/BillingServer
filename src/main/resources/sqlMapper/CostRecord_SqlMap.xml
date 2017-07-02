@@ -20,6 +20,7 @@
         tradeStatus tradeStatus,
         isDelete isDelete,
         id id,
+        userId userId,
         isHidden isHidden
     </sql>
 
@@ -83,6 +84,9 @@
             <if test=" id!=null ">
                 id,
             </if>
+            <if test=" userId!=null ">
+                userId,
+            </if>
         </trim>
         ) VALUES (
         <trim suffixOverrides=",">
@@ -142,6 +146,9 @@
             </if>
             <if test=" id!=null ">
                 #{id,jdbcType=BIGINT},
+            </if>
+            <if test=" userId!=null ">
+                #{userId,jdbcType=BIGINT},
             </if>
         </trim>
         )
@@ -206,7 +213,7 @@
                 isHidden=#{isHidden,jdbcType=INTEGER},
             </if>
         </trim>
-        WHERE id=#{id,jdbcType=BIGINT}
+        WHERE id=#{id,jdbcType=BIGINT} AND userId=#{userId,jdbcType=BIGINT}
     </update>
 
     <update id="updateByTradeNo" parameterType="com.tony.entity.CostRecord">
@@ -267,14 +274,14 @@
                 isHidden=#{isHidden,jdbcType=INTEGER},
             </if>
         </trim>
-        WHERE tradeNo=#{tradeNo,jdbcType=VARCHAR}
+        WHERE tradeNo=#{tradeNo,jdbcType=VARCHAR} AND userId=#{userId,jdbcType=BIGINT}
     </update>
 
     <update id="toggleDeleteStatus" parameterType="java.util.Map">
         UPDATE t_cost_info
         SET
             isDelete = #{isDelete,jdbcType=INTEGER}
-        WHERE tradeNo = #{tradeNo,jdbcType=VARCHAR}
+        WHERE tradeNo = #{tradeNo,jdbcType=VARCHAR} AND userId = #{userId,jdbcType=BIGINT}
               AND isDelete = #{nowStatus,jdbcType=INTEGER}
     </update>
 
@@ -282,258 +289,259 @@
         UPDATE t_cost_info
         SET
             isHidden = #{isHidden,jdbcType=INTEGER}
-        WHERE tradeNo = #{tradeNo,jdbcType=VARCHAR}
+        WHERE tradeNo = #{tradeNo,jdbcType=VARCHAR} AND userId = #{userId,jdbcType=BIGINT}
               AND isHidden = #{nowStatus,jdbcType=INTEGER}
     </update>
 
     <select id="find" parameterType="com.tony.entity.CostRecord" resultType="com.tony.entity.CostRecord">
         SELECT
         <include refid="all"/>
-        FROM t_cost_info
-        <trim prefix="WHERE" prefixOverrides="and">
-            <if test=" tradeNo!=null and tradeNo!='' ">
-                and tradeNo=#{tradeNo,jdbcType=VARCHAR}
-            </if>
-            <if test=" orderNo!=null and orderNo!='' ">
-                and orderNo=#{orderNo,jdbcType=VARCHAR}
-            </if>
-            <if test=" createTime!=null and createTime!='' ">
-                and createTime=#{createTime,jdbcType=VARCHAR}
-            </if>
-            <if test=" paidTime!=null and paidTime!='' ">
-                and paidTime=#{paidTime,jdbcType=VARCHAR}
-            </if>
-            <if test=" modifyTime!=null and modifyTime!='' ">
-                and modifyTime=#{modifyTime,jdbcType=VARCHAR}
-            </if>
-            <if test=" location!=null and location!='' ">
-                and location=#{location,jdbcType=VARCHAR}
-            </if>
-            <if test=" orderType!=null and orderType!='' ">
-                and orderType=#{orderType,jdbcType=VARCHAR}
-            </if>
-            <if test=" target!=null and target!='' ">
-                and target=#{target,jdbcType=VARCHAR}
-            </if>
-            <if test=" goodsName!=null and goodsName!='' ">
-                and goodsName=#{goodsName,jdbcType=VARCHAR}
-            </if>
-            <if test=" money!=null ">
-                and money=#{money,jdbcType=BIGINT}
-            </if>
-            <if test=" inOutType!=null and inOutType!='' ">
-                and inOutType=#{inOutType,jdbcType=VARCHAR}
-            </if>
-            <if test=" orderStatus!=null and orderStatus!='' ">
-                and orderStatus=#{orderStatus,jdbcType=VARCHAR}
-            </if>
-            <if test=" serviceCost!=null ">
-                and serviceCost=#{serviceCost,jdbcType=BIGINT}
-            </if>
-            <if test=" refundMoney!=null ">
-                and refundMoney=#{refundMoney,jdbcType=BIGINT}
-            </if>
-            <if test=" memo!=null and memo!='' ">
-                and memo=#{memo,jdbcType=VARCHAR}
-            </if>
-            <if test=" tradeStatus!=null and tradeStatus!='' ">
-                and tradeStatus=#{tradeStatus,jdbcType=VARCHAR}
-            </if>
-            <if test=" isDelete!=null ">
-                and isDelete=#{isDelete,jdbcType=INTEGER}
-            </if>
-            <if test=" id!=null ">
-                and id=#{id,jdbcType=BIGINT}
-            </if>
-            <if test=" isHidden!=null ">
-                and isHidden=#{isHidden,jdbcType=INTEGER}
-            </if>
-        </trim>
+        FROM t_cost_info WHERE userId=#{userId,jdbcType=BIGINT}
+
+        <if test=" tradeNo!=null and tradeNo!='' ">
+            and tradeNo=#{tradeNo,jdbcType=VARCHAR}
+        </if>
+        <if test=" orderNo!=null and orderNo!='' ">
+            and orderNo=#{orderNo,jdbcType=VARCHAR}
+        </if>
+        <if test=" createTime!=null and createTime!='' ">
+            and createTime=#{createTime,jdbcType=VARCHAR}
+        </if>
+        <if test=" paidTime!=null and paidTime!='' ">
+            and paidTime=#{paidTime,jdbcType=VARCHAR}
+        </if>
+        <if test=" modifyTime!=null and modifyTime!='' ">
+            and modifyTime=#{modifyTime,jdbcType=VARCHAR}
+        </if>
+        <if test=" location!=null and location!='' ">
+            and location=#{location,jdbcType=VARCHAR}
+        </if>
+        <if test=" orderType!=null and orderType!='' ">
+            and orderType=#{orderType,jdbcType=VARCHAR}
+        </if>
+        <if test=" target!=null and target!='' ">
+            and target=#{target,jdbcType=VARCHAR}
+        </if>
+        <if test=" goodsName!=null and goodsName!='' ">
+            and goodsName=#{goodsName,jdbcType=VARCHAR}
+        </if>
+        <if test=" money!=null ">
+            and money=#{money,jdbcType=BIGINT}
+        </if>
+        <if test=" inOutType!=null and inOutType!='' ">
+            and inOutType=#{inOutType,jdbcType=VARCHAR}
+        </if>
+        <if test=" orderStatus!=null and orderStatus!='' ">
+            and orderStatus=#{orderStatus,jdbcType=VARCHAR}
+        </if>
+        <if test=" serviceCost!=null ">
+            and serviceCost=#{serviceCost,jdbcType=BIGINT}
+        </if>
+        <if test=" refundMoney!=null ">
+            and refundMoney=#{refundMoney,jdbcType=BIGINT}
+        </if>
+        <if test=" memo!=null and memo!='' ">
+            and memo=#{memo,jdbcType=VARCHAR}
+        </if>
+        <if test=" tradeStatus!=null and tradeStatus!='' ">
+            and tradeStatus=#{tradeStatus,jdbcType=VARCHAR}
+        </if>
+        <if test=" isDelete!=null ">
+            and isDelete=#{isDelete,jdbcType=INTEGER}
+        </if>
+        <if test=" id!=null ">
+            and id=#{id,jdbcType=BIGINT}
+        </if>
+        <if test=" isHidden!=null ">
+            and isHidden=#{isHidden,jdbcType=INTEGER}
+        </if>
     </select>
 
     <select id="count" parameterType="java.util.Map" resultType="Integer">
         SELECT COUNT(1) FROM (
-        SELECT id FROM t_cost_info
-        <trim prefix="WHERE" prefixOverrides="and">
-            <if test=" tradeNo!=null and tradeNo!='' ">
-                and tradeNo=#{tradeNo,jdbcType=VARCHAR}
-            </if>
-            <if test=" orderNo!=null and orderNo!='' ">
-                and orderNo=#{orderNo,jdbcType=VARCHAR}
-            </if>
-            <if test=" createTime!=null and createTime!='' ">
-                and createTime=#{createTime,jdbcType=VARCHAR}
-            </if>
-            <if test=" paidTime!=null and paidTime!='' ">
-                and paidTime=#{paidTime,jdbcType=VARCHAR}
-            </if>
-            <if test=" modifyTime!=null and modifyTime!='' ">
-                and modifyTime=#{modifyTime,jdbcType=VARCHAR}
-            </if>
-            <if test=" location!=null and location!='' ">
-                and location=#{location,jdbcType=VARCHAR}
-            </if>
-            <if test=" orderType!=null and orderType!='' ">
-                and orderType=#{orderType,jdbcType=VARCHAR}
-            </if>
-            <if test=" target!=null and target!='' ">
-                and target=#{target,jdbcType=VARCHAR}
-            </if>
-            <if test=" goodsName!=null and goodsName!='' ">
-                and goodsName=#{goodsName,jdbcType=VARCHAR}
-            </if>
-            <if test=" money!=null ">
-                and money=#{money,jdbcType=BIGINT}
-            </if>
-            <if test=" inOutType!=null and inOutType!='' ">
-                and inOutType=#{inOutType,jdbcType=VARCHAR}
-            </if>
-            <if test=" orderStatus!=null and orderStatus!='' ">
-                and orderStatus=#{orderStatus,jdbcType=VARCHAR}
-            </if>
-            <if test=" serviceCost!=null ">
-                and serviceCost=#{serviceCost,jdbcType=BIGINT}
-            </if>
-            <if test=" refundMoney!=null ">
-                and refundMoney=#{refundMoney,jdbcType=BIGINT}
-            </if>
-            <if test=" memo!=null and memo!='' ">
-                and memo=#{memo,jdbcType=VARCHAR}
-            </if>
-            <if test=" tradeStatus!=null and tradeStatus!='' ">
-                and tradeStatus=#{tradeStatus,jdbcType=VARCHAR}
-            </if>
-            <if test=" isDelete!=null ">
-                and isDelete=#{isDelete,jdbcType=INTEGER}
-            </if>
-            <if test=" id!=null ">
-                and id=#{id,jdbcType=BIGINT}
-            </if>
-            <if test=" startDate!=null and endDate!=null and startDate!='' and endDate!='' ">
-                and (createTime between #{startDate,jdbcType=VARCHAR} and #{endDate,jdbcType=VARCHAR})
-            </if>
-            <if test=" isHidden!=null ">
-                and isHidden=#{isHidden,jdbcType=INTEGER}
-            </if>
-            <if test=" content!=null and content!=''">
-                and (target like CONCAT('%',#{content,jdbcType=VARCHAR},'%') or goodsName like
-                CONCAT('%',#{content,jdbcType=VARCHAR},'%') or memo like CONCAT('%',#{content,jdbcType=VARCHAR},'%'))
-            </if>
-        </trim>
-        union
-        select id from t_cost_info tci where id in(
-        select distinct ct.costId id from t_cost_tag ct join t_tag_info t on ct.tagId=t.id
-        where t.tagName like CONCAT('%',#{content,jdbcType=VARCHAR},'%') and t.isDelete='0' and ct.isDelete='0'
-        )
-        <if test=" startDate!=null and endDate!=null and startDate!='' and endDate!='' ">
-            and (tci.createTime between #{startDate,jdbcType=VARCHAR} and #{endDate,jdbcType=VARCHAR})
+        SELECT id FROM t_cost_info WHERE userId=#{userId,jdbcType=BIGINT}
+        <if test=" tradeNo!=null and tradeNo!='' ">
+            and tradeNo=#{tradeNo,jdbcType=VARCHAR}
+        </if>
+        <if test=" orderNo!=null and orderNo!='' ">
+            and orderNo=#{orderNo,jdbcType=VARCHAR}
+        </if>
+        <if test=" createTime!=null and createTime!='' ">
+            and createTime=#{createTime,jdbcType=VARCHAR}
+        </if>
+        <if test=" paidTime!=null and paidTime!='' ">
+            and paidTime=#{paidTime,jdbcType=VARCHAR}
+        </if>
+        <if test=" modifyTime!=null and modifyTime!='' ">
+            and modifyTime=#{modifyTime,jdbcType=VARCHAR}
+        </if>
+        <if test=" location!=null and location!='' ">
+            and location=#{location,jdbcType=VARCHAR}
         </if>
         <if test=" orderType!=null and orderType!='' ">
-            and tci.orderType=#{orderType,jdbcType=VARCHAR}
+            and orderType=#{orderType,jdbcType=VARCHAR}
+        </if>
+        <if test=" target!=null and target!='' ">
+            and target=#{target,jdbcType=VARCHAR}
+        </if>
+        <if test=" goodsName!=null and goodsName!='' ">
+            and goodsName=#{goodsName,jdbcType=VARCHAR}
+        </if>
+        <if test=" money!=null ">
+            and money=#{money,jdbcType=BIGINT}
         </if>
         <if test=" inOutType!=null and inOutType!='' ">
-            and tci.inOutType=#{inOutType,jdbcType=VARCHAR}
+            and inOutType=#{inOutType,jdbcType=VARCHAR}
+        </if>
+        <if test=" orderStatus!=null and orderStatus!='' ">
+            and orderStatus=#{orderStatus,jdbcType=VARCHAR}
+        </if>
+        <if test=" serviceCost!=null ">
+            and serviceCost=#{serviceCost,jdbcType=BIGINT}
+        </if>
+        <if test=" refundMoney!=null ">
+            and refundMoney=#{refundMoney,jdbcType=BIGINT}
+        </if>
+        <if test=" memo!=null and memo!='' ">
+            and memo=#{memo,jdbcType=VARCHAR}
+        </if>
+        <if test=" tradeStatus!=null and tradeStatus!='' ">
+            and tradeStatus=#{tradeStatus,jdbcType=VARCHAR}
         </if>
         <if test=" isDelete!=null ">
-            and tci.isDelete=#{isDelete,jdbcType=INTEGER}
+            and isDelete=#{isDelete,jdbcType=INTEGER}
+        </if>
+        <if test=" id!=null ">
+            and id=#{id,jdbcType=BIGINT}
+        </if>
+        <if test=" startDate!=null and endDate!=null and startDate!='' and endDate!='' ">
+            and (createTime between #{startDate,jdbcType=VARCHAR} and #{endDate,jdbcType=VARCHAR})
         </if>
         <if test=" isHidden!=null ">
-            and tci.isHidden=#{isHidden,jdbcType=INTEGER}
+            and isHidden=#{isHidden,jdbcType=INTEGER}
+        </if>
+        <if test=" content!=null and content!=''">
+            and (target like CONCAT('%',#{content,jdbcType=VARCHAR},'%') or goodsName like
+            CONCAT('%',#{content,jdbcType=VARCHAR},'%') or memo like CONCAT('%',#{content,jdbcType=VARCHAR},'%'))
+
+            union
+            select id from t_cost_info tci where id in(
+            select distinct ct.costId id from t_cost_tag ct join t_tag_info t on ct.tagId=t.id
+            where t.tagName like CONCAT('%',#{content,jdbcType=VARCHAR},'%') and t.isDelete='0' and ct.isDelete='0'
+            and t.userId=#{userId,jdbcType=BIGINT}
+            )
+
+            <if test=" startDate!=null and endDate!=null and startDate!='' and endDate!='' ">
+                and (tci.createTime between #{startDate,jdbcType=VARCHAR} and #{endDate,jdbcType=VARCHAR})
+            </if>
+            <if test=" orderType!=null and orderType!='' ">
+                and tci.orderType=#{orderType,jdbcType=VARCHAR}
+            </if>
+            <if test=" inOutType!=null and inOutType!='' ">
+                and tci.inOutType=#{inOutType,jdbcType=VARCHAR}
+            </if>
+            <if test=" isDelete!=null ">
+                and tci.isDelete=#{isDelete,jdbcType=INTEGER}
+            </if>
+            <if test=" isHidden!=null ">
+                and tci.isHidden=#{isHidden,jdbcType=INTEGER}
+            </if>
         </if>
         )tcount
+
     </select>
 
     <select id="page" parameterType="java.util.Map" resultType="com.tony.entity.CostRecord">
         SELECT
         <include refid="all"/>
-        FROM t_cost_info
-        <trim prefix="WHERE" prefixOverrides="and">
-            <if test=" tradeNo!=null and tradeNo!='' ">
-                and tradeNo=#{tradeNo,jdbcType=VARCHAR}
-            </if>
-            <if test=" orderNo!=null and orderNo!='' ">
-                and orderNo=#{orderNo,jdbcType=VARCHAR}
-            </if>
-            <if test=" createTime!=null and createTime!='' ">
-                and createTime=#{createTime,jdbcType=VARCHAR}
-            </if>
-            <if test=" paidTime!=null and paidTime!='' ">
-                and paidTime=#{paidTime,jdbcType=VARCHAR}
-            </if>
-            <if test=" modifyTime!=null and modifyTime!='' ">
-                and modifyTime=#{modifyTime,jdbcType=VARCHAR}
-            </if>
-            <if test=" location!=null and location!='' ">
-                and location=#{location,jdbcType=VARCHAR}
-            </if>
-            <if test=" orderType!=null and orderType!='' ">
-                and orderType=#{orderType,jdbcType=VARCHAR}
-            </if>
-            <if test=" target!=null and target!='' ">
-                and target=#{target,jdbcType=VARCHAR}
-            </if>
-            <if test=" goodsName!=null and goodsName!='' ">
-                and goodsName=#{goodsName,jdbcType=VARCHAR}
-            </if>
-            <if test=" money!=null ">
-                and money=#{money,jdbcType=BIGINT}
-            </if>
-            <if test=" inOutType!=null and inOutType!='' ">
-                and inOutType=#{inOutType,jdbcType=VARCHAR}
-            </if>
-            <if test=" orderStatus!=null and orderStatus!='' ">
-                and orderStatus=#{orderStatus,jdbcType=VARCHAR}
-            </if>
-            <if test=" serviceCost!=null ">
-                and serviceCost=#{serviceCost,jdbcType=BIGINT}
-            </if>
-            <if test=" refundMoney!=null ">
-                and refundMoney=#{refundMoney,jdbcType=BIGINT}
-            </if>
-            <if test=" memo!=null and memo!='' ">
-                and memo=#{memo,jdbcType=VARCHAR}
-            </if>
-            <if test=" tradeStatus!=null and tradeStatus!='' ">
-                and tradeStatus=#{tradeStatus,jdbcType=VARCHAR}
-            </if>
-            <if test=" isDelete!=null ">
-                and isDelete=#{isDelete,jdbcType=INTEGER}
-            </if>
-            <if test=" id!=null ">
-                and id=#{id,jdbcType=BIGINT}
-            </if>
-            <if test=" startDate!=null and endDate!=null and startDate!='' and endDate!='' ">
-                and (createTime between #{startDate,jdbcType=VARCHAR} and #{endDate,jdbcType=VARCHAR})
-            </if>
-            <if test=" isHidden!=null ">
-                and isHidden=#{isHidden,jdbcType=INTEGER}
-            </if>
-            <if test=" content!=null and content!=''">
-                and (target like CONCAT('%',#{content,jdbcType=VARCHAR},'%') or goodsName like
-                CONCAT('%',#{content,jdbcType=VARCHAR},'%') or memo like CONCAT('%',#{content,jdbcType=VARCHAR},'%'))
-            </if>
-        </trim>
-        union
-        select
-        <include refid="all"/>
-        from t_cost_info a where a.id in (
-        select distinct ct.costId id from t_cost_tag ct join t_tag_info t on ct.tagId=t.id
-        where t.tagName like CONCAT('%',#{content,jdbcType=VARCHAR},'%') and t.isDelete='0' and ct.isDelete='0'
-        )
-        <if test=" startDate!=null and endDate!=null and startDate!='' and endDate!='' ">
-            and (a.createTime between #{startDate,jdbcType=VARCHAR} and #{endDate,jdbcType=VARCHAR})
+        FROM t_cost_info WHERE userId=#{userId,jdbcType=BIGINT}
+        <if test=" tradeNo!=null and tradeNo!='' ">
+            and tradeNo=#{tradeNo,jdbcType=VARCHAR}
+        </if>
+        <if test=" orderNo!=null and orderNo!='' ">
+            and orderNo=#{orderNo,jdbcType=VARCHAR}
+        </if>
+        <if test=" createTime!=null and createTime!='' ">
+            and createTime=#{createTime,jdbcType=VARCHAR}
+        </if>
+        <if test=" paidTime!=null and paidTime!='' ">
+            and paidTime=#{paidTime,jdbcType=VARCHAR}
+        </if>
+        <if test=" modifyTime!=null and modifyTime!='' ">
+            and modifyTime=#{modifyTime,jdbcType=VARCHAR}
+        </if>
+        <if test=" location!=null and location!='' ">
+            and location=#{location,jdbcType=VARCHAR}
         </if>
         <if test=" orderType!=null and orderType!='' ">
-            and a.orderType=#{orderType,jdbcType=VARCHAR}
+            and orderType=#{orderType,jdbcType=VARCHAR}
+        </if>
+        <if test=" target!=null and target!='' ">
+            and target=#{target,jdbcType=VARCHAR}
+        </if>
+        <if test=" goodsName!=null and goodsName!='' ">
+            and goodsName=#{goodsName,jdbcType=VARCHAR}
+        </if>
+        <if test=" money!=null ">
+            and money=#{money,jdbcType=BIGINT}
         </if>
         <if test=" inOutType!=null and inOutType!='' ">
-            and a.inOutType=#{inOutType,jdbcType=VARCHAR}
+            and inOutType=#{inOutType,jdbcType=VARCHAR}
+        </if>
+        <if test=" orderStatus!=null and orderStatus!='' ">
+            and orderStatus=#{orderStatus,jdbcType=VARCHAR}
+        </if>
+        <if test=" serviceCost!=null ">
+            and serviceCost=#{serviceCost,jdbcType=BIGINT}
+        </if>
+        <if test=" refundMoney!=null ">
+            and refundMoney=#{refundMoney,jdbcType=BIGINT}
+        </if>
+        <if test=" memo!=null and memo!='' ">
+            and memo=#{memo,jdbcType=VARCHAR}
+        </if>
+        <if test=" tradeStatus!=null and tradeStatus!='' ">
+            and tradeStatus=#{tradeStatus,jdbcType=VARCHAR}
         </if>
         <if test=" isDelete!=null ">
-            and a.isDelete=#{isDelete,jdbcType=INTEGER}
+            and isDelete=#{isDelete,jdbcType=INTEGER}
+        </if>
+        <if test=" id!=null ">
+            and id=#{id,jdbcType=BIGINT}
+        </if>
+        <if test=" startDate!=null and endDate!=null and startDate!='' and endDate!='' ">
+            and (createTime between #{startDate,jdbcType=VARCHAR} and #{endDate,jdbcType=VARCHAR})
         </if>
         <if test=" isHidden!=null ">
-            and a.isHidden=#{isHidden,jdbcType=INTEGER}
+            and isHidden=#{isHidden,jdbcType=INTEGER}
+        </if>
+        <if test=" content!=null and content!=''">
+            and (target like CONCAT('%',#{content,jdbcType=VARCHAR},'%') or goodsName like
+            CONCAT('%',#{content,jdbcType=VARCHAR},'%') or memo like CONCAT('%',#{content,jdbcType=VARCHAR},'%'))
+            union
+            select
+            <include refid="all"/>
+            from t_cost_info a where a.id in (
+            select distinct ct.costId id from t_cost_tag ct join t_tag_info t on ct.tagId=t.id
+            where t.tagName like CONCAT('%',#{content,jdbcType=VARCHAR},'%') and t.isDelete='0' and ct.isDelete='0'
+            and t.userId=#{userId,jdbcType=BIGINT}
+            )
+
+            <if test=" startDate!=null and endDate!=null and startDate!='' and endDate!='' ">
+                and (a.createTime between #{startDate,jdbcType=VARCHAR} and #{endDate,jdbcType=VARCHAR})
+            </if>
+            <if test=" orderType!=null and orderType!='' ">
+                and a.orderType=#{orderType,jdbcType=VARCHAR}
+            </if>
+            <if test=" inOutType!=null and inOutType!='' ">
+                and a.inOutType=#{inOutType,jdbcType=VARCHAR}
+            </if>
+            <if test=" isDelete!=null ">
+                and a.isDelete=#{isDelete,jdbcType=INTEGER}
+            </if>
+            <if test=" isHidden!=null ">
+                and a.isHidden=#{isHidden,jdbcType=INTEGER}
+            </if>
         </if>
         ORDER BY
         <if test="orderBy != null">
@@ -545,10 +553,10 @@
         LIMIT #{index} , #{offset}
     </select>
 
-    <select id="findByTradeNo" resultType="com.tony.entity.CostRecord" parameterType="String">
+    <select id="findByTradeNo" resultType="com.tony.entity.CostRecord" parameterType="java.util.Map">
         SELECT
         <include refid="all"/>
         FROM t_cost_info
-        WHERE tradeNo=#{tradeNo,jdbcType=VARCHAR}
+        WHERE tradeNo=#{tradeNo,jdbcType=VARCHAR} AND userId=#{userId,jdbcType=BIGINT}
     </select>
 </mapper>

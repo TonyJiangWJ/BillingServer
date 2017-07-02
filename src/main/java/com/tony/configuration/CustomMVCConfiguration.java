@@ -1,6 +1,7 @@
 package com.tony.configuration;
 
 import com.tony.interceptors.InterceptorDemo;
+import com.tony.interceptors.LoginInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,6 +22,8 @@ public class CustomMVCConfiguration extends WebMvcConfigurerAdapter {
 
     @Autowired
     private InterceptorDemo interceptorDemo;
+    @Autowired
+    private LoginInterceptor loginInterceptor;
 
     @Bean
     public HttpMessageConverter<String> responseBodyConverter() {
@@ -44,7 +47,10 @@ public class CustomMVCConfiguration extends WebMvcConfigurerAdapter {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(interceptorDemo).addPathPatterns("/**");
+        registry.addInterceptor(interceptorDemo)
+                .excludePathPatterns("/bootDemo/user/login*")
+                .addPathPatterns("/bootDemo/**");
+        registry.addInterceptor(loginInterceptor).addPathPatterns("/bootDemo/user/login*");
         super.addInterceptors(registry);
     }
 }

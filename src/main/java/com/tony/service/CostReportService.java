@@ -8,5 +8,5 @@ import java.util.List;
  * Author by TonyJiang on 2017/6/11.
  */
 public interface CostReportService {
-    List<ReportEntity> getMonthReportByMonth(List<String> month);
+    List<ReportEntity> getMonthReportByMonth(List<String> month, Long userId);
 }

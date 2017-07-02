@@ -3,7 +3,7 @@ package com.tony.request;
 /**
  * Author by TonyJiang on 2017/6/10.
  */
-public class CostRecordHideRequest {
+public class CostRecordHideRequest extends BaseRequest {
     private String tradeNo;
     private String nowStatus;
 

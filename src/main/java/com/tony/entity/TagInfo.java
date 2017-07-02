@@ -16,6 +16,7 @@ public class TagInfo {
     private Date createTime;
     private Date modifyTime;
     private Integer isDelete;
+    private Long userId;
 
     public Long getId() {
         return id;
@@ -55,5 +56,13 @@ public class TagInfo {
 
     public void setIsDelete(Integer isDelete) {
         this.isDelete = isDelete;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 }

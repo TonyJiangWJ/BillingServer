@@ -4,18 +4,39 @@
 <mapper namespace="com.tony.dao.AdminDao">
     <sql id="all">
         id id,
+        tokenId tokenId,
+        tokenVerify tokenVerify,
         code code,
-        user_name userName,
+        userName userName,
         password password,
-        last_login lastLogin,
-        create_time createTime,
-        modify_time modifyTime,
+        lastLogin lastLogin,
+        createTime createTime,
+        modifyTime modifyTime,
         version version,
-        deleted deleted
+        isDeleted isDeleted
     </sql>
-    <select id="listAdmin" resultType="com.tony.entity.Admin">
+    <update id="doLogin" parameterType="com.tony.entity.Admin">
+        UPDATE t_admin
+        SET lastLogin   = #{lastLogin,jdbcType=TIMESTAMP},
+            tokenId     = #{tokenId,jdbcType=VARCHAR},
+            tokenVerify = #{tokenVerify,jdbcType=BIGINT}
+        WHERE
+            userName = #{userName,jdbcType=VARCHAR}
+            AND password = #{password,jdbcType=VARCHAR}
+            AND isDeleted = 0
+    </update>
+    <select id="preLogin" parameterType="com.tony.entity.Admin" resultType="com.tony.entity.Admin">
         SELECT
-         <include refid="all"/>
+        <include refid="all"/>
         FROM t_admin
+        WHERE userName = #{userName,jdbcType=VARCHAR}
+        AND password = #{password,jdbcType=VARCHAR}
+        AND isDeleted = 0
+    </select>
+    <select id="loginCheck" resultType="com.tony.entity.Admin" parameterType="String">
+        SELECT
+        <include refid="all"/>
+        FROM t_admin
+        WHERE tokenId = #{tokenId} AND isDeleted = 0
     </select>
 </mapper>

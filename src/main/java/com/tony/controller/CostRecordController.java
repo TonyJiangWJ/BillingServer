@@ -79,6 +79,7 @@ public class CostRecordController {
                 costRecord.setContent(request.getContent());
             }
             costRecord.setStartDate(request.getStartDate());
+            costRecord.setUserId(request.getUserId());
             PagerGrid<CostRecordQuery> pagerGrid = new PagerGrid<CostRecordQuery>(costRecord);
             if (request.getPageSize() != null && !request.getPageSize().equals(0)) {
                 pagerGrid.setOffset(request.getPageSize());
@@ -135,7 +136,7 @@ public class CostRecordController {
         }
         ResponseUtil.error(response);
         try {
-            CostRecord record = costRecordService.findByTradeNo(request.getTradeNo());
+            CostRecord record = costRecordService.findByTradeNo(request.getTradeNo(), request.getUserId());
             if (record != null) {
                 response.setRecordDetail(formatDetailModel(record));
                 ResponseUtil.success(response);
@@ -164,6 +165,7 @@ public class CostRecordController {
         record.setGoodsName(request.getGoodsName());
         record.setMemo(request.getMemo());
         record.setTradeNo(request.getTradeNo());
+        record.setUserId(request.getUserId());
         if (costRecordService.updateByTradeNo(record) > 0) {
             return ResponseUtil.success(response);
         }
@@ -187,6 +189,7 @@ public class CostRecordController {
             params.put("tradeNo", request.getTradeNo());
             params.put("nowStatus", request.getNowStatus());
             params.put("isDelete", request.getNowStatus().equals(0) ? 1 : 0);
+            params.put("userId", request.getUserId());
             if (costRecordService.toggleDeleteStatus(params) > 0) {
                 ResponseUtil.success(response);
             } else {
@@ -212,6 +215,7 @@ public class CostRecordController {
             params.put("isHidden",
                     EnumHidden.getHiddenEnum(request.getNowStatus()).val().equals(EnumHidden.HIDDEN.val())
                             ? EnumHidden.NOT_HIDDEN.val() : EnumHidden.HIDDEN.val());
+            params.put("userId", request.getUserId());
             if (costRecordService.toggleHideStatus(params) > 0) {
                 ResponseUtil.success(response);
             } else {
@@ -256,6 +260,7 @@ public class CostRecordController {
             record.setMemo(request.getMemo());
             record.setGoodsName(request.getMemo());
             record.setLocation(request.getLocation());
+            record.setUserId(request.getUserId());
             if (costRecordService.orderPut(record) > 0) {
                 ResponseUtil.success(response);
             } else {
@@ -269,10 +274,10 @@ public class CostRecordController {
     }
 
     @RequestMapping("/csv/convert")
-    public JSON doConvert(@ModelAttribute("file") MultipartFile file) {
+    public JSON doConvert(@ModelAttribute("file") MultipartFile file, @ModelAttribute("request") BaseRequest request) {
         JSONObject json = new JSONObject();
         try {
-            if (alipayBillCsvConvertService.convertToPOJO(file)) {
+            if (alipayBillCsvConvertService.convertToPOJO(file, request.getUserId())) {
                 json.put("msg", "转换成功");
             } else {
                 json.put("msg", "转换失败");
@@ -312,10 +317,10 @@ public class CostRecordController {
     }
 
     @RequestMapping("/backup/csv/put")
-    public JSON getFromBackUp(@ModelAttribute("file") MultipartFile file) {
+    public JSON getFromBackUp(@ModelAttribute("file") MultipartFile file, @ModelAttribute("request") BaseRequest request) {
         JSONObject json = new JSONObject();
         try {
-            if (alipayBillCsvConvertService.getFromBackUp(file)) {
+            if (alipayBillCsvConvertService.getFromBackUp(file, request.getUserId())) {
                 json.put("msg", "备份恢复成功");
             } else {
                 json.put("msg", "转换失败");

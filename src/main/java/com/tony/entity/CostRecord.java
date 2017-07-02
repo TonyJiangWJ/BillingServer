@@ -26,6 +26,7 @@ public class CostRecord {
     private Integer isDelete;
     private Long id;
     private Integer isHidden;
+    private Long userId;
 
     public Integer getIsHidden() {
         return isHidden;
@@ -177,5 +178,13 @@ public class CostRecord {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 }

@@ -38,9 +38,11 @@ public class TagInfoController extends BaseController {
 
     // 列出所有标签
     @RequestMapping(value = "/tag/list")
-    public TagInfoListResponse listTag() {
+    public TagInfoListResponse listTag(@ModelAttribute("request") BaseRequest request) {
         TagInfoListResponse response = new TagInfoListResponse();
-        List<TagInfo> tagInfos = tagInfoService.listTagInfo(new TagInfo());
+        TagInfo tagInfo = new TagInfo();
+        tagInfo.setUserId(request.getUserId());
+        List<TagInfo> tagInfos = tagInfoService.listTagInfo(tagInfo);
         if (!CollectionUtils.isEmpty(tagInfos)) {
 
             List<TagInfoModel> list = new ArrayList<>();
@@ -67,6 +69,7 @@ public class TagInfoController extends BaseController {
         try {
             TagInfo tagInfo = new TagInfo();
             tagInfo.setTagName(request.getTagName());
+            tagInfo.setUserId(request.getUserId());
             if (tagInfoService.putTagInfo(tagInfo) > 0) {
                 ResponseUtil.success(response);
             } else {
@@ -137,7 +140,7 @@ public class TagInfoController extends BaseController {
             return ResponseUtil.paramError(response);
         }
         try {
-            CostRecord costRecord = costRecordService.findByTradeNo(request.getTradeNo());
+            CostRecord costRecord = costRecordService.findByTradeNo(request.getTradeNo(), request.getUserId());
             TagInfo tagInfo = tagInfoService.getTagInfoById(request.getTagId());
             if (costRecord != null && tagInfo != null) {
                 TagCostRef ref = new TagCostRef();
@@ -166,7 +169,7 @@ public class TagInfoController extends BaseController {
             return ResponseUtil.paramError(response);
         }
         try {
-            CostRecord costRecord = costRecordService.findByTradeNo(request.getTradeNo());
+            CostRecord costRecord = costRecordService.findByTradeNo(request.getTradeNo(), request.getUserId());
             TagInfo tagInfo = tagInfoService.getTagInfoById(request.getTagId());
             if (costRecord != null && tagInfo != null) {
                 Map<String, Object> param = new HashMap<>();

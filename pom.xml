@@ -20,6 +20,8 @@
         <commons-lang3.version>3.5</commons-lang3.version>
         <start.class>com.tony.Application</start.class>
         <beanutils.version>1.9.3</beanutils.version>
+        <jjwt.version>0.7.0</jjwt.version>
+        <aspectj.version>1.8.4</aspectj.version>
     </properties>
 
     <dependencies>
@@ -54,7 +56,21 @@
             <artifactId>commons-beanutils</artifactId>
             <version>${beanutils.version}</version>
         </dependency>
-
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt</artifactId>
+            <version>${jjwt.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjrt</artifactId>
+            <version>${aspectj.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
+            <version>${aspectj.version}</version>
+        </dependency>
         <!--
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>

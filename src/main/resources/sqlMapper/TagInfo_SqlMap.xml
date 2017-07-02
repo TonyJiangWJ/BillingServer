@@ -6,7 +6,8 @@
         tagName tagName,
         createTime createTime,
         modifyTime modifyTime,
-        isDelete isDelete
+        isDelete isDelete,
+        userId userId
     </sql>
     <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.tony.entity.TagInfo">
         INSERT INTO t_tag_info (
@@ -26,6 +27,9 @@
             <if test=" isDelete!=null ">
                 isDelete,
             </if>
+            <if test=" userId!=null ">
+                userId,
+            </if>
         </trim>
         ) VALUES (
         <trim suffixOverrides=",">
@@ -43,6 +47,9 @@
             </if>
             <if test=" isDelete!=null ">
                 #{isDelete,jdbcType=INTEGER},
+            </if>
+            <if test=" userId!=null ">
+                #{userId,jdbcType=BIGINT},
             </if>
         </trim>
         )
@@ -85,7 +92,7 @@
             <if test=" modifyTime!=null ">
                 and modifyTime=#{modifyTime,jdbcType=TIMESTAMP}
             </if>
-            and isDelete=0
+            and isDelete=0 and userId=#{userId,jdbcType=BIGINT}
         </trim>
     </select>
 
@@ -177,7 +184,7 @@
         SELECT
         <include refid="all"/>
         FROM t_tag_info
-        WHERE isDelete = 0
+        WHERE isDelete = 0 AND userId=#{userId,jdbcType=BIGINT}
         AND tagName LIKE CONCAT('%',#{tagName,jdbcType=VARCHAR},'%')
     </select>
 </mapper>

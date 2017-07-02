@@ -2,8 +2,8 @@ package com.tony.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.tony.entity.Admin;
 import com.tony.entity.CostRecord;
+import com.tony.request.BaseRequest;
 import com.tony.service.AdminService;
 import com.tony.service.AlipayBillCsvConvertService;
 import com.tony.service.CostRecordService;
@@ -37,12 +37,9 @@ public class HelloWorld {
     private AlipayBillCsvConvertService alipayBillCsvConvertService;
 
     @RequestMapping("/hello/world")
-    public Admin hello() {
+    public String hello() {
 //        System.out.println(JSON.toJSONString(adminService.listAdmin()));
-        List<Admin> adminList = adminService.listAdmin();
-
-        logger.info("result:{}", JSON.toJSONString(adminList));
-        return adminList.get(0);
+        return "HelloWorld";
     }
 
     @RequestMapping("/hello/all")
@@ -71,9 +68,9 @@ public class HelloWorld {
     }
 
     @RequestMapping("/hello/convert/demo")
-    public JSON doConvert(@ModelAttribute("file") MultipartFile file) {
+    public JSON doConvert(@ModelAttribute("file") MultipartFile file, @ModelAttribute("request") BaseRequest request) {
         JSONObject json = new JSONObject();
-        if (alipayBillCsvConvertService.convertToPOJO(file)) {
+        if (alipayBillCsvConvertService.convertToPOJO(file, request.getUserId())) {
             json.put("msg", "转换成功");
         } else {
             json.put("msg", "转换失败");

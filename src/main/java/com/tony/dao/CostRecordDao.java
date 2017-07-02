@@ -14,11 +14,11 @@ import java.util.Map;
 public interface CostRecordDao {
     List<CostRecord> find(CostRecord record);
 
-    List<CostRecordQuery> page(Map<String, Object> param);
+    List<CostRecordQuery> page(Map<String, Object> params);
 
     Integer count(Map<String, Object> params);
 
-    CostRecord findByTradeNo(String tradeNo);
+    CostRecord findByTradeNo(Map<String, Object> params);
 
     Long insert(CostRecord record);
 

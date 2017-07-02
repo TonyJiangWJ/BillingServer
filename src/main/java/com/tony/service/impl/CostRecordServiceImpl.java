@@ -47,8 +47,12 @@ public class CostRecordServiceImpl implements CostRecordService {
         return pagerGrid;
     }
 
-    public CostRecord findByTradeNo(String tradeNo) {
-        return costRecordDao.findByTradeNo(tradeNo);
+
+    public CostRecord findByTradeNo(String tradeNo, Long userId) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("tradeNo", tradeNo);
+        params.put("userId", userId);
+        return costRecordDao.findByTradeNo(params);
     }
 
     public Integer toggleDeleteStatus(Map<String, Object> params) {
@@ -61,7 +65,10 @@ public class CostRecordServiceImpl implements CostRecordService {
     }
 
     public Long orderPut(CostRecord record) {
-        if (costRecordDao.findByTradeNo(record.getTradeNo()) != null) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("tradeNo", record.getTradeNo());
+        params.put("userId", record.getUserId());
+        if (costRecordDao.findByTradeNo(params) != null) {
             return -1L;
         } else {
             if (costRecordDao.insert(record) > 0) {

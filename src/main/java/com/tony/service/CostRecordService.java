@@ -15,7 +15,7 @@ public interface CostRecordService {
 
     PagerGrid<CostRecordQuery> page(PagerGrid<CostRecordQuery> pagerGrid);
 
-    CostRecord findByTradeNo(String tradeNo);
+    CostRecord findByTradeNo(String tradeNo, Long userId);
 
     Integer toggleDeleteStatus(Map<String, Object> params);
 

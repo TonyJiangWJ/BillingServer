@@ -7,10 +7,12 @@ import java.util.Date;
  */
 public class Admin {
     private Integer id;
+    private String tokenId;
+    private Long tokenVerify;
     private String code;
     private String userName;
     private String password;
-    private String lastLogin;
+    private Date lastLogin;
     private Date createTime;
     private Date modifyTime;
     private String deleted;
@@ -22,6 +24,22 @@ public class Admin {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public String getTokenId() {
+        return tokenId;
+    }
+
+    public void setTokenId(String tokenId) {
+        this.tokenId = tokenId;
+    }
+
+    public Long getTokenVerify() {
+        return tokenVerify;
+    }
+
+    public void setTokenVerify(Long tokenVerify) {
+        this.tokenVerify = tokenVerify;
     }
 
     public String getCode() {
@@ -48,11 +66,11 @@ public class Admin {
         this.password = password;
     }
 
-    public String getLastLogin() {
+    public Date getLastLogin() {
         return lastLogin;
     }
 
-    public void setLastLogin(String lastLogin) {
+    public void setLastLogin(Date lastLogin) {
         this.lastLogin = lastLogin;
     }
 

@@ -25,23 +25,23 @@ public class CostReportServiceImpl implements CostReportService {
     private CostReportDao costReportDao;
 
     @Override
-    public List<ReportEntity> getMonthReportByMonth(List<String> months) {
+    public List<ReportEntity> getMonthReportByMonth(List<String> months, Long userId) {
         List<ReportEntity> reportList = new ArrayList<>();
         for (String month : months) {
-            reportList.add(getReportInfo(month));
+            reportList.add(getReportInfo(month, userId));
         }
         return reportList;
     }
 
-    private ReportEntity getReportInfo(String month) {
+    private ReportEntity getReportInfo(String month, Long userId) {
 
-        SimpleReportEntity allInfo = getAllMonthReport(month);
-        SimpleReportEntity exceptDeleted = getMonthReportExceptDeleted(month);
-        SimpleReportEntity exceptHidden = getMonthReportExceptHidden(month);
-        SimpleReportEntity exceptDeletedAndHidden = getMonthReportExceptDeletedAndHidden(month);
-        SimpleReportEntity hidden = getMonthReportHidden(month);
-        SimpleReportEntity deleted = getMonthReportDeleted(month);
-        SimpleReportEntity deletedAndHidden = getMonthReportDeletedAndHidden(month);
+        SimpleReportEntity allInfo = getAllMonthReport(month, userId);
+        SimpleReportEntity exceptDeleted = getMonthReportExceptDeleted(month, userId);
+        SimpleReportEntity exceptHidden = getMonthReportExceptHidden(month, userId);
+        SimpleReportEntity exceptDeletedAndHidden = getMonthReportExceptDeletedAndHidden(month, userId);
+        SimpleReportEntity hidden = getMonthReportHidden(month, userId);
+        SimpleReportEntity deleted = getMonthReportDeleted(month, userId);
+        SimpleReportEntity deletedAndHidden = getMonthReportDeletedAndHidden(month, userId);
         ReportEntity report = new ReportEntity();
         report.setMonth(month);
         report.setTotalCost(MoneyUtil.fen2Yuan(allInfo.getTotalCost()));
@@ -62,45 +62,45 @@ public class CostReportServiceImpl implements CostReportService {
         return report;
     }
 
-    private SimpleReportEntity getMonthReportDeletedAndHidden(String month) {
-        Long cost = costReportDao.getReportAmountByCondition(new ReportEntityQuery(month, EnumHidden.HIDDEN.val(), EnumDeleted.DELETED.val(), InOutType.COST));
-        Long income = costReportDao.getReportAmountByCondition(new ReportEntityQuery(month, EnumHidden.HIDDEN.val(), EnumDeleted.DELETED.val(), InOutType.INCOME));
+    private SimpleReportEntity getMonthReportDeletedAndHidden(String month, Long userId) {
+        Long cost = costReportDao.getReportAmountByCondition(new ReportEntityQuery(month, EnumHidden.HIDDEN.val(), EnumDeleted.DELETED.val(), InOutType.COST, userId));
+        Long income = costReportDao.getReportAmountByCondition(new ReportEntityQuery(month, EnumHidden.HIDDEN.val(), EnumDeleted.DELETED.val(), InOutType.INCOME, userId));
         return new SimpleReportEntity(month, cost, income);
     }
 
-    private SimpleReportEntity getMonthReportDeleted(String month) {
-        Long cost = costReportDao.getReportAmountByCondition(new ReportEntityQuery(month, EnumHidden.NOT_FILTER.val(), EnumDeleted.DELETED.val(), InOutType.COST));
-        Long income = costReportDao.getReportAmountByCondition(new ReportEntityQuery(month, EnumHidden.NOT_FILTER.val(), EnumDeleted.DELETED.val(), InOutType.INCOME));
+    private SimpleReportEntity getMonthReportDeleted(String month, Long userId) {
+        Long cost = costReportDao.getReportAmountByCondition(new ReportEntityQuery(month, EnumHidden.NOT_FILTER.val(), EnumDeleted.DELETED.val(), InOutType.COST, userId));
+        Long income = costReportDao.getReportAmountByCondition(new ReportEntityQuery(month, EnumHidden.NOT_FILTER.val(), EnumDeleted.DELETED.val(), InOutType.INCOME, userId));
         return new SimpleReportEntity(month, cost, income);
     }
 
-    private SimpleReportEntity getMonthReportHidden(String month) {
-        Long cost = costReportDao.getReportAmountByCondition(new ReportEntityQuery(month, EnumHidden.HIDDEN.val(), EnumDeleted.NOT_FILTER.val(), InOutType.COST));
-        Long income = costReportDao.getReportAmountByCondition(new ReportEntityQuery(month, EnumHidden.HIDDEN.val(), EnumDeleted.NOT_FILTER.val(), InOutType.INCOME));
+    private SimpleReportEntity getMonthReportHidden(String month, Long userId) {
+        Long cost = costReportDao.getReportAmountByCondition(new ReportEntityQuery(month, EnumHidden.HIDDEN.val(), EnumDeleted.NOT_FILTER.val(), InOutType.COST, userId));
+        Long income = costReportDao.getReportAmountByCondition(new ReportEntityQuery(month, EnumHidden.HIDDEN.val(), EnumDeleted.NOT_FILTER.val(), InOutType.INCOME, userId));
         return new SimpleReportEntity(month, cost, income);
     }
 
-    private SimpleReportEntity getMonthReportExceptDeletedAndHidden(String month) {
-        Long cost = costReportDao.getReportAmountByCondition(new ReportEntityQuery(month, EnumHidden.NOT_HIDDEN.val(), EnumDeleted.NOT_DELETED.val(), InOutType.COST));
-        Long income = costReportDao.getReportAmountByCondition(new ReportEntityQuery(month, EnumHidden.NOT_HIDDEN.val(), EnumDeleted.NOT_DELETED.val(), InOutType.INCOME));
+    private SimpleReportEntity getMonthReportExceptDeletedAndHidden(String month, Long userId) {
+        Long cost = costReportDao.getReportAmountByCondition(new ReportEntityQuery(month, EnumHidden.NOT_HIDDEN.val(), EnumDeleted.NOT_DELETED.val(), InOutType.COST, userId));
+        Long income = costReportDao.getReportAmountByCondition(new ReportEntityQuery(month, EnumHidden.NOT_HIDDEN.val(), EnumDeleted.NOT_DELETED.val(), InOutType.INCOME, userId));
         return new SimpleReportEntity(month, cost, income);
     }
 
-    private SimpleReportEntity getMonthReportExceptHidden(String month) {
-        Long cost = costReportDao.getReportAmountByCondition(new ReportEntityQuery(month, EnumHidden.NOT_HIDDEN.val(), EnumDeleted.NOT_FILTER.val(), InOutType.COST));
-        Long income = costReportDao.getReportAmountByCondition(new ReportEntityQuery(month, EnumHidden.NOT_HIDDEN.val(), EnumDeleted.NOT_FILTER.val(), InOutType.INCOME));
+    private SimpleReportEntity getMonthReportExceptHidden(String month, Long userId) {
+        Long cost = costReportDao.getReportAmountByCondition(new ReportEntityQuery(month, EnumHidden.NOT_HIDDEN.val(), EnumDeleted.NOT_FILTER.val(), InOutType.COST, userId));
+        Long income = costReportDao.getReportAmountByCondition(new ReportEntityQuery(month, EnumHidden.NOT_HIDDEN.val(), EnumDeleted.NOT_FILTER.val(), InOutType.INCOME, userId));
         return new SimpleReportEntity(month, cost, income);
     }
 
-    private SimpleReportEntity getMonthReportExceptDeleted(String month) {
-        Long cost = costReportDao.getReportAmountByCondition(new ReportEntityQuery(month, EnumHidden.NOT_FILTER.val(), EnumDeleted.NOT_DELETED.val(), InOutType.COST));
-        Long income = costReportDao.getReportAmountByCondition(new ReportEntityQuery(month, EnumHidden.NOT_FILTER.val(), EnumDeleted.NOT_DELETED.val(), InOutType.INCOME));
+    private SimpleReportEntity getMonthReportExceptDeleted(String month, Long userId) {
+        Long cost = costReportDao.getReportAmountByCondition(new ReportEntityQuery(month, EnumHidden.NOT_FILTER.val(), EnumDeleted.NOT_DELETED.val(), InOutType.COST, userId));
+        Long income = costReportDao.getReportAmountByCondition(new ReportEntityQuery(month, EnumHidden.NOT_FILTER.val(), EnumDeleted.NOT_DELETED.val(), InOutType.INCOME, userId));
         return new SimpleReportEntity(month, cost, income);
     }
 
-    private SimpleReportEntity getAllMonthReport(String month) {
-        Long cost = costReportDao.getReportAmountByCondition(new ReportEntityQuery(month, EnumHidden.NOT_FILTER.val(), EnumDeleted.NOT_FILTER.val(), InOutType.COST));
-        Long income = costReportDao.getReportAmountByCondition(new ReportEntityQuery(month, EnumHidden.NOT_FILTER.val(), EnumDeleted.NOT_FILTER.val(), InOutType.INCOME));
+    private SimpleReportEntity getAllMonthReport(String month, Long userId) {
+        Long cost = costReportDao.getReportAmountByCondition(new ReportEntityQuery(month, EnumHidden.NOT_FILTER.val(), EnumDeleted.NOT_FILTER.val(), InOutType.COST, userId));
+        Long income = costReportDao.getReportAmountByCondition(new ReportEntityQuery(month, EnumHidden.NOT_FILTER.val(), EnumDeleted.NOT_FILTER.val(), InOutType.INCOME, userId));
         return new SimpleReportEntity(month, cost, income);
     }
 }

@@ -4,13 +4,22 @@ package com.tony.request;
  * Author jiangwj20966 on 2017/6/2.
  */
 public class BaseRequest {
-    private String userCode;
+    private String tokenId;
+    private Long userId;
 
-    public String getUserCode() {
-        return userCode;
+    public Long getUserId() {
+        return userId;
     }
 
-    public void setUserCode(String userCode) {
-        this.userCode = userCode;
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    public String getTokenId() {
+        return tokenId;
+    }
+
+    public void setTokenId(String tokenId) {
+        this.tokenId = tokenId;
     }
 }

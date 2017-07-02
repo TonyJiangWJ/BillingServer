@@ -8,15 +8,17 @@ public class ReportEntityQuery {
     private Integer isHidden;
     private Integer isDeleted;
     private String inOutType;
+    private Long userId;
 
     public ReportEntityQuery() {
     }
 
-    public ReportEntityQuery(String month, Integer isHidden, Integer isDeleted, String inOutType) {
+    public ReportEntityQuery(String month, Integer isHidden, Integer isDeleted, String inOutType, Long userId) {
         this.month = month;
         this.isHidden = isHidden;
         this.isDeleted = isDeleted;
         this.inOutType = inOutType;
+        this.userId = userId;
     }
 
     public String getMonth() {
@@ -49,5 +51,13 @@ public class ReportEntityQuery {
 
     public void setInOutType(String inOutType) {
         this.inOutType = inOutType;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 }
