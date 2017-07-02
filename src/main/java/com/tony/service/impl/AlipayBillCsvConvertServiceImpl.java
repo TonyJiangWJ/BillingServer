@@ -52,7 +52,7 @@ public class AlipayBillCsvConvertServiceImpl implements AlipayBillCsvConvertServ
                         for (String csvLine : fixedList) {
                             records.add(recordRefUtil.convertCsv2Record(csvLine));
                         }
-                        System.out.println(JSON.toJSONString(records));
+//                        System.out.println(JSON.toJSONString(records));
                         if (!CollectionUtils.isEmpty(records)) {
                             for (Record entity : records) {
                                 convertToDBJOAndInsert(entity, userId);
@@ -135,6 +135,7 @@ public class AlipayBillCsvConvertServiceImpl implements AlipayBillCsvConvertServ
         CostRecord record = costRecordDao.findByTradeNo(params);
         if (record == null) {
             entity.setId(null);
+            entity.setUserId(userId);
             if (costRecordDao.insert(entity) > 0) {
                 logger.debug("record insert success");
             } else {
@@ -172,6 +173,7 @@ public class AlipayBillCsvConvertServiceImpl implements AlipayBillCsvConvertServ
             record.setTarget(entity.getTarget());
             record.setTradeNo(entity.getTradeNo());
             record.setTradeStatus(entity.getTradeStatus());
+            record.setUserId(userId);
             if (costRecordDao.insert(record) > 0) {
                 logger.debug("record insert success");
             } else {

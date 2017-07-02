@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -274,10 +275,10 @@ public class CostRecordController {
     }
 
     @RequestMapping("/csv/convert")
-    public JSON doConvert(@ModelAttribute("file") MultipartFile file, @ModelAttribute("request") BaseRequest request) {
+    public JSON doConvert(@ModelAttribute("file") MultipartFile file, HttpServletRequest request) {
         JSONObject json = new JSONObject();
         try {
-            if (alipayBillCsvConvertService.convertToPOJO(file, request.getUserId())) {
+            if (alipayBillCsvConvertService.convertToPOJO(file, Long.valueOf((Integer) request.getAttribute("userId")))) {
                 json.put("msg", "转换成功");
             } else {
                 json.put("msg", "转换失败");
@@ -317,10 +318,10 @@ public class CostRecordController {
     }
 
     @RequestMapping("/backup/csv/put")
-    public JSON getFromBackUp(@ModelAttribute("file") MultipartFile file, @ModelAttribute("request") BaseRequest request) {
+    public JSON getFromBackUp(@ModelAttribute("file") MultipartFile file, HttpServletRequest request) {
         JSONObject json = new JSONObject();
         try {
-            if (alipayBillCsvConvertService.getFromBackUp(file, request.getUserId())) {
+            if (alipayBillCsvConvertService.getFromBackUp(file, Long.valueOf((Integer) request.getAttribute("userId")))) {
                 json.put("msg", "备份恢复成功");
             } else {
                 json.put("msg", "转换失败");

@@ -61,8 +61,13 @@ public class InterceptorDemo implements HandlerInterceptor {
             String tokenId = AuthUtil.getUserTokenId(tokenCok.getValue());
             Admin admin = adminService.checkToken(tokenId); // TODO should replace by no-sql database
             if (admin != null) {
-                ((TokenServletRequest) request).addParameter("tokenId", tokenId);
-                ((TokenServletRequest) request).addParameter("userId", String.valueOf(admin.getId()));
+                if (request instanceof TokenServletRequest) {
+                    ((TokenServletRequest) request).addParameter("tokenId", tokenId);
+                    ((TokenServletRequest) request).addParameter("userId", String.valueOf(admin.getId()));
+                } else {
+                    request.setAttribute("userId", admin.getId());
+                    request.setAttribute("tokenId", tokenId);
+                }
                 return true;
             }
         }

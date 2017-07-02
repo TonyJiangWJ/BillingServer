@@ -31,9 +31,13 @@ public class FilterDemo implements Filter {
 //        }else {
 //            logger.info("cookie for token is null");
 //        }
-        TokenServletRequest request = new TokenServletRequest((HttpServletRequest) servletRequest);
-        request.addParameter("fuck", "you");
-        filterChain.doFilter(request, servletResponse);
+        if (servletRequest instanceof HttpServletRequest) {
+            TokenServletRequest request = new TokenServletRequest((HttpServletRequest) servletRequest);
+            request.addParameter("fuck", "you");
+            filterChain.doFilter(request, servletResponse);
+        } else {
+            filterChain.doFilter(servletRequest, servletResponse);
+        }
     }
 
     @Override
