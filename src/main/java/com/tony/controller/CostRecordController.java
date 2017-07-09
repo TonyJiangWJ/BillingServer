@@ -21,6 +21,7 @@ import com.tony.util.ResponseUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.jmx.export.annotation.ManagedOperation;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -278,7 +279,7 @@ public class CostRecordController {
     public JSON doConvert(@ModelAttribute("file") MultipartFile file, HttpServletRequest request) {
         JSONObject json = new JSONObject();
         try {
-            if (alipayBillCsvConvertService.convertToPOJO(file, Long.valueOf((Integer) request.getAttribute("userId")))) {
+            if (alipayBillCsvConvertService.convertToPOJO(file, (Long) request.getAttribute("userId"))) {
                 json.put("msg", "转换成功");
             } else {
                 json.put("msg", "转换失败");
@@ -291,8 +292,11 @@ public class CostRecordController {
     }
 
     @RequestMapping("/backup/csv/get")
-    public void backUp(HttpServletResponse response) {
-        List<CostRecord> records = costRecordService.find(new CostRecord());
+    public void backUp(HttpServletResponse response, @ModelAttribute("request")BaseRequest request) {
+        CostRecord requestParam = new CostRecord();
+        requestParam.setUserId(request.getUserId());
+        List<CostRecord> records = costRecordService.find(requestParam);
+
         List<String> result = alipayBillCsvConvertService.convertPOJO2String(records);
 
         OutputStreamWriter outputStreamWriter = null;
@@ -318,10 +322,10 @@ public class CostRecordController {
     }
 
     @RequestMapping("/backup/csv/put")
-    public JSON getFromBackUp(@ModelAttribute("file") MultipartFile file, HttpServletRequest request) {
+    public JSON getFromBackUp(@ModelAttribute("file") MultipartFile file, @ModelAttribute("request")BaseRequest request) {
         JSONObject json = new JSONObject();
         try {
-            if (alipayBillCsvConvertService.getFromBackUp(file, Long.valueOf((Integer) request.getAttribute("userId")))) {
+            if (alipayBillCsvConvertService.getFromBackUp(file, request.getUserId())) {
                 json.put("msg", "备份恢复成功");
             } else {
                 json.put("msg", "转换失败");
