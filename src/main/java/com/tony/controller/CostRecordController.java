@@ -276,10 +276,10 @@ public class CostRecordController {
     }
 
     @RequestMapping("/csv/convert")
-    public JSON doConvert(@ModelAttribute("file") MultipartFile file, HttpServletRequest request) {
+    public JSON doConvert(@ModelAttribute("file") MultipartFile file, @ModelAttribute("request") BaseRequest request) {
         JSONObject json = new JSONObject();
         try {
-            if (alipayBillCsvConvertService.convertToPOJO(file, (Long) request.getAttribute("userId"))) {
+            if (alipayBillCsvConvertService.convertToPOJO(file, request.getUserId())) {
                 json.put("msg", "转换成功");
             } else {
                 json.put("msg", "转换失败");
