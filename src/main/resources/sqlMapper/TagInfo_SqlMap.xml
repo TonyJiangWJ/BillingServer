@@ -103,13 +103,13 @@
         WHERE id=#{id,jdbcType=BIGINT} AND isDelete='0'
     </select>
 
-    <select id="listTagInfoByTradeNo" resultType="com.tony.entity.TagInfo" parameterType="String">
+    <select id="listTagInfoByTradeNo" resultType="com.tony.entity.TagInfo" parameterType="java.util.Map">
         SELECT
         <include refid="all"/>
         FROM t_tag_info
         WHERE id IN (
         SELECT tagId FROM t_cost_tag t_ct JOIN t_cost_info t_c ON t_ct.costId = t_c.id
-        WHERE t_c.tradeNo = #{tradeNo,jdbcType=VARCHAR} AND t_ct.isDelete = '0'
+        WHERE t_c.tradeNo = #{tradeNo,jdbcType=VARCHAR} AND t_ct.isDelete = '0' AND t_c.userId=#{userId,jdbcType=BIGINT}
         )
     </select>
 

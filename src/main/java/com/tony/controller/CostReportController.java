@@ -34,9 +34,15 @@ public class CostReportController {
         ReportResponse response = new ReportResponse();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
         Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.MONTH, -6);
+        int ngm = -6;
+        if (request.getUserId().equals(2L)) {
+            Calendar calendarMonth2 = Calendar.getInstance();
+            calendarMonth2.set(2017, Calendar.FEBRUARY, 1);
+            ngm = calendarMonth2.get(Calendar.MONTH) - calendar.get(Calendar.MONTH) - 1;
+        }
+        calendar.add(Calendar.MONTH, ngm);
         List<String> monthList = new ArrayList<>();
-        for (int i = 0; i < 6; i++) {
+        for (int i = 0; i < -ngm; i++) {
             calendar.add(Calendar.MONTH, 1);
             monthList.add(sdf.format(calendar.getTime()));
         }

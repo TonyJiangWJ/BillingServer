@@ -110,7 +110,10 @@ public class TagInfoController extends BaseController {
             return (CostTagListResponse) ResponseUtil.paramError(response);
         }
         try {
-            List<TagInfo> costTagList = tagInfoService.listTagInfoByTradeNo(request.getTradeNo());
+            Map<String, Object> param = new HashMap<>();
+            param.put("tradeNo", request.getTradeNo());
+            param.put("userId", request.getUserId());
+            List<TagInfo> costTagList = tagInfoService.listTagInfoByTradeNo(param);
             TagInfoModel model;
             List<TagInfoModel> result = new ArrayList<>();
             for (TagInfo entity : costTagList) {

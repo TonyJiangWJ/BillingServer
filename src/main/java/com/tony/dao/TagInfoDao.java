@@ -18,7 +18,7 @@ public interface TagInfoDao {
 
     List<TagInfo> find(TagInfo tagInfo);
 
-    List<TagInfo> listTagInfoByTradeNo(String tradeNo);
+    List<TagInfo> listTagInfoByTradeNo(Map param);
 
     TagInfo getTagInfoById(Long id);
 
