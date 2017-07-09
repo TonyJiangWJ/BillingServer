@@ -49,8 +49,10 @@ public class CustomMVCConfiguration extends WebMvcConfigurerAdapter {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(interceptorDemo)
                 .excludePathPatterns("/bootDemo/user/login*")
+                .excludePathPatterns("/bootDemo/user/register/put*")
                 .addPathPatterns("/bootDemo/**");
-        registry.addInterceptor(loginInterceptor).addPathPatterns("/bootDemo/user/login*");
+        registry.addInterceptor(loginInterceptor).addPathPatterns("/bootDemo/user/login*")
+                .addPathPatterns("/bootDemo/user/register/put*");
         super.addInterceptors(registry);
     }
 }

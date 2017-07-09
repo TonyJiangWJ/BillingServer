@@ -2,6 +2,7 @@ package com.tony.util;
 
 
 import com.tony.annotation.Table;
+import com.tony.entity.Budget;
 import com.tony.entity.TagCostRef;
 import com.tony.entity.TagInfo;
 import com.tony.entity.query.CostRecordQuery;
@@ -18,7 +19,7 @@ public class StaticCodeGeneratorUtil {
 //        generateAll(CostRecord.class, true);
 //        System.out.println(insertSqlGenerator(CostRecord.class, true));
 //        System.out.println("under_score_case SQL:");
-        generateAll(TagCostRef.class, true);
+        generateAll(Budget.class, true);
     }
 
     public static void generateAll(Class clz, boolean isSqlCamelCase) {
@@ -76,7 +77,7 @@ public class StaticCodeGeneratorUtil {
             sb.append(tableName);
         }
         sb.append("  (\n");
-        sb.append("<trim suffixOverrides=\",\">");
+        sb.append("<trim suffixOverrides=\",\">\n");
         for (Field field : fields) {
             sb.append(dynamicSqlColumnGenerator(isCamelCaseCode, field));
         }

@@ -1,5 +1,6 @@
 package com.tony.service.impl;
 
+import com.tony.constants.EnumDeleted;
 import com.tony.dao.AdminDao;
 import com.tony.entity.Admin;
 import com.tony.service.AdminService;
@@ -41,5 +42,26 @@ public class AdminServiceImpl implements AdminService {
             }
         }
         return null;
+    }
+
+    @Override
+    public Long register(Admin admin) {
+        if (null == adminDao.queryByUserName(admin.getUserName())) {
+            admin.setCreateTime(new Date());
+            admin.setModifyTime(admin.getCreateTime());
+            admin.setVersion(1);
+            admin.setIsDeleted(EnumDeleted.NOT_DELETED.val());
+            if (adminDao.register(admin) > 0) {
+                return admin.getId();
+            }else{
+                return -1L;
+            }
+        }
+        return -2L;
+    }
+
+    @Override
+    public Long logout(Long userId) {
+        return adminDao.logout(userId);
     }
 }

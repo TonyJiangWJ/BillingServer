@@ -6,7 +6,7 @@ import java.util.Date;
  * Author by TonyJiang on 2017/5/18.
  */
 public class Admin {
-    private Integer id;
+    private Long id;
     private String tokenId;
     private Long tokenVerify;
     private String code;
@@ -15,14 +15,14 @@ public class Admin {
     private Date lastLogin;
     private Date createTime;
     private Date modifyTime;
-    private String deleted;
+    private Integer isDeleted;
     private Integer version;
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -90,12 +90,12 @@ public class Admin {
         this.modifyTime = modifyTime;
     }
 
-    public String getDeleted() {
-        return deleted;
+    public Integer getIsDeleted() {
+        return isDeleted;
     }
 
-    public void setDeleted(String deleted) {
-        this.deleted = deleted;
+    public void setIsDeleted(Integer isDeleted) {
+        this.isDeleted = isDeleted;
     }
 
     public Integer getVersion() {

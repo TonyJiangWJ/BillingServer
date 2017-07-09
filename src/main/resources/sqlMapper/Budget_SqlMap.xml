@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tony.dao.BudgetDao">
+    <sql id="all">
+        id id,
+        tagId tagId,
+        budgetMoney budgetMoney,
+        createTime createTime,
+        modifyTime modifyTime,
+        belongYear belongYear,
+        belongMonth belongMonth,
+        isDelete isDelete,
+        version version
+    </sql>
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.tony.entity.Budget">
+        INSERT INTO t_budget (
+        <trim suffixOverrides=",">
+            <if test=" id!=null ">
+                id,
+            </if>
+            <if test=" tagId!=null ">
+                tagId,
+            </if>
+            <if test=" budgetMoney!=null ">
+                budgetMoney,
+            </if>
+            <if test=" createTime!=null ">
+                createTime,
+            </if>
+            <if test=" modifyTime!=null ">
+                modifyTime,
+            </if>
+            <if test=" belongYear!=null and belongYear!='' ">
+                belongYear,
+            </if>
+            <if test=" belongMonth!=null ">
+                belongMonth,
+            </if>
+            <if test=" isDelete!=null ">
+                isDelete,
+            </if>
+            <if test=" version!=null ">
+                version,
+            </if>
+        </trim>
+        ) VALUES (
+        <trim suffixOverrides=",">
+            <if test=" id!=null ">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test=" tagId!=null ">
+                #{tagId,jdbcType=BIGINT},
+            </if>
+            <if test=" budgetMoney!=null ">
+                #{budgetMoney,jdbcType=BIGINT},
+            </if>
+            <if test=" createTime!=null ">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test=" modifyTime!=null ">
+                #{modifyTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test=" belongYear!=null and belongYear!='' ">
+                #{belongYear,jdbcType=VARCHAR},
+            </if>
+            <if test=" belongMonth!=null ">
+                #{belongMonth,jdbcType=INTEGER},
+            </if>
+            <if test=" isDelete!=null ">
+                #{isDelete,jdbcType=INTEGER},
+            </if>
+            <if test=" version!=null ">
+                #{version,jdbcType=INTEGER},
+            </if>
+        </trim>
+        )
+    </insert>
+    <update id="update" parameterType="com.tony.entity.Budget">
+        UPDATE t_budget
+        <trim prefix="SET" suffixOverrides=",">
+            <if test=" tagId!=null ">
+                tagId=#{tagId,jdbcType=BIGINT},
+            </if>
+            <if test=" budgetMoney!=null ">
+                budgetMoney=#{budgetMoney,jdbcType=BIGINT},
+            </if>
+            <if test=" createTime!=null ">
+                createTime=#{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test=" modifyTime!=null ">
+                modifyTime=#{modifyTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test=" belongYear!=null and belongYear!='' ">
+                belongYear=#{belongYear,jdbcType=VARCHAR},
+            </if>
+            <if test=" belongMonth!=null ">
+                belongMonth=#{belongMonth,jdbcType=INTEGER},
+            </if>
+            <if test=" isDelete!=null ">
+                isDelete=#{isDelete,jdbcType=INTEGER},
+            </if>
+            <if test=" version!=null ">
+                version=#{version,jdbcType=INTEGER},
+            </if>
+        </trim>
+        WHERE id=#{id,jdbcType=BIGINT}
+    </update>
+
+    <select id="findByTagName" parameterType="String" resultType="com.tony.entity.Budget">
+        SELECT
+        <include refid="all"/>
+        FROM t_budget budget
+        JOIN t_tag_info tag
+        ON tag.id=budget.tagId
+        WHERE tag.tagName = #{tagName,jdbcType=VARCHAR}
+        AND tag.isDelete='0' AND budget.isDelete = '0'
+    </select>
+
+
+    <select id="findByYearMonth" parameterType="com.tony.entity.Budget" resultType="com.tony.entity.Budget">
+        SELECT
+        <include refid="all"/>
+        FROM t_budget
+        <trim prefix="WHERE" prefixOverrides="and">
+            <if test=" tagId!=null ">
+                and tagId=#{tagId,jdbcType=BIGINT}
+            </if>
+            <if test=" belongYear!=null and belongYear!='' ">
+                and belongYear=#{belongYear,jdbcType=VARCHAR}
+            </if>
+            <if test=" belongMonth!=null ">
+                and belongMonth=#{belongMonth,jdbcType=INTEGER}
+            </if>
+            and isDelete='0'
+        </trim>
+
+    </select>
+</mapper>

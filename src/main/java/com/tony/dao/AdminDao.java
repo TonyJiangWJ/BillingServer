@@ -13,4 +13,10 @@ public interface AdminDao {
     Admin preLogin(Admin admin);
 
     Admin loginCheck(String tokenId);
+
+    Admin queryByUserName(String userName);
+
+    Long register(Admin admin);
+
+    Long logout(Long userId);
 }
