@@ -27,6 +27,7 @@
     <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.tony.entity.CostRecord">
         INSERT INTO t_cost_info (
         <trim suffixOverrides=",">
+            userId,
             <if test=" tradeNo!=null and tradeNo!='' ">
                 tradeNo,
             </if>
@@ -84,12 +85,11 @@
             <if test=" id!=null ">
                 id,
             </if>
-            <if test=" userId!=null ">
-                userId,
-            </if>
+
         </trim>
         ) VALUES (
         <trim suffixOverrides=",">
+            #{userId,jdbcType=BIGINT},
             <if test=" tradeNo!=null and tradeNo!='' ">
                 #{tradeNo,jdbcType=VARCHAR},
             </if>
@@ -147,9 +147,7 @@
             <if test=" id!=null ">
                 #{id,jdbcType=BIGINT},
             </if>
-            <if test=" userId!=null ">
-                #{userId,jdbcType=BIGINT},
-            </if>
+
         </trim>
         )
 

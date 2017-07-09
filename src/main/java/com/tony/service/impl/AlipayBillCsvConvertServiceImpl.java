@@ -109,7 +109,7 @@ public class AlipayBillCsvConvertServiceImpl implements AlipayBillCsvConvertServ
                         for (String csvLine : fixedList) {
                             records.add(recordRefUtil.convertCsv2CostRecord(csvLine));
                         }
-                        System.out.println(JSON.toJSONString(records));
+//                        System.out.println(JSON.toJSONString(records));
                         if (!CollectionUtils.isEmpty(records)) {
                             for (CostRecord entity : records) {
                                 convertToDBJOAndInsertCostRecord(entity, userId);
@@ -278,7 +278,7 @@ public class AlipayBillCsvConvertServiceImpl implements AlipayBillCsvConvertServ
                     String methodName = "set" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
                     method = methodMap.get(methodName);
                     String typeClass = method.getParameterTypes()[0].getSimpleName();
-                    System.out.println(typeClass);
+//                    System.out.println(typeClass);
                     if (typeClass.equals("Long")) {
                         method.invoke(record, Long.valueOf(strings[i].trim()));
                     } else if (typeClass.equals("Integer")) {

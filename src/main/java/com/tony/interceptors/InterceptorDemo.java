@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.support.StandardMultipartHttpServletRequest;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -64,9 +65,9 @@ public class InterceptorDemo implements HandlerInterceptor {
                 if (request instanceof TokenServletRequest) {
                     ((TokenServletRequest) request).addParameter("tokenId", tokenId);
                     ((TokenServletRequest) request).addParameter("userId", String.valueOf(admin.getId()));
-                } else {
-                    request.setAttribute("userId", admin.getId());
-                    request.setAttribute("tokenId", tokenId);
+                } else if(request instanceof StandardMultipartHttpServletRequest){
+                    ((TokenServletRequest) ((StandardMultipartHttpServletRequest) request).getRequest()).addParameter("tokenId", tokenId);
+                    ((TokenServletRequest) ((StandardMultipartHttpServletRequest) request).getRequest()).addParameter("userId", String.valueOf(admin.getId()));
                 }
                 return true;
             }
