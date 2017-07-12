@@ -20,7 +20,7 @@ spring:
 
 # MyBatis
 mybatis:
-    typeAliasesPackage: com.tony.entity
+    typeAliasesPackage: com.tony.billing.entity
     mapperLocations: classpath:/sqlMapper/*SqlMap.xml
     configLocation: classpath:/mybatis-config.xml
 

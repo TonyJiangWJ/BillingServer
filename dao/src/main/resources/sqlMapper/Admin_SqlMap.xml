@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 
-<mapper namespace="com.tony.dao.AdminDao">
+<mapper namespace="com.tony.billing.dao.mapper.AdminMapper">
     <sql id="all">
         id id,
         tokenId tokenId,
@@ -15,7 +15,7 @@
         version version,
         isDeleted isDeleted
     </sql>
-    <update id="doLogin" parameterType="com.tony.entity.Admin">
+    <update id="doLogin" parameterType="com.tony.billing.entity.Admin">
         UPDATE t_admin
         SET lastLogin   = #{lastLogin,jdbcType=TIMESTAMP},
             tokenId     = #{tokenId,jdbcType=VARCHAR},
@@ -25,7 +25,7 @@
             AND password = #{password,jdbcType=VARCHAR}
             AND isDeleted = 0
     </update>
-    <select id="preLogin" parameterType="com.tony.entity.Admin" resultType="com.tony.entity.Admin">
+    <select id="preLogin" parameterType="com.tony.billing.entity.Admin" resultType="com.tony.billing.entity.Admin">
         SELECT
         <include refid="all"/>
         FROM t_admin
@@ -33,20 +33,20 @@
         AND password = #{password,jdbcType=VARCHAR}
         AND isDeleted = 0
     </select>
-    <select id="loginCheck" resultType="com.tony.entity.Admin" parameterType="String">
+    <select id="loginCheck" resultType="com.tony.billing.entity.Admin" parameterType="String">
         SELECT
         <include refid="all"/>
         FROM t_admin
         WHERE tokenId = #{tokenId} AND isDeleted = 0
     </select>
-    <select id="queryByUserName" parameterType="String" resultType="com.tony.entity.Admin">
+    <select id="queryByUserName" parameterType="String" resultType="com.tony.billing.entity.Admin">
         SELECT
         <include refid="all"/>
         FROM t_admin
         WHERE isDeleted='0' AND userName=#{userName,jdbcType=VARCHAR}
     </select>
 
-    <insert id="register" useGeneratedKeys="true" keyProperty="id" parameterType="com.tony.entity.Admin">
+    <insert id="register" useGeneratedKeys="true" keyProperty="id" parameterType="com.tony.billing.entity.Admin">
         INSERT INTO t_admin
         (
             id,

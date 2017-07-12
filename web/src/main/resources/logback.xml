@@ -41,6 +41,6 @@
         <appender-ref ref="asyncFileAppender" />
     </root>
     <!-- 打印sql -->
-    <logger name="com.tony.dao" level="DEBUG">
+    <logger name="com.tony.billing.dao" level="DEBUG">
     </logger>
 </configuration>
