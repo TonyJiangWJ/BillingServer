@@ -33,7 +33,7 @@ public class FilterDemo implements Filter {
 //        }
         if (servletRequest instanceof HttpServletRequest) {
             TokenServletRequest request = new TokenServletRequest((HttpServletRequest) servletRequest);
-            request.addParameter("fuck", "you");
+//            request.addParameter("fuck", "you");
             filterChain.doFilter(request, servletResponse);
         } else {
             filterChain.doFilter(servletRequest, servletResponse);

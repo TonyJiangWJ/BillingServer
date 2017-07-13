@@ -3,10 +3,12 @@ package com.tony.billing.service.impl;
 import com.tony.billing.dao.BudgetDao;
 import com.tony.billing.dao.CostRecordDao;
 import com.tony.billing.dao.TagInfoDao;
-import com.tony.billing.model.BudgetCostModel;
 import com.tony.billing.entity.Budget;
 import com.tony.billing.entity.CostRecord;
+import com.tony.billing.model.BudgetCostModel;
+import com.tony.billing.model.BudgetModel;
 import com.tony.billing.service.BudgetService;
+import com.tony.billing.util.BeanCopyUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,8 +43,13 @@ public class BudgetServiceImpl implements BudgetService {
     }
 
     @Override
-    public List<Budget> queryBudgetsByCondition(Budget budget) {
-        return budgetDao.findByYearMonth(budget);
+    public List<BudgetModel> queryBudgetsByCondition(Budget budget) {
+        List<Budget> budgets = budgetDao.findByYearMonth(budget);
+        List<BudgetModel> budgetModels = new ArrayList<>();
+        for (Budget budget1 : budgets) {
+            budgetModels.add(BeanCopyUtil.copy(budget1, BudgetModel.class));
+        }
+        return budgetModels;
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.tony.billing.service;
 
 import com.tony.billing.model.BudgetCostModel;
 import com.tony.billing.entity.Budget;
+import com.tony.billing.model.BudgetModel;
 
 import java.util.List;
 
@@ -11,7 +12,7 @@ import java.util.List;
 public interface BudgetService {
     Long saveBudget(Budget budget);
 
-    List<Budget> queryBudgetsByCondition(Budget budget);
+    List<BudgetModel> queryBudgetsByCondition(Budget budget);
 
     List<BudgetCostModel> queryCostsByCondition(BudgetCostModel budget);
 }
