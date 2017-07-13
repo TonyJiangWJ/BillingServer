@@ -11,11 +11,11 @@ import java.util.List;
 public class CostTagListResponse extends BaseResponse {
     private List<TagInfoDto> tagInfoModels;
 
-    public List<TagInfoDto> getTagInfoDtos() {
+    public List<TagInfoDto> getTagInfoModels() {
         return tagInfoModels;
     }
 
-    public void setTagInfoDtos(List<TagInfoDto> tagInfoDtos) {
+    public void setTagInfoModels(List<TagInfoDto> tagInfoDtos) {
         this.tagInfoModels = tagInfoDtos;
     }
 }

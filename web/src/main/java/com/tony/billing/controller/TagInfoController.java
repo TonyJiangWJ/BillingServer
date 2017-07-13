@@ -124,7 +124,7 @@ public class TagInfoController extends BaseController {
                 result.add(model);
             }
             if (!CollectionUtils.isEmpty(result)) {
-                response.setTagInfoDtos(result);
+                response.setTagInfoModels(result);
                 ResponseUtil.success(response);
             } else {
                 ResponseUtil.dataNotExisting(response);

@@ -32,9 +32,12 @@ public class FilterDemo implements Filter {
 //            logger.info("cookie for token is null");
 //        }
         if (servletRequest instanceof HttpServletRequest) {
-            TokenServletRequest request = new TokenServletRequest((HttpServletRequest) servletRequest);
+            synchronized (this) { // 不加这个会导致并发问题，后续需要慢慢研究一下 TODO deal this concurrent error
+                logger.info("request:{}", ((HttpServletRequest) servletRequest).getRequestURI());
+                TokenServletRequest request = new TokenServletRequest((HttpServletRequest) servletRequest);
 //            request.addParameter("fuck", "you");
-            filterChain.doFilter(request, servletResponse);
+                filterChain.doFilter(request, servletResponse);
+            }
         } else {
             filterChain.doFilter(servletRequest, servletResponse);
         }
