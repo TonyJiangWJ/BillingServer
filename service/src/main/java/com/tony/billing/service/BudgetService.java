@@ -1,6 +1,6 @@
 package com.tony.billing.service;
 
-import com.tony.billing.dto.BudgetCostDto;
+import com.tony.billing.model.BudgetCostModel;
 import com.tony.billing.entity.Budget;
 
 import java.util.List;
@@ -13,5 +13,5 @@ public interface BudgetService {
 
     List<Budget> queryBudgetsByCondition(Budget budget);
 
-    List<BudgetCostDto> queryCostsByCondition(Budget budget);
+    List<BudgetCostModel> queryCostsByCondition(BudgetCostModel budget);
 }

@@ -3,17 +3,18 @@ package com.tony.billing.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.tony.billing.request.*;
-import com.tony.billing.constants.EnumHidden;
+import com.tony.billing.constants.enums.EnumHidden;
 import com.tony.billing.constants.TradeStatus;
 import com.tony.billing.entity.CostRecord;
 import com.tony.billing.entity.PagerGrid;
 import com.tony.billing.entity.query.CostRecordQuery;
-import com.tony.billing.model.CostRecordDetailModel;
-import com.tony.billing.model.CostRecordModel;
+import com.tony.billing.dto.CostRecordDetailDto;
+import com.tony.billing.dto.CostRecordDto;
+import com.tony.billing.request.costrecord.*;
 import com.tony.billing.response.BaseResponse;
-import com.tony.billing.response.CostRecordDeleteResponse;
-import com.tony.billing.response.CostRecordDetailResponse;
-import com.tony.billing.response.CostRecordPageResponse;
+import com.tony.billing.response.costrecord.CostRecordDeleteResponse;
+import com.tony.billing.response.costrecord.CostRecordDetailResponse;
+import com.tony.billing.response.costrecord.CostRecordPageResponse;
 import com.tony.billing.service.AlipayBillCsvConvertService;
 import com.tony.billing.service.CostRecordService;
 import com.tony.billing.util.MoneyUtil;
@@ -344,8 +345,8 @@ public class CostRecordController {
         return dateCode + String.valueOf(datetime.getTime() / 1000 % 1000000000);
     }
 
-    private CostRecordDetailModel formatDetailModel(CostRecord record) {
-        CostRecordDetailModel model = new CostRecordDetailModel();
+    private CostRecordDetailDto formatDetailModel(CostRecord record) {
+        CostRecordDetailDto model = new CostRecordDetailDto();
         model.setCreateTime(record.getCreateTime());
         model.setGoodsName(record.getGoodsName());
         model.setInOutType(record.getInOutType());
@@ -368,12 +369,12 @@ public class CostRecordController {
     }
 
 
-    private List<CostRecordModel> formatModelList(List<CostRecordQuery> list) {
+    private List<CostRecordDto> formatModelList(List<CostRecordQuery> list) {
         if (!CollectionUtils.isEmpty(list)) {
-            List<CostRecordModel> models = new ArrayList<CostRecordModel>();
-            CostRecordModel model;
+            List<CostRecordDto> models = new ArrayList<CostRecordDto>();
+            CostRecordDto model;
             for (CostRecord entity : list) {
-                model = new CostRecordModel();
+                model = new CostRecordDto();
                 model.setCreateTime(entity.getCreateTime());
                 model.setGoodsName(entity.getGoodsName());
                 model.setInOutType(entity.getInOutType());

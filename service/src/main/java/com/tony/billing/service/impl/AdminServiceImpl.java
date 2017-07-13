@@ -1,6 +1,6 @@
 package com.tony.billing.service.impl;
 
-import com.tony.billing.constants.EnumDeleted;
+import com.tony.billing.constants.enums.EnumDeleted;
 import com.tony.billing.dao.AdminDao;
 import com.tony.billing.entity.Admin;
 import com.tony.billing.service.AdminService;

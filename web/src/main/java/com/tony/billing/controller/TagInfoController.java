@@ -4,10 +4,11 @@ import com.tony.billing.request.*;
 import com.tony.billing.entity.CostRecord;
 import com.tony.billing.entity.TagCostRef;
 import com.tony.billing.entity.TagInfo;
-import com.tony.billing.model.TagInfoModel;
+import com.tony.billing.dto.TagInfoDto;
+import com.tony.billing.request.taginfo.*;
 import com.tony.billing.response.BaseResponse;
-import com.tony.billing.response.CostTagListResponse;
-import com.tony.billing.response.TagInfoListResponse;
+import com.tony.billing.response.taginfo.CostTagListResponse;
+import com.tony.billing.response.taginfo.TagInfoListResponse;
 import com.tony.billing.service.CostRecordService;
 import com.tony.billing.service.TagInfoService;
 import com.tony.billing.util.ResponseUtil;
@@ -45,10 +46,10 @@ public class TagInfoController extends BaseController {
         List<TagInfo> tagInfos = tagInfoService.listTagInfo(tagInfo);
         if (!CollectionUtils.isEmpty(tagInfos)) {
 
-            List<TagInfoModel> list = new ArrayList<>();
-            TagInfoModel model = null;
+            List<TagInfoDto> list = new ArrayList<>();
+            TagInfoDto model = null;
             for (TagInfo entity : tagInfos) {
-                model = new TagInfoModel();
+                model = new TagInfoDto();
                 model.setTagId(entity.getId());
                 model.setTagName(entity.getTagName());
                 list.add(model);
@@ -114,16 +115,16 @@ public class TagInfoController extends BaseController {
             param.put("tradeNo", request.getTradeNo());
             param.put("userId", request.getUserId());
             List<TagInfo> costTagList = tagInfoService.listTagInfoByTradeNo(param);
-            TagInfoModel model;
-            List<TagInfoModel> result = new ArrayList<>();
+            TagInfoDto model;
+            List<TagInfoDto> result = new ArrayList<>();
             for (TagInfo entity : costTagList) {
-                model = new TagInfoModel();
+                model = new TagInfoDto();
                 model.setTagName(entity.getTagName());
                 model.setTagId(entity.getId());
                 result.add(model);
             }
             if (!CollectionUtils.isEmpty(result)) {
-                response.setTagInfoModels(result);
+                response.setTagInfoDtos(result);
                 ResponseUtil.success(response);
             } else {
                 ResponseUtil.dataNotExisting(response);

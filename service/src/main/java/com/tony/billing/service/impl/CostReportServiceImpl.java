@@ -1,7 +1,7 @@
 package com.tony.billing.service.impl;
 
-import com.tony.billing.constants.EnumDeleted;
-import com.tony.billing.constants.EnumHidden;
+import com.tony.billing.constants.enums.EnumDeleted;
+import com.tony.billing.constants.enums.EnumHidden;
 import com.tony.billing.constants.InOutType;
 import com.tony.billing.dao.CostReportDao;
 import com.tony.billing.entity.ReportEntity;

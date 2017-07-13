@@ -35,7 +35,6 @@ public class BudgetDaoImpl implements BudgetDao {
 
     @Override
     public Budget findByTagName(String tagName) {
-
         return budgetMapper.findByTagName(tagName);
     }
 

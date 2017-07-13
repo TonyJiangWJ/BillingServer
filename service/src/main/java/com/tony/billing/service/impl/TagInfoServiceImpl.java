@@ -1,6 +1,6 @@
 package com.tony.billing.service.impl;
 
-import com.tony.billing.constants.EnumDeleted;
+import com.tony.billing.constants.enums.EnumDeleted;
 import com.tony.billing.dao.TagInfoDao;
 import com.tony.billing.entity.TagCostRef;
 import com.tony.billing.entity.TagInfo;

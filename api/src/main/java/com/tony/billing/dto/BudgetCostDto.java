@@ -1,61 +1,70 @@
 package com.tony.billing.dto;
 
 /**
- * Author by TonyJiang on 2017/7/12.
+ * Author jiangwj20966 on 2017/7/13.
  */
 public class BudgetCostDto {
-    private String tagName;
-    private Long totalCost;
-    private Long budgetMoney;
-    private String month;
-    private String year;
-    private Long restMoney;
+    private String totalCost;
+    private String restMoney;
+    private String budgetMoney;
+    private String belongYearMonth;
+    private String costExpHidden;
+    private String costExpDelete;
+    private String costClear;
 
-    public String getTagName() {
-        return tagName;
-    }
-
-    public void setTagName(String tagName) {
-        this.tagName = tagName;
-    }
-
-    public Long getTotalCost() {
+    public String getTotalCost() {
         return totalCost;
     }
 
-    public void setTotalCost(Long totalCost) {
+    public void setTotalCost(String totalCost) {
         this.totalCost = totalCost;
     }
 
-    public Long getBudgetMoney() {
-        return budgetMoney;
-    }
-
-    public void setBudgetMoney(Long budgetMoney) {
-        this.budgetMoney = budgetMoney;
-    }
-
-    public String getMonth() {
-        return month;
-    }
-
-    public void setMonth(String month) {
-        this.month = month;
-    }
-
-    public String getYear() {
-        return year;
-    }
-
-    public void setYear(String year) {
-        this.year = year;
-    }
-
-    public Long getRestMoney() {
+    public String getRestMoney() {
         return restMoney;
     }
 
-    public void setRestMoney(Long restMoney) {
+    public void setRestMoney(String restMoney) {
         this.restMoney = restMoney;
+    }
+
+    public String getBudgetMoney() {
+        return budgetMoney;
+    }
+
+    public void setBudgetMoney(String budgetMoney) {
+        this.budgetMoney = budgetMoney;
+    }
+
+    public String getBelongYearMonth() {
+        return belongYearMonth;
+    }
+
+    public void setBelongYearMonth(String belongYearMonth) {
+        this.belongYearMonth = belongYearMonth;
+    }
+
+    public String getCostExpHidden() {
+        return costExpHidden;
+    }
+
+    public void setCostExpHidden(String costExpHidden) {
+        this.costExpHidden = costExpHidden;
+    }
+
+    public String getCostExpDelete() {
+        return costExpDelete;
+    }
+
+    public void setCostExpDelete(String costExpDelete) {
+        this.costExpDelete = costExpDelete;
+    }
+
+    public String getCostClear() {
+        return costClear;
+    }
+
+    public void setCostClear(String costClear) {
+        this.costClear = costClear;
     }
 }

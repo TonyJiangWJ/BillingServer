@@ -1,8 +1,8 @@
 package com.tony.billing.controller;
 
 import com.tony.billing.entity.Admin;
-import com.tony.billing.request.AdminLoginRequest;
-import com.tony.billing.request.AdminRegisterRequest;
+import com.tony.billing.request.admin.AdminLoginRequest;
+import com.tony.billing.request.admin.AdminRegisterRequest;
 import com.tony.billing.request.BaseRequest;
 import com.tony.billing.response.BaseResponse;
 import com.tony.billing.service.AdminService;
