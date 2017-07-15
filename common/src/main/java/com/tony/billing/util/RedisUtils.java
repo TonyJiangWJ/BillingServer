@@ -28,14 +28,6 @@ public class RedisUtils {
         redisTemplate = stringRedisTemplate;
     }
 
-    public static Logger getLogger() {
-        return logger;
-    }
-
-    public static void setLogger(Logger logger) {
-        RedisUtils.logger = logger;
-    }
-
     private static Logger logger = LoggerFactory.getLogger(RedisUtils.class);
 
     // 设置对象持久化
@@ -57,7 +49,7 @@ public class RedisUtils {
         return result;
     }
 
-    // 设置对象存活时间
+    // 设置对象存活时间,单位秒
     public static void set(final Object key, final Object val, final long time) {
         try {
             redisTemplate.execute(new RedisCallback<Boolean>() {
