@@ -29,6 +29,7 @@
         <jjwt.version>0.7.0</jjwt.version>
         <aspectj.version>1.8.4</aspectj.version>
         <guava.version>19.0</guava.version>
+
     </properties>
 
     <dependencies>

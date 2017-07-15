@@ -3,13 +3,12 @@ package com.tony.billing.interceptors;
 import com.alibaba.fastjson.JSON;
 import com.tony.billing.entity.Admin;
 import com.tony.billing.filters.wapper.TokenServletRequest;
-import com.tony.billing.service.AdminService;
 import com.tony.billing.util.AuthUtil;
 import com.tony.billing.util.CookieUtil;
+import com.tony.billing.util.RedisUtils;
 import com.tony.billing.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.support.StandardMultipartHttpServletRequest;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -18,6 +17,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Map;
 
 /**
  * Author by TonyJiang on 2017/7/1.
@@ -25,8 +25,6 @@ import javax.servlet.http.HttpServletResponse;
 @Component
 public class InterceptorDemo implements HandlerInterceptor {
 
-    @Autowired
-    private AdminService adminService;
 
     private Logger logger = LoggerFactory.getLogger(InterceptorDemo.class);
 
@@ -60,12 +58,13 @@ public class InterceptorDemo implements HandlerInterceptor {
         Cookie tokenCok = CookieUtil.getCookie("token", request);
         if (tokenCok != null) {
             String tokenId = AuthUtil.getUserTokenId(tokenCok.getValue());
-            Admin admin = adminService.checkToken(tokenId); // TODO should replace by no-sql database
-            if (admin != null) {
+            Map store = RedisUtils.get(tokenId, Admin.class);
+            if (store != null) {
+                Admin admin = (Admin) store.get(tokenId);
                 if (request instanceof TokenServletRequest) {
                     ((TokenServletRequest) request).addParameter("tokenId", tokenId);
                     ((TokenServletRequest) request).addParameter("userId", String.valueOf(admin.getId()));
-                } else if(request instanceof StandardMultipartHttpServletRequest){
+                } else if (request instanceof StandardMultipartHttpServletRequest) {
                     ((TokenServletRequest) ((StandardMultipartHttpServletRequest) request).getRequest()).addParameter("tokenId", tokenId);
                     ((TokenServletRequest) ((StandardMultipartHttpServletRequest) request).getRequest()).addParameter("userId", String.valueOf(admin.getId()));
                 }

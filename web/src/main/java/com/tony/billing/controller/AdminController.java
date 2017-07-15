@@ -1,9 +1,9 @@
 package com.tony.billing.controller;
 
 import com.tony.billing.entity.Admin;
+import com.tony.billing.request.BaseRequest;
 import com.tony.billing.request.admin.AdminLoginRequest;
 import com.tony.billing.request.admin.AdminRegisterRequest;
-import com.tony.billing.request.BaseRequest;
 import com.tony.billing.response.BaseResponse;
 import com.tony.billing.service.AdminService;
 import com.tony.billing.util.AuthUtil;
@@ -85,7 +85,7 @@ public class AdminController extends BaseController {
     @RequestMapping(value = "/user/logout", method = RequestMethod.POST)
     public BaseResponse logout(@ModelAttribute("request") BaseRequest request) {
         BaseResponse response = new BaseResponse();
-        if (adminService.logout(request.getUserId()) > 0) {
+        if (adminService.logout(request.getTokenId())) {
             return ResponseUtil.success(response);
         } else {
             return ResponseUtil.error(response);

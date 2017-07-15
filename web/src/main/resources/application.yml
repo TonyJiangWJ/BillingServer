@@ -18,10 +18,22 @@ spring:
       username: root
       password: fixture
 
+    redis:
+      database: 0
+      host: 112.74.175.214
+      port: 6379
+      password:
+      pool:
+        max-active: 8
+        max-wait: -1
+        max-idle: 8
+        min-idle: 0
+      timeout: 3000
+
 # MyBatis
 mybatis:
     typeAliasesPackage: com.tony.billing.entity
     mapperLocations: classpath:/sqlMapper/*SqlMap.xml
     configLocation: classpath:/mybatis-config.xml
 
-# LOGGING
+

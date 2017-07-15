@@ -9,9 +9,7 @@ public interface AdminService {
 
     Admin login(Admin admin);
 
-    Admin checkToken(String tokenId);
-
     Long register(Admin admin);
 
-    Long logout(Long userId);
+    boolean logout(String tokenId);
 }

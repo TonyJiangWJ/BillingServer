@@ -4,10 +4,13 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.tony.billing.entity.CostRecord;
 import com.tony.billing.request.BaseRequest;
+import com.tony.billing.response.BaseResponse;
 import com.tony.billing.service.AdminService;
 import com.tony.billing.service.AlipayBillCsvConvertService;
 import com.tony.billing.service.CostRecordService;
 import com.tony.billing.util.CsvParser;
+import com.tony.billing.util.RedisUtils;
+import com.tony.billing.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
@@ -77,5 +80,13 @@ public class HelloWorld {
         }
         return json;
     }
+
+    @RequestMapping("/hello/redis/test")
+    public BaseResponse redisTest(@ModelAttribute("request") BaseRequest request) {
+        RedisUtils.set("redis-key", "asdfasdf");
+        RedisUtils.del("e15151d40a87894b0ce1eb7310d4d34e1500099584");
+        return ResponseUtil.success(new BaseResponse());
+    }
+
 
 }
