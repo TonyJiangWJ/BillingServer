@@ -30,7 +30,7 @@ public class AdminServiceImpl implements AdminService {
             checkUser.setTokenVerify(VERIFY_TIME);
             checkUser.setLastLogin(new Date());
             if (adminDao.doLogin(checkUser) > 0) {
-                RedisUtils.set(checkUser.getTokenId(), deleteSecret(checkUser), VERIFY_TIME);
+                RedisUtils.set(checkUser.getTokenId(), deleteSecret(checkUser), VERIFY_TIME/1000);
                 return checkUser;
             }
         }
