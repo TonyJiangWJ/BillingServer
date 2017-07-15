@@ -3,8 +3,8 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>springboot</artifactId>
-        <groupId>com.tony</groupId>
+        <artifactId>billing</artifactId>
+        <groupId>com.tony.billing</groupId>
         <version>1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -17,16 +17,20 @@
     </properties>
     <dependencies>
         <dependency>
-            <groupId>com.tony</groupId>
+            <groupId>com.tony.billing</groupId>
             <artifactId>common</artifactId>
             <version>${common.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.tony</groupId>
+            <groupId>com.tony.billing</groupId>
             <artifactId>api</artifactId>
             <version>${api.version}</version>
         </dependency>
-
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>${mysql-connector.version}</version>
+        </dependency>
     </dependencies>
 
     <build>

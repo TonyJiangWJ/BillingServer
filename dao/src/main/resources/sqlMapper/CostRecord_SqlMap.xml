@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.tony.dao.CostRecordDao">
+<mapper namespace="com.tony.billing.dao.mapper.CostRecordMapper">
     <sql id="all">
         tradeNo tradeNo,
         orderNo orderNo,
@@ -24,7 +24,7 @@
         isHidden isHidden
     </sql>
 
-    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.tony.entity.CostRecord">
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.tony.billing.entity.CostRecord">
         INSERT INTO t_cost_info (
         <trim suffixOverrides=",">
             userId,
@@ -153,7 +153,7 @@
 
     </insert>
 
-    <update id="updateById" parameterType="com.tony.entity.CostRecord">
+    <update id="updateById" parameterType="com.tony.billing.entity.CostRecord">
         UPDATE t_cost_info SET
         <trim suffixOverrides=",">
             <if test=" tradeNo!=null and tradeNo!='' ">
@@ -214,7 +214,7 @@
         WHERE id=#{id,jdbcType=BIGINT} AND userId=#{userId,jdbcType=BIGINT}
     </update>
 
-    <update id="updateByTradeNo" parameterType="com.tony.entity.CostRecord">
+    <update id="updateByTradeNo" parameterType="com.tony.billing.entity.CostRecord">
         UPDATE t_cost_info SET
         <trim suffixOverrides=",">
             <if test=" tradeNo!=null and tradeNo!='' ">
@@ -291,7 +291,7 @@
               AND isHidden = #{nowStatus,jdbcType=INTEGER}
     </update>
 
-    <select id="find" parameterType="com.tony.entity.CostRecord" resultType="com.tony.entity.CostRecord">
+    <select id="find" parameterType="com.tony.billing.entity.CostRecord" resultType="com.tony.billing.entity.CostRecord">
         SELECT
         <include refid="all"/>
         FROM t_cost_info WHERE userId=#{userId,jdbcType=BIGINT}
@@ -449,7 +449,7 @@
 
     </select>
 
-    <select id="page" parameterType="java.util.Map" resultType="com.tony.entity.CostRecord">
+    <select id="page" parameterType="java.util.Map" resultType="com.tony.billing.entity.CostRecord">
         SELECT
         <include refid="all"/>
         FROM t_cost_info WHERE userId=#{userId,jdbcType=BIGINT}
@@ -551,7 +551,7 @@
         LIMIT #{index} , #{offset}
     </select>
 
-    <select id="findByTradeNo" resultType="com.tony.entity.CostRecord" parameterType="java.util.Map">
+    <select id="findByTradeNo" resultType="com.tony.billing.entity.CostRecord" parameterType="java.util.Map">
         SELECT
         <include refid="all"/>
         FROM t_cost_info

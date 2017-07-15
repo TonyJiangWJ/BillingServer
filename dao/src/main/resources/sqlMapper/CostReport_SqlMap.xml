@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.tony.dao.CostReportDao">
-    <select id="getReportAmountByCondition" parameterType="com.tony.entity.query.ReportEntityQuery"
+<mapper namespace="com.tony.billing.dao.mapper.CostReportMapper">
+    <select id="getReportAmountByCondition" parameterType="com.tony.billing.entity.query.ReportEntityQuery"
             resultType="Long">
         SELECT sum(money) AS amount
         FROM t_cost_info
