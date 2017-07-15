@@ -1,13 +1,14 @@
 package com.tony.billing.filters;
 
 import com.tony.billing.filters.wapper.TokenServletRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.Order;
+import org.springframework.web.filter.OncePerRequestFilter;
 
-import javax.servlet.*;
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
@@ -15,36 +16,15 @@ import java.io.IOException;
  */
 @Order(0)
 @WebFilter(filterName = "filterDemo", urlPatterns = "/*")
-public class FilterDemo implements Filter {
-    Logger logger = LoggerFactory.getLogger(FilterDemo.class);
+public class FilterDemo extends OncePerRequestFilter {
 
     @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
+    protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
 
-    }
-
-    @Override
-    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
-//        Cookie cookie = CookieUtil.getCookie("token", (HttpServletRequest) servletRequest);
-//        if (cookie != null) {
-//            servletRequest.setAttribute("tokenId", cookie.getValue());
-//        }else {
-//            logger.info("cookie for token is null");
-//        }
-        if (servletRequest instanceof HttpServletRequest) {
-            synchronized (this) { // 不加这个会导致并发问题，后续需要慢慢研究一下 TODO deal this concurrent error
-                logger.info("request:{}", ((HttpServletRequest) servletRequest).getRequestURI());
-                TokenServletRequest request = new TokenServletRequest((HttpServletRequest) servletRequest);
-//            request.addParameter("fuck", "you");
-                filterChain.doFilter(request, servletResponse);
-            }
-        } else {
-            filterChain.doFilter(servletRequest, servletResponse);
+        TokenServletRequest request = new TokenServletRequest(httpServletRequest);
+        synchronized (this) { // 在并发访问的时候过滤器链处理请求容易导致并发问题
+            filterChain.doFilter(request, httpServletResponse);
         }
-    }
-
-    @Override
-    public void destroy() {
 
     }
 }

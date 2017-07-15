@@ -40,4 +40,9 @@ public class TokenServletRequest extends HttpServletRequestWrapper {
         params.put(name, value);
     }
 
+    @Override
+    public String getParameter(String name) {
+        String[] value = getParameterMap().get(name);
+        return value == null ? null : value[0];
+    }
 }

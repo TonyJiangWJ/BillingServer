@@ -87,17 +87,27 @@
 
 
     <!-- 异步记录文件 -->
-    <appender name="asyncFileAppender" class="ch.qos.logback.classic.AsyncAppender">
+    <appender name="asyncFileAppenderInfo" class="ch.qos.logback.classic.AsyncAppender">
         <discardingThreshold>0</discardingThreshold>
         <queueSize>500</queueSize>
         <appender-ref ref="FILE-INFO" />
-        <appender-ref ref="FILE-DEBUG" />
-        <appender-ref ref="FILE-ERROR" />
     </appender>
+    <appender name="asyncFileAppenderDebug" class="ch.qos.logback.classic.AsyncAppender">
+        <discardingThreshold>0</discardingThreshold>
+        <queueSize>500</queueSize>
+        <appender-ref ref="FILE-DEBUG" />
+    </appender>
+    、<appender name="asyncFileAppenderError" class="ch.qos.logback.classic.AsyncAppender">
+    <discardingThreshold>0</discardingThreshold>
+    <queueSize>500</queueSize>
+    <appender-ref ref="FILE-ERROR" />
+</appender>
 
     <root level="INFO">
         <appender-ref ref="STDOUT" />
-        <appender-ref ref="asyncFileAppender" />
+        <appender-ref ref="asyncFileAppenderInfo" />
+        <appender-ref ref="asyncFileAppenderDebug" />
+        <appender-ref ref="asyncFileAppenderError" />
     </root>
     <!-- 打印sql -->
     <logger name="com.tony.billing.dao" level="DEBUG">
