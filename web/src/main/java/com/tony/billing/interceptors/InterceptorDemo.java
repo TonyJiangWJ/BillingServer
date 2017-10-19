@@ -2,7 +2,7 @@ package com.tony.billing.interceptors;
 
 import com.alibaba.fastjson.JSON;
 import com.tony.billing.entity.Admin;
-import com.tony.billing.filters.wapper.TokenServletRequest;
+import com.tony.billing.filters.wapper.TokenServletRequestWrapper;
 import com.tony.billing.util.AuthUtil;
 import com.tony.billing.util.CookieUtil;
 import com.tony.billing.util.RedisUtils;
@@ -61,12 +61,12 @@ public class InterceptorDemo implements HandlerInterceptor {
             Map store = RedisUtils.get(tokenId, Admin.class);
             if (store != null) {
                 Admin admin = (Admin) store.get(tokenId);
-                if (request instanceof TokenServletRequest) {
-                    ((TokenServletRequest) request).addParameter("tokenId", tokenId);
-                    ((TokenServletRequest) request).addParameter("userId", String.valueOf(admin.getId()));
+                if (request instanceof TokenServletRequestWrapper) {
+                    ((TokenServletRequestWrapper) request).addParameter("tokenId", tokenId);
+                    ((TokenServletRequestWrapper) request).addParameter("userId", String.valueOf(admin.getId()));
                 } else if (request instanceof StandardMultipartHttpServletRequest) {
-                    ((TokenServletRequest) ((StandardMultipartHttpServletRequest) request).getRequest()).addParameter("tokenId", tokenId);
-                    ((TokenServletRequest) ((StandardMultipartHttpServletRequest) request).getRequest()).addParameter("userId", String.valueOf(admin.getId()));
+                    ((TokenServletRequestWrapper) ((StandardMultipartHttpServletRequest) request).getRequest()).addParameter("tokenId", tokenId);
+                    ((TokenServletRequestWrapper) ((StandardMultipartHttpServletRequest) request).getRequest()).addParameter("userId", String.valueOf(admin.getId()));
                 }
                 return true;
             }
