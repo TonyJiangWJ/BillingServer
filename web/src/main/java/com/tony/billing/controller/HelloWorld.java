@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.tony.billing.entity.CostRecord;
 import com.tony.billing.request.BaseRequest;
+import com.tony.billing.request.RealNameRequest;
 import com.tony.billing.response.BaseResponse;
 import com.tony.billing.service.AdminService;
 import com.tony.billing.service.AlipayBillCsvConvertService;
@@ -16,10 +17,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -88,5 +91,26 @@ public class HelloWorld {
         return ResponseUtil.success(new BaseResponse());
     }
 
+    @RequestMapping("/hello/mockrealname")
+    public JSONObject realNameCheck(@ModelAttribute("request") RealNameRequest realNameRequest,
+                                    HttpServletRequest request) {
+        JSONObject jsonObject = new JSONObject();
+        JSONObject result = new JSONObject();
+        String headerInfo = null;
+        String appCode = "";
+        if((headerInfo=request.getHeader("Authorization"))!=null) {
+             appCode = headerInfo.split(" ")[1];
+        }
+        logger.info("requestInfo:{} appCode:{}",JSON.toJSONString(realNameRequest),appCode);
+        boolean realNameResult = realNameRequest.getRealName().contains("pass");
+        result.put("isok", realNameResult);
+        result.put("realname", realNameRequest.getRealName());
+        result.put("idcard", realNameRequest.getCardNo());
+        result.put("idCardInfo", "身份信息");
+        jsonObject.put("error_code", 0);
+        jsonObject.put("reason", "成功");
+        jsonObject.put("result", result);
+        return jsonObject;
+    }
 
 }
