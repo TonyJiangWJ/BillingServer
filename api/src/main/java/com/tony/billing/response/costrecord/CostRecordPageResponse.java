@@ -1,6 +1,6 @@
 package com.tony.billing.response.costrecord;
 
-import com.tony.billing.dto.CostRecordDto;
+import com.tony.billing.dto.CostRecordDTO;
 import com.tony.billing.response.BaseResponse;
 
 import java.util.List;
@@ -9,7 +9,7 @@ import java.util.List;
  * Author jiangwj20966 on 2017/6/2.
  */
 public class CostRecordPageResponse extends BaseResponse {
-    private List<CostRecordDto> costRecordList;
+    private List<CostRecordDTO> costRecordList;
     private Integer totalPage;
     private Integer pageSize;
     private Integer pageNo;
@@ -24,11 +24,11 @@ public class CostRecordPageResponse extends BaseResponse {
         this.totalItem = totalItem;
     }
 
-    public List<CostRecordDto> getCostRecordList() {
+    public List<CostRecordDTO> getCostRecordList() {
         return costRecordList;
     }
 
-    public void setCostRecordList(List<CostRecordDto> costRecordList) {
+    public void setCostRecordList(List<CostRecordDTO> costRecordList) {
         this.costRecordList = costRecordList;
     }
 

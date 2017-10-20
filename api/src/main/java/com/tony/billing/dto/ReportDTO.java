@@ -3,7 +3,7 @@ package com.tony.billing.dto;
 /**
  * Author by TonyJiang on 2017/6/10.
  */
-public class ReportDto {
+public class ReportDTO {
     private String month;
     private String totalCost;
     private String totalCostExceptDeleted;

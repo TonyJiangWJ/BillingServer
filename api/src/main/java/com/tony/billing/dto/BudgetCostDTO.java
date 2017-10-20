@@ -3,7 +3,7 @@ package com.tony.billing.dto;
 /**
  * Author jiangwj20966 on 2017/7/13.
  */
-public class BudgetCostDto {
+public class BudgetCostDTO {
     private String totalCost;
     private String restMoney;
     private String budgetMoney;

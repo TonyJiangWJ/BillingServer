@@ -1,6 +1,6 @@
 package com.tony.billing.response.budget;
 
-import com.tony.billing.dto.BudgetDto;
+import com.tony.billing.dto.BudgetDTO;
 import com.tony.billing.response.BaseResponse;
 
 import java.util.List;
@@ -9,13 +9,13 @@ import java.util.List;
  * Author jiangwj20966 on 2017/7/13.
  */
 public class BudgetListResponse extends BaseResponse {
-    private List<BudgetDto> budgetList;
+    private List<BudgetDTO> budgetList;
 
-    public List<BudgetDto> getBudgetList() {
+    public List<BudgetDTO> getBudgetList() {
         return budgetList;
     }
 
-    public void setBudgetList(List<BudgetDto> budgetList) {
+    public void setBudgetList(List<BudgetDTO> budgetList) {
         this.budgetList = budgetList;
     }
 }

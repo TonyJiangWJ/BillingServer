@@ -1,6 +1,6 @@
 package com.tony.billing.response.costrecord;
 
-import com.tony.billing.dto.ReportDto;
+import com.tony.billing.dto.ReportDTO;
 import com.tony.billing.response.BaseResponse;
 
 import java.util.List;
@@ -9,13 +9,13 @@ import java.util.List;
  * Author by TonyJiang on 2017/6/10.
  */
 public class ReportResponse extends BaseResponse {
-    private List<ReportDto> reportList;
+    private List<ReportDTO> reportList;
 
-    public List<ReportDto> getReportList() {
+    public List<ReportDTO> getReportList() {
         return reportList;
     }
 
-    public void setReportList(List<ReportDto> reportList) {
+    public void setReportList(List<ReportDTO> reportList) {
         this.reportList = reportList;
     }
 }

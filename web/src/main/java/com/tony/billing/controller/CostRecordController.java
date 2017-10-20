@@ -8,8 +8,8 @@ import com.tony.billing.constants.TradeStatus;
 import com.tony.billing.entity.CostRecord;
 import com.tony.billing.entity.PagerGrid;
 import com.tony.billing.entity.query.CostRecordQuery;
-import com.tony.billing.dto.CostRecordDetailDto;
-import com.tony.billing.dto.CostRecordDto;
+import com.tony.billing.dto.CostRecordDetailDTO;
+import com.tony.billing.dto.CostRecordDTO;
 import com.tony.billing.request.costrecord.*;
 import com.tony.billing.response.BaseResponse;
 import com.tony.billing.response.costrecord.CostRecordDeleteResponse;
@@ -345,8 +345,8 @@ public class CostRecordController {
         return dateCode + String.valueOf(datetime.getTime() / 1000 % 1000000000);
     }
 
-    private CostRecordDetailDto formatDetailModel(CostRecord record) {
-        CostRecordDetailDto model = new CostRecordDetailDto();
+    private CostRecordDetailDTO formatDetailModel(CostRecord record) {
+        CostRecordDetailDTO model = new CostRecordDetailDTO();
         model.setCreateTime(record.getCreateTime());
         model.setGoodsName(record.getGoodsName());
         model.setInOutType(record.getInOutType());
@@ -369,12 +369,12 @@ public class CostRecordController {
     }
 
 
-    private List<CostRecordDto> formatModelList(List<CostRecordQuery> list) {
+    private List<CostRecordDTO> formatModelList(List<CostRecordQuery> list) {
         if (!CollectionUtils.isEmpty(list)) {
-            List<CostRecordDto> models = new ArrayList<CostRecordDto>();
-            CostRecordDto model;
+            List<CostRecordDTO> models = new ArrayList<CostRecordDTO>();
+            CostRecordDTO model;
             for (CostRecord entity : list) {
-                model = new CostRecordDto();
+                model = new CostRecordDTO();
                 model.setCreateTime(entity.getCreateTime());
                 model.setGoodsName(entity.getGoodsName());
                 model.setInOutType(entity.getInOutType());
