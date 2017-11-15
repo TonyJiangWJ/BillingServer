@@ -1,6 +1,6 @@
 package com.tony.billing.response.taginfo;
 
-import com.tony.billing.dto.TagInfoDto;
+import com.tony.billing.dto.TagInfoDTO;
 import com.tony.billing.response.BaseResponse;
 
 import java.util.List;
@@ -9,13 +9,13 @@ import java.util.List;
  * Author by TonyJiang on 2017/6/15.
  */
 public class CostTagListResponse extends BaseResponse {
-    private List<TagInfoDto> tagInfoModels;
+    private List<TagInfoDTO> tagInfoModels;
 
-    public List<TagInfoDto> getTagInfoModels() {
+    public List<TagInfoDTO> getTagInfoModels() {
         return tagInfoModels;
     }
 
-    public void setTagInfoModels(List<TagInfoDto> tagInfoDtos) {
-        this.tagInfoModels = tagInfoDtos;
+    public void setTagInfoModels(List<TagInfoDTO> tagInfoDTOS) {
+        this.tagInfoModels = tagInfoDTOS;
     }
 }

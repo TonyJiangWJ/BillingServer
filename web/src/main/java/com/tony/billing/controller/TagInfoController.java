@@ -4,7 +4,7 @@ import com.tony.billing.request.*;
 import com.tony.billing.entity.CostRecord;
 import com.tony.billing.entity.TagCostRef;
 import com.tony.billing.entity.TagInfo;
-import com.tony.billing.dto.TagInfoDto;
+import com.tony.billing.dto.TagInfoDTO;
 import com.tony.billing.request.taginfo.*;
 import com.tony.billing.response.BaseResponse;
 import com.tony.billing.response.taginfo.CostTagListResponse;
@@ -46,10 +46,10 @@ public class TagInfoController extends BaseController {
         List<TagInfo> tagInfos = tagInfoService.listTagInfo(tagInfo);
         if (!CollectionUtils.isEmpty(tagInfos)) {
 
-            List<TagInfoDto> list = new ArrayList<>();
-            TagInfoDto model = null;
+            List<TagInfoDTO> list = new ArrayList<>();
+            TagInfoDTO model = null;
             for (TagInfo entity : tagInfos) {
-                model = new TagInfoDto();
+                model = new TagInfoDTO();
                 model.setTagId(entity.getId());
                 model.setTagName(entity.getTagName());
                 list.add(model);
@@ -115,10 +115,10 @@ public class TagInfoController extends BaseController {
             param.put("tradeNo", request.getTradeNo());
             param.put("userId", request.getUserId());
             List<TagInfo> costTagList = tagInfoService.listTagInfoByTradeNo(param);
-            TagInfoDto model;
-            List<TagInfoDto> result = new ArrayList<>();
+            TagInfoDTO model;
+            List<TagInfoDTO> result = new ArrayList<>();
             for (TagInfo entity : costTagList) {
-                model = new TagInfoDto();
+                model = new TagInfoDTO();
                 model.setTagName(entity.getTagName());
                 model.setTagId(entity.getId());
                 result.add(model);

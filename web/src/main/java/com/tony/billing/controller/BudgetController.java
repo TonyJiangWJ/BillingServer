@@ -1,6 +1,6 @@
 package com.tony.billing.controller;
 
-import com.tony.billing.dto.BudgetDto;
+import com.tony.billing.dto.BudgetDTO;
 import com.tony.billing.entity.Budget;
 import com.tony.billing.model.BudgetModel;
 import com.tony.billing.request.budget.BudgetListRequest;
@@ -70,16 +70,16 @@ public class BudgetController extends BaseController {
             query.setBelongYear(request.getYear());
             List<BudgetModel> budgets = budgetService.queryBudgetsByCondition(query);
             if (CollectionUtils.isNotEmpty(budgets)) {
-                BudgetDto budgetDto;
-                List<BudgetDto> budgetDtos = new ArrayList<>();
+                BudgetDTO budgetDTO;
+                List<BudgetDTO> budgetDTOS = new ArrayList<>();
                 for (BudgetModel budget : budgets) {
-                    budgetDto = new BudgetDto();
-                    budgetDto.setBudgetMoney(MoneyUtil.fen2Yuan(budget.getBudgetMoney()));
-                    budgetDto.setTagName(budget.getTagName());
-                    budgetDto.setYearMonth(budget.getBelongYear() + "-" + budget.getBelongMonth());
-                    budgetDtos.add(budgetDto);
+                    budgetDTO = new BudgetDTO();
+                    budgetDTO.setBudgetMoney(MoneyUtil.fen2Yuan(budget.getBudgetMoney()));
+                    budgetDTO.setTagName(budget.getTagName());
+                    budgetDTO.setYearMonth(budget.getBelongYear() + "-" + budget.getBelongMonth());
+                    budgetDTOS.add(budgetDTO);
                 }
-                response.setBudgetList(budgetDtos);
+                response.setBudgetList(budgetDTOS);
                 ResponseUtil.success(response);
             } else {
                 ResponseUtil.dataNotExisting(response);

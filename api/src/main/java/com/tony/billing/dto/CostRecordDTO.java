@@ -3,7 +3,7 @@ package com.tony.billing.dto;
 /**
  * Author jiangwj20966 on 2017/6/2.
  */
-public class CostRecordDto {
+public class CostRecordDTO {
     private String tradeNo;
     private String createTime;
     private String location;
