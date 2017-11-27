@@ -9,6 +9,7 @@ import com.tony.billing.service.AdminService;
 import com.tony.billing.util.AuthUtil;
 import com.tony.billing.util.CodeGeneratorUtil;
 import com.tony.billing.util.Md5Util;
+import com.tony.billing.util.RSAUtil;
 import com.tony.billing.util.ResponseUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -29,6 +30,9 @@ public class AdminController extends BaseController {
     @Resource
     private AdminService adminService;
 
+    @Resource
+    private RSAUtil rsaUtil;
+
     @RequestMapping(value = "/user/login", method = RequestMethod.POST)
     public BaseResponse login(@ModelAttribute("request") AdminLoginRequest request, HttpServletResponse httpServletResponse) {
         BaseResponse response = new BaseResponse();
@@ -39,7 +43,10 @@ public class AdminController extends BaseController {
         try {
             Admin loginAdmin = new Admin();
             loginAdmin.setUserName(request.getUserName());
-            loginAdmin.setPassword(Md5Util.md5(request.getPassword()));
+            loginAdmin.setPassword(Md5Util.md5(rsaUtil.encrypt(rsaUtil.decrypt(request.getPassword()))));
+            if (loginAdmin.getPassword() == null) {
+                return ResponseUtil.error(response);
+            }
             Admin admin = adminService.login(loginAdmin);
             if (admin != null) {
                 AuthUtil.setCookieToken(admin.getTokenId(), httpServletResponse);
@@ -64,7 +71,10 @@ public class AdminController extends BaseController {
             }
             Admin admin = new Admin();
             admin.setUserName(registerRequest.getUserName());
-            admin.setPassword(Md5Util.md5(registerRequest.getPassword()));
+            admin.setPassword(Md5Util.md5(rsaUtil.encrypt(rsaUtil.decrypt(registerRequest.getPassword()))));
+            if (admin.getPassword() == null) {
+                return ResponseUtil.error(response);
+            }
             admin.setCode(CodeGeneratorUtil.getCode(20));
             Long flag = 0L;
             if ((flag = adminService.register(admin)) > 0) {

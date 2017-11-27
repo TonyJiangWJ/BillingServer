@@ -10,6 +10,7 @@ import com.tony.billing.service.AdminService;
 import com.tony.billing.service.AlipayBillCsvConvertService;
 import com.tony.billing.service.CostRecordService;
 import com.tony.billing.util.CsvParser;
+import com.tony.billing.util.RSAUtil;
 import com.tony.billing.util.RedisUtils;
 import com.tony.billing.util.ResponseUtil;
 import org.slf4j.Logger;
@@ -41,10 +42,13 @@ public class HelloWorld {
     private CostRecordService costRecordService;
     @Resource
     private AlipayBillCsvConvertService alipayBillCsvConvertService;
+    @Resource
+    private RSAUtil rsaUtil;
 
     @RequestMapping("/hello/world")
     public String hello() {
 //        System.out.println(JSON.toJSONString(adminService.listAdmin()));
+        logger.info("enter :{}", rsaUtil.encrypt("123456"));
         return "HelloWorld";
     }
 
@@ -98,10 +102,10 @@ public class HelloWorld {
         JSONObject result = new JSONObject();
         String headerInfo = null;
         String appCode = "";
-        if((headerInfo=request.getHeader("Authorization"))!=null) {
-             appCode = headerInfo.split(" ")[1];
+        if ((headerInfo = request.getHeader("Authorization")) != null) {
+            appCode = headerInfo.split(" ")[1];
         }
-        logger.info("requestInfo:{} appCode:{}",JSON.toJSONString(realNameRequest),appCode);
+        logger.info("requestInfo:{} appCode:{}", JSON.toJSONString(realNameRequest), appCode);
         boolean realNameResult = realNameRequest.getRealName().contains("pass");
         result.put("isok", realNameResult);
         result.put("realname", realNameRequest.getRealName());
@@ -111,6 +115,12 @@ public class HelloWorld {
         jsonObject.put("reason", "成功");
         jsonObject.put("result", result);
         return jsonObject;
+    }
+
+    @RequestMapping("/hello/testRsa")
+    public String testRsa(@RequestParam("content") String content) {
+        logger.info("enter ");
+        return rsaUtil.encrypt(content);
     }
 
 }
