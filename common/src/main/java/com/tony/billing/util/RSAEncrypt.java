@@ -46,30 +46,34 @@ public class RSAEncrypt {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        // 初始化密钥对生成器，密钥大小为96-1024位
-        keyPairGen.initialize(1024, new SecureRandom());
-        // 生成一个密钥对，保存在keyPair中
-        KeyPair keyPair = keyPairGen.generateKeyPair();
-        // 得到私钥
-        RSAPrivateKey privateKey = (RSAPrivateKey) keyPair.getPrivate();
-        // 得到公钥
-        RSAPublicKey publicKey = (RSAPublicKey) keyPair.getPublic();
-        try {
-            // 得到公钥
-            byte[] publicKeyBytes = publicKey.getEncoded();
-            String publicKeyString = Base64.encodeBase64String(publicKeyBytes);
+        if (keyPairGen != null) {
+            // 初始化密钥对生成器，密钥大小为96-1024位
+            keyPairGen.initialize(1024, new SecureRandom());
+            // 生成一个密钥对，保存在keyPair中
+            KeyPair keyPair = keyPairGen.generateKeyPair();
             // 得到私钥
-            byte[] privateKeyBytes = privateKey.getEncoded();
-            String privateKeyString = Base64.encodeBase64String(privateKeyBytes);
-            // 将密钥对写入到文件
-            BufferedOutputStream pubOutStream = new BufferedOutputStream(new FileOutputStream(filePath + "/publicKey.keystore"));
-            BufferedOutputStream priOutStream = new BufferedOutputStream(new FileOutputStream(filePath + "/privateKey.keystore"));
-            pubOutStream.write(publicKeyString.getBytes());
-            priOutStream.write(privateKeyString.getBytes());
-            pubOutStream.close();
-            priOutStream.close();
-        } catch (Exception e) {
-            e.printStackTrace();
+            RSAPrivateKey privateKey = (RSAPrivateKey) keyPair.getPrivate();
+            // 得到公钥
+            RSAPublicKey publicKey = (RSAPublicKey) keyPair.getPublic();
+            try {
+                // 得到公钥
+                byte[] publicKeyBytes = publicKey.getEncoded();
+                String publicKeyString = Base64.encodeBase64String(publicKeyBytes);
+                // 得到私钥
+                byte[] privateKeyBytes = privateKey.getEncoded();
+                String privateKeyString = Base64.encodeBase64String(privateKeyBytes);
+                // 将密钥对写入到文件
+                BufferedOutputStream pubOutStream = new BufferedOutputStream(new FileOutputStream(filePath + "/publicKey.keystore"));
+                BufferedOutputStream priOutStream = new BufferedOutputStream(new FileOutputStream(filePath + "/privateKey.keystore"));
+                if (publicKeyString != null && privateKeyString != null) {
+                    pubOutStream.write(publicKeyString.getBytes());
+                    priOutStream.write(privateKeyString.getBytes());
+                }
+                pubOutStream.close();
+                priOutStream.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 

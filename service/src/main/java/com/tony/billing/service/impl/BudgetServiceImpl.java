@@ -91,6 +91,8 @@ public class BudgetServiceImpl implements BudgetService {
                                 case 11:
                                     costClear += cost.getMoney();
                                     break;
+                                default:
+                                    logger.error("this is impossible");
                             }
                             totalCost += cost.getMoney();
                         }

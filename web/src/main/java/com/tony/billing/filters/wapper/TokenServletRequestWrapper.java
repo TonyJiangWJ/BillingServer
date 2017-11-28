@@ -16,11 +16,11 @@ import java.util.Map;
  */
 public class TokenServletRequestWrapper extends HttpServletRequestWrapper {
 
-    private static Map<String, String[]> params;
+    private static Map<String, String[]> params = new ParameterMap<>();
 
     public TokenServletRequestWrapper(HttpServletRequest request) {
         super(request);
-        params = new ParameterMap<>();
+        ;
     }
 
     @Override

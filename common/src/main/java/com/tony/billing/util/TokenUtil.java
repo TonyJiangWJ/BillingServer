@@ -9,6 +9,6 @@ public class TokenUtil {
         for (String param : params) {
             sb.append(param);
         }
-        return Md5Util.md5(sb.toString()) + Math.round(System.currentTimeMillis() / 1000);
+        return Md5Util.md5(sb.toString()) + Math.round(System.currentTimeMillis() / 1000f);
     }
 }

@@ -142,7 +142,7 @@ public class CsvParser {
         return temp;
     }
 
-    public void CsvClose() throws IOException {
+    public void csvClose() throws IOException {
         this.bufferedReader.close();
     }
 
@@ -481,8 +481,7 @@ public class CsvParser {
         if (StringUtils.isEmpty(money)) {
             return null;
         }
-        Long result = new Long(money.replace(".", ""));
-        return result;
+        return Long.valueOf(money.replace(".", ""));
     }
 
 }

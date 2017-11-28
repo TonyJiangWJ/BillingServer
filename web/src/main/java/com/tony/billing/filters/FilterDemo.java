@@ -20,7 +20,7 @@ import java.io.IOException;
 @WebFilter(filterName = "filterDemo", urlPatterns = "/*")
 public class FilterDemo extends OncePerRequestFilter {
 
-    private final String multipartContent = "multipart/form-data";
+    private static final String multipartContent = "multipart/form-data";
 
     private CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver();
 
