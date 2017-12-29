@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -38,7 +39,8 @@ public class RSAUtil {
                     if (System.currentTimeMillis() - timestamp < 30 * 1000) {
                         return cipherStr.substring(13);
                     } else {
-                        logger.error("验证信息超时：{}", new Date(timestamp).toString());
+                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                        logger.error("验证信息超时：{}", simpleDateFormat.format(new Date(timestamp)));
                     }
                 }
             }
@@ -50,6 +52,8 @@ public class RSAUtil {
 
     public String encrypt(String content) {
         if (content != null) {
+            long timestamp = System.currentTimeMillis();
+            content = timestamp + content;
             try {
                 return Base64.encodeBase64String(RSAEncrypt.encrypt(privateKey, content.getBytes()));
             } catch (Exception e) {
