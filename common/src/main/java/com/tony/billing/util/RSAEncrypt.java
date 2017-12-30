@@ -34,6 +34,10 @@ public class RSAEncrypt {
     private static final char[] HEX_CHAR = {'0', '1', '2', '3', '4', '5', '6',
             '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
 
+    public static void main(String[] args) {
+        genKeyPair("D:/");
+    }
+
     /**
      * 随机生成密钥对
      */

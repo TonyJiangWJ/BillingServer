@@ -43,7 +43,7 @@ public class AdminController extends BaseController {
         try {
             Admin loginAdmin = new Admin();
             loginAdmin.setUserName(request.getUserName());
-            loginAdmin.setPassword(Md5Util.md5(rsaUtil.encrypt(rsaUtil.decrypt(request.getPassword()))));
+            loginAdmin.setPassword(Md5Util.md5(rsaUtil.decrypt(request.getPassword())+"springboot"));
             if (loginAdmin.getPassword() == null) {
                 return ResponseUtil.error(response);
             }
