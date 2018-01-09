@@ -17,4 +17,8 @@ public interface AdminDao {
     Long register(Admin admin);
 
     Long logout(Long userId);
+
+    Long modifyPwd(Admin admin);
+
+    Admin getAdminById(Long userId);
 }

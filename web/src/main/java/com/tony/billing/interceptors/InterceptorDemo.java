@@ -9,6 +9,7 @@ import com.tony.billing.util.RedisUtils;
 import com.tony.billing.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.support.StandardMultipartHttpServletRequest;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -25,6 +26,8 @@ import java.util.Map;
 @Component
 public class InterceptorDemo implements HandlerInterceptor {
 
+    @Autowired
+    private AuthUtil authUtil;
 
     private Logger logger = LoggerFactory.getLogger(InterceptorDemo.class);
 
@@ -42,18 +45,18 @@ public class InterceptorDemo implements HandlerInterceptor {
 
     @Override
     public void postHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o, ModelAndView modelAndView) throws Exception {
-        logger.info("请求处理结束：Access-Control-Allow-Origin:{}", httpServletResponse.getHeader("Access-Control-Allow-Origin"));
+        logger.debug("请求处理结束：Access-Control-Allow-Origin:{}", httpServletResponse.getHeader("Access-Control-Allow-Origin"));
     }
 
     @Override
     public void afterCompletion(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o, Exception e) throws Exception {
-        logger.info("完全结束");
+        logger.debug("完全结束");
     }
 
     private boolean isUserLogin(HttpServletRequest request) throws Exception {
         Cookie tokenCok = CookieUtil.getCookie("token", request);
         if (tokenCok != null) {
-            String tokenId = AuthUtil.getUserTokenId(tokenCok.getValue());
+            String tokenId = authUtil.getUserTokenId(tokenCok.getValue());
             Map store = RedisUtils.get(tokenId, Admin.class);
             if (store != null) {
                 Admin admin = (Admin) store.get(tokenId);
@@ -75,7 +78,7 @@ public class InterceptorDemo implements HandlerInterceptor {
         Cookie[] cookies = httpServletRequest.getCookies();
         if (cookies != null) {
             for (Cookie cookie : cookies) {
-                logger.info("cookie[name:{} value:{}]", cookie.getName(), cookie.getValue());
+                logger.debug("cookie[name:{} value:{}]", cookie.getName(), cookie.getValue());
             }
             String url = httpServletRequest.getRequestURL().toString();
             logger.info("headerInfo:{}", httpServletRequest.getHeader("Host"));

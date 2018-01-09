@@ -15,8 +15,8 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * Author by TonyJiang on 2017/7/2.
  */
-@Aspect
-@Component
+//@Aspect
+//@Component
 @Deprecated
 public class RequestInterceptor {
 
@@ -41,9 +41,6 @@ public class RequestInterceptor {
                 request.setTokenId(tokenId);
                 logger.info("修改参数成功");
             }
-            logger.info("不修改参数");
-        } else {
-            logger.info("无参数");
         }
     }
 }

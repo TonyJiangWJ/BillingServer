@@ -24,6 +24,11 @@ public class AdminDaoImpl implements AdminDao {
         return adminMapper.doLogin(admin);
     }
 
+    /**
+     * 与数据库中的用户信息进行校验
+     * @param admin
+     * @return
+     */
     @Override
     public Admin preLogin(Admin admin) {
         Preconditions.checkNotNull(admin.getUserName(), "userName should not be null");
@@ -31,6 +36,12 @@ public class AdminDaoImpl implements AdminDao {
         return adminMapper.preLogin(admin);
     }
 
+    /**
+     * 根据tokenId校验登录有效性 改用redis缓存实现
+     * @param tokenId
+     * @return
+     */
+    @Deprecated
     @Override
     public Admin loginCheck(String tokenId) {
         Preconditions.checkNotNull(tokenId, "tokenId must not be null");
@@ -52,5 +63,15 @@ public class AdminDaoImpl implements AdminDao {
     @Override
     public Long logout(Long userId) {
         return adminMapper.logout(userId);
+    }
+
+    @Override
+    public Long modifyPwd(Admin admin) {
+        return adminMapper.modifyPwd(admin);
+    }
+
+    @Override
+    public Admin getAdminById(Long userId) {
+        return adminMapper.getAdminById(userId);
     }
 }

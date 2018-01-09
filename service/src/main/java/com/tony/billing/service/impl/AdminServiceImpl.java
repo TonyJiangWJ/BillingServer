@@ -3,9 +3,11 @@ package com.tony.billing.service.impl;
 import com.tony.billing.constants.enums.EnumDeleted;
 import com.tony.billing.dao.AdminDao;
 import com.tony.billing.entity.Admin;
+import com.tony.billing.entity.ModifyAdmin;
 import com.tony.billing.service.AdminService;
 import com.tony.billing.util.RedisUtils;
 import com.tony.billing.util.TokenUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -21,6 +23,7 @@ public class AdminServiceImpl implements AdminService {
     private AdminDao adminDao;
 
     private final Long VERIFY_TIME = 3600 * 24 * 1000L;
+
     @Override
     public Admin login(Admin admin) {
         Admin checkUser = adminDao.preLogin(admin);
@@ -30,7 +33,7 @@ public class AdminServiceImpl implements AdminService {
             checkUser.setTokenVerify(VERIFY_TIME);
             checkUser.setLastLogin(new Date());
             if (adminDao.doLogin(checkUser) > 0) {
-                RedisUtils.set(checkUser.getTokenId(), deleteSecret(checkUser), VERIFY_TIME/1000);
+                RedisUtils.set(checkUser.getTokenId(), deleteSecret(checkUser), VERIFY_TIME / 1000);
                 return checkUser;
             }
         }
@@ -59,7 +62,17 @@ public class AdminServiceImpl implements AdminService {
         return RedisUtils.del(tokenId);
     }
 
-    private Admin deleteSecret(Admin admin){
+    @Override
+    public boolean modifyPwd(ModifyAdmin admin) {
+        Admin stored = adminDao.getAdminById(admin.getId());
+        if (stored != null && StringUtils.equals(stored.getPassword(), admin.getPassword())) {
+            stored.setPassword(admin.getNewPassword());
+            return adminDao.modifyPwd(stored) > 0;
+        }
+        return false;
+    }
+
+    private Admin deleteSecret(Admin admin) {
         Admin admin1 = new Admin();
         admin1.setId(admin.getId());
         admin1.setTokenId(admin.getTokenId());

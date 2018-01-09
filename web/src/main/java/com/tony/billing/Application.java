@@ -2,6 +2,7 @@ package com.tony.billing;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tony.billing.util.AuthUtil;
 import com.tony.billing.util.RSAUtil;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,7 +23,8 @@ public class Application {
 
     @Value("${rsa.key.path}")
     private String rsaKeyPath;
-
+    @Value("${jwt.secret.key:springboot}")
+    private String jwtSecretKey;
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
     }
@@ -46,5 +48,10 @@ public class Application {
     @Bean
     public RSAUtil rsaUtil() throws Exception {
         return new RSAUtil(rsaKeyPath);
+    }
+
+    @Bean
+    public AuthUtil authUtil() {
+        return new AuthUtil(new AuthUtil.JavaWebToken(jwtSecretKey));
     }
 }

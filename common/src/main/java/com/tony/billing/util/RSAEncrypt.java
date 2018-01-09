@@ -35,7 +35,7 @@ public class RSAEncrypt {
             '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
 
     public static void main(String[] args) {
-        genKeyPair("D:/");
+        genKeyPair("D:/ali/");
     }
 
     /**
