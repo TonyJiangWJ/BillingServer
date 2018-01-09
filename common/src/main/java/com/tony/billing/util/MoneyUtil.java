@@ -30,14 +30,14 @@ public class MoneyUtil {
         int len = money.length();
         if (idxDot >= 0) {
             if ((len - idxDot) > 3) {
-                return new Long(money.substring(0, idxDot + 3).replace(".", ""));
+                return Long.valueOf(money.substring(0, idxDot + 3).replace(".", ""));
             } else if ((len - idxDot) == 3) {
-                return new Long(money.replace(".", ""));
+                return Long.valueOf(money.replace(".", ""));
             } else {
-                return new Long(money.replace(".", "") + "0");
+                return Long.valueOf(money.replace(".", "") + "0");
             }
         } else {
-            return new Long(money + "00");
+            return Long.valueOf(money + "00");
         }
     }
 

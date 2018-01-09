@@ -58,7 +58,7 @@ public class RedisUtils {
                     byte[] keys = serializer.serialize(JSON.toJSONString(key));
                     byte[] name = serializer.serialize(JSON.toJSONString(val));
                     connection.setEx(keys, time, name);
-                    return null;
+                    return true;
                 }
             });
         } catch (Exception e) {

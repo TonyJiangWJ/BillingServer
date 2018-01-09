@@ -1,8 +1,11 @@
 package com.tony.billing.filters;
 
+import com.alibaba.fastjson.JSON;
 import com.tony.billing.filters.wapper.TokenServletRequestWrapper;
 import org.apache.commons.lang3.StringUtils;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.Order;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
@@ -16,11 +19,13 @@ import java.io.IOException;
 /**
  * Author by TonyJiang on 2017/7/2.
  */
-@Order(0)
+@Order(1)
 @WebFilter(filterName = "filterDemo", urlPatterns = "/*")
 public class FilterDemo extends OncePerRequestFilter {
 
-    private final String multipartContent = "multipart/form-data";
+    private static final String multipartContent = "multipart/form-data";
+
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver();
 

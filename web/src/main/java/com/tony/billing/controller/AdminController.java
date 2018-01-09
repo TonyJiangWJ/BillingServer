@@ -1,16 +1,20 @@
 package com.tony.billing.controller;
 
 import com.tony.billing.entity.Admin;
+import com.tony.billing.entity.ModifyAdmin;
 import com.tony.billing.request.BaseRequest;
 import com.tony.billing.request.admin.AdminLoginRequest;
+import com.tony.billing.request.admin.AdminModifyPwdRequest;
 import com.tony.billing.request.admin.AdminRegisterRequest;
 import com.tony.billing.response.BaseResponse;
 import com.tony.billing.service.AdminService;
 import com.tony.billing.util.AuthUtil;
 import com.tony.billing.util.CodeGeneratorUtil;
 import com.tony.billing.util.Md5Util;
+import com.tony.billing.util.RSAUtil;
 import com.tony.billing.util.ResponseUtil;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -29,6 +33,15 @@ public class AdminController extends BaseController {
     @Resource
     private AdminService adminService;
 
+    @Resource
+    private RSAUtil rsaUtil;
+
+    @Resource
+    private AuthUtil authUtil;
+
+    @Value("${pwd.salt:springboot}")
+    private String pwdSalt;
+
     @RequestMapping(value = "/user/login", method = RequestMethod.POST)
     public BaseResponse login(@ModelAttribute("request") AdminLoginRequest request, HttpServletResponse httpServletResponse) {
         BaseResponse response = new BaseResponse();
@@ -39,10 +52,14 @@ public class AdminController extends BaseController {
         try {
             Admin loginAdmin = new Admin();
             loginAdmin.setUserName(request.getUserName());
-            loginAdmin.setPassword(Md5Util.md5(request.getPassword()));
+            loginAdmin.setPassword(md5(rsaUtil.decrypt(request.getPassword())));
+            logger.debug("salt:{}", pwdSalt);
+            if (loginAdmin.getPassword() == null) {
+                return ResponseUtil.error(response);
+            }
             Admin admin = adminService.login(loginAdmin);
             if (admin != null) {
-                AuthUtil.setCookieToken(admin.getTokenId(), httpServletResponse);
+                authUtil.setCookieToken(admin.getTokenId(), httpServletResponse);
                 ResponseUtil.success(response);
             } else {
                 ResponseUtil.error(response);
@@ -64,7 +81,10 @@ public class AdminController extends BaseController {
             }
             Admin admin = new Admin();
             admin.setUserName(registerRequest.getUserName());
-            admin.setPassword(Md5Util.md5(registerRequest.getPassword()));
+            admin.setPassword(md5(rsaUtil.decrypt(registerRequest.getPassword())));
+            if (admin.getPassword() == null) {
+                return ResponseUtil.error(response);
+            }
             admin.setCode(CodeGeneratorUtil.getCode(20));
             Long flag = 0L;
             if ((flag = adminService.register(admin)) > 0) {
@@ -92,4 +112,22 @@ public class AdminController extends BaseController {
         }
     }
 
+    @RequestMapping(value = "/user/pwd/modify", method = RequestMethod.POST)
+    public BaseResponse modifyPwd(@ModelAttribute("request") AdminModifyPwdRequest request) {
+        BaseResponse response = new BaseResponse();
+        ModifyAdmin modifyAdmin = new ModifyAdmin();
+
+        modifyAdmin.setId(request.getUserId());
+        modifyAdmin.setNewPassword(md5(request.getNewPassword()));
+        modifyAdmin.setPassword(md5(request.getOldPassword()));
+        if (adminService.modifyPwd(modifyAdmin)) {
+            return ResponseUtil.success(response);
+        } else {
+            return ResponseUtil.error(response);
+        }
+    }
+
+    private String md5(String pwd) {
+        return Md5Util.md5(pwd + pwdSalt);
+    }
 }

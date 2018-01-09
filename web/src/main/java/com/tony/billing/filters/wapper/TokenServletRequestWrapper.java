@@ -16,16 +16,16 @@ import java.util.Map;
  */
 public class TokenServletRequestWrapper extends HttpServletRequestWrapper {
 
-    private static Map<String, String[]> params;
+    private static Map<String, String[]> params = new ParameterMap<>();
 
     public TokenServletRequestWrapper(HttpServletRequest request) {
         super(request);
-        params = new ParameterMap<>();
+        ;
     }
 
     @Override
     public Map<String, String[]> getParameterMap() {
-        if (super.getParameterMap() != null && super.getParameterMap().size() != 0 && params.size() == 0) {
+        if (super.getParameterMap() != null && super.getParameterMap().size() != 0) {
             params.putAll(super.getParameterMap());
         }
         return params;
