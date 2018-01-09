@@ -41,11 +41,6 @@ public class CostReportController extends BaseController {
             List<String> monthList = new ArrayList<>();
             if (StringUtils.isEmpty(request.getStartMonth()) || StringUtils.isEmpty(request.getEndMonth())) {
                 int ngm = -6;
-                if (request.getUserId().equals(2L)) {
-                    Calendar calendarMonth2 = Calendar.getInstance();
-                    calendarMonth2.set(2017, Calendar.FEBRUARY, 1);
-                    ngm = calendarMonth2.get(Calendar.MONTH) - calendar.get(Calendar.MONTH) - 1;
-                }
                 calendar.add(Calendar.MONTH, ngm);
                 for (int i = 0; i < -ngm; i++) {
                     calendar.add(Calendar.MONTH, 1);
