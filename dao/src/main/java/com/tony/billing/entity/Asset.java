@@ -6,11 +6,20 @@ import java.util.Date;
  * 资产
  */
 public class Asset {
+    private Long id;
     private String name;
     private String type;
     private Long amount;
     private Date createTime;
     private Date modifyTime;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;

@@ -1,8 +1,7 @@
--- MySQL dump 10.13  Distrib 5.7.17, for Win64 (x86_64)
+-- MySQL dump 10.13  Distrib 5.7.11, for Win64 (x86_64)
 --
--- Host: localhost    Database: my_2017_cost
 -- ------------------------------------------------------
--- Server version	5.7.11
+-- Server version	5.7.19-0ubuntu0.16.04.1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -28,20 +27,54 @@ CREATE TABLE `t_admin` (
   `tokenVerify` bigint(20) NOT NULL DEFAULT '0',
   `code` varchar(20) DEFAULT NULL,
   `userName` varchar(20) DEFAULT NULL,
-  `password` varchar(32) DEFAULT NULL,
+  `password` varchar(256) DEFAULT NULL,
   `lastLogin` datetime DEFAULT NULL,
   `createTime` datetime DEFAULT NULL,
   `modifyTime` datetime DEFAULT NULL,
   `version` int(11) DEFAULT NULL,
   `isDeleted` tinyint(4) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `t_admin`
+-- Table structure for table `t_asset`
 --
 
+DROP TABLE IF EXISTS `t_asset`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `t_asset` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `name` varchar(128) DEFAULT NULL,
+  `type` varchar(16) DEFAULT NULL,
+  `amount` bigint(20) NOT NULL,
+  `create_time` datetime NOT NULL,
+  `modify_time` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `t_budget`
+--
+
+DROP TABLE IF EXISTS `t_budget`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `t_budget` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `tagId` bigint(20) NOT NULL COMMENT '标签id',
+  `budgetMoney` bigint(20) NOT NULL DEFAULT '0' COMMENT '预算金额',
+  `createTime` datetime NOT NULL,
+  `modifyTime` datetime NOT NULL,
+  `belongYear` char(4) NOT NULL DEFAULT '2017' COMMENT '年份',
+  `belongMonth` int(11) NOT NULL COMMENT '月份',
+  `isDelete` tinyint(4) NOT NULL DEFAULT '0',
+  `version` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `t_cost_info`
@@ -72,15 +105,9 @@ CREATE TABLE `t_cost_info` (
   `isDelete` tinyint(4) NOT NULL DEFAULT '0',
   `isHidden` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `tradeNo` (`tradeNo`)
-) ENGINE=InnoDB AUTO_INCREMENT=3522 DEFAULT CHARSET=utf8;
+  UNIQUE KEY `tradeNoAndUserId` (`tradeNo`,`userId`)
+) ENGINE=InnoDB AUTO_INCREMENT=8307 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `t_cost_info`
---
-
-
 
 --
 -- Table structure for table `t_cost_info_deleted`
@@ -115,12 +142,6 @@ CREATE TABLE `t_cost_info_deleted` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `t_cost_info_deleted`
---
-
-
-
---
 -- Table structure for table `t_cost_tag`
 --
 
@@ -135,14 +156,28 @@ CREATE TABLE `t_cost_tag` (
   `modifyTime` datetime NOT NULL,
   `isDelete` tinyint(4) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=353 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=392 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `t_cost_tag`
+-- Table structure for table `t_liability`
 --
 
-
+DROP TABLE IF EXISTS `t_liability`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `t_liability` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `create_time` datetime NOT NULL,
+  `repayment_day` datetime NOT NULL,
+  `name` varchar(128) DEFAULT NULL,
+  `type` varchar(16) DEFAULT NULL,
+  `amount` bigint(20) DEFAULT NULL,
+  `installment` int(11) DEFAULT NULL,
+  `index` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `t_tag_info`
@@ -159,13 +194,8 @@ CREATE TABLE `t_tag_info` (
   `isDelete` tinyint(4) NOT NULL DEFAULT '0',
   `userId` bigint(20) NOT NULL DEFAULT '-1',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=44 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `t_tag_info`
---
-
 
 --
 -- Dumping routines for database 'my_2017_cost'
@@ -180,4 +210,4 @@ CREATE TABLE `t_tag_info` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-07-02 21:07:02
+-- Dump completed on 2018-01-11 17:20:49

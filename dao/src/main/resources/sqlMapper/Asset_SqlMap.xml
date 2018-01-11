@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tony.billing.dao.mapper.AssetMapper">
+    <sql id="all">
+        id id,
+        name name,
+        type type,
+        amount amount,
+        createTime createTime,
+        modifyTime modifyTime
+    </sql>
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.tony.billing.entity.Asset">
+        INSERT INTO (
+        <trim suffixOverrides=",">
+            <if test=" id!=null ">
+                id,
+            </if>
+            <if test=" name!=null and name!='' ">
+                name,
+            </if>
+            <if test=" type!=null and type!='' ">
+                type,
+            </if>
+            <if test=" amount!=null ">
+                amount,
+            </if>
+            <if test=" createTime!=null ">
+                createTime,
+            </if>
+            <if test=" modifyTime!=null ">
+                modifyTime,
+            </if>
+        </trim>
+        ) VALUES (
+        <trim suffixOverrides=",">
+            <if test=" id!=null ">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test=" name!=null and name!='' ">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test=" type!=null and type!='' ">
+                #{type,jdbcType=VARCHAR},
+            </if>
+            <if test=" amount!=null ">
+                #{amount,jdbcType=BIGINT},
+            </if>
+            <if test=" createTime!=null ">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test=" modifyTime!=null ">
+                #{modifyTime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+        )
+    </insert>
+    <update id="update" parameterType="com.tony.billing.entity.Asset">
+        UPDATE null
+        <trim prefix="SET" suffixOverrides=",">
+            <if test=" id!=null ">
+                id=#{id,jdbcType=BIGINT},
+            </if>
+            <if test=" name!=null and name!='' ">
+                name=#{name,jdbcType=VARCHAR},
+            </if>
+            <if test=" type!=null and type!='' ">
+                type=#{type,jdbcType=VARCHAR},
+            </if>
+            <if test=" amount!=null ">
+                amount=#{amount,jdbcType=BIGINT},
+            </if>
+            <if test=" createTime!=null ">
+                createTime=#{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test=" modifyTime!=null ">
+                modifyTime=#{modifyTime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </update>
+    <select id="page" parameterType="java.util.Map" resultType="com.tony.billing.entity.Asset">
+        SELECT
+        <include refid="all"/>
+        FROM
+        <trim prefix="WHERE" prefixOverrides="and">
+            <if test=" id!=null ">
+                and id=#{id,jdbcType=BIGINT}
+            </if>
+            <if test=" name!=null and name!='' ">
+                and name=#{name,jdbcType=VARCHAR}
+            </if>
+            <if test=" type!=null and type!='' ">
+                and type=#{type,jdbcType=VARCHAR}
+            </if>
+            <if test=" amount!=null ">
+                and amount=#{amount,jdbcType=BIGINT}
+            </if>
+            <if test=" createTime!=null ">
+                and createTime=#{createTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test=" modifyTime!=null ">
+                and modifyTime=#{modifyTime,jdbcType=TIMESTAMP}
+            </if>
+        </trim>
+        ORDER BY
+        <if test="orderBy != null">
+            ${orderBy} ${sort}
+        </if>
+        <if test="orderBy == null or orderBy == '' ">
+            id ${sort}
+        </if>
+        LIMIT #{index} , #{offset}
+    </select>
+
+    <select id="list" parameterType="com.tony.billing.entity.Asset" resultType="com.tony.billing.entity.Asset">
+        SELECT
+        <include refid="all"/>
+        FROM
+        <trim prefix="WHERE" prefixOverrides="and">
+            <if test=" id!=null ">
+                and id=#{id,jdbcType=BIGINT}
+            </if>
+            <if test=" name!=null and name!='' ">
+                and name=#{name,jdbcType=VARCHAR}
+            </if>
+            <if test=" type!=null and type!='' ">
+                and type=#{type,jdbcType=VARCHAR}
+            </if>
+            <if test=" amount!=null ">
+                and amount=#{amount,jdbcType=BIGINT}
+            </if>
+            <if test=" createTime!=null ">
+                and createTime=#{createTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test=" modifyTime!=null ">
+                and modifyTime=#{modifyTime,jdbcType=TIMESTAMP}
+            </if>
+        </trim>
+    </select>
+</mapper>
