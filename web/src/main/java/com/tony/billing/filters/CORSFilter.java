@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 @Order(0)
-@WebFilter(filterName = "csrfFilter", urlPatterns = "/*")
+@WebFilter(filterName = "CORSFilter", urlPatterns = "/*")
 public class CORSFilter extends OncePerRequestFilter {
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());

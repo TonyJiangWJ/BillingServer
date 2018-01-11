@@ -1,6 +1,6 @@
-package com.hundsun.emall.common.util;
+package com.tony.billing.util;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 public class ShaSignHelper {
 
