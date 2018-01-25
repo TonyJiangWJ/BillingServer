@@ -10,9 +10,11 @@ public class Liability {
     private Long id;
     private Date createTime;
     private Date repaymentDay;
+    private Date modifyTime;
     private String name;
     private String type;
     private Long amount;
+    private Integer status;
     private Integer installment;
     private Integer index;
 
@@ -78,5 +80,21 @@ public class Liability {
 
     public void setIndex(Integer index) {
         this.index = index;
+    }
+
+    public Date getModifyTime() {
+        return modifyTime;
+    }
+
+    public void setModifyTime(Date modifyTime) {
+        this.modifyTime = modifyTime;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
     }
 }

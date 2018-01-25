@@ -5,6 +5,7 @@ import com.tony.billing.annotation.Table;
 import com.tony.billing.entity.Asset;
 import com.tony.billing.entity.Budget;
 import com.tony.billing.entity.Liability;
+import com.tony.billing.entity.LoginLog;
 
 import java.lang.reflect.Field;
 import java.util.Date;
@@ -18,7 +19,7 @@ public class StaticCodeGeneratorUtil {
 //        generateAll(CostRecord.class, true);
 //        System.out.println(insertSqlGenerator(CostRecord.class, true));
 //        System.out.println("under_score_case SQL:");
-        generateAll(Liability.class, true);
+        generateAll(LoginLog.class, false);
     }
 
     public static void generateAll(Class clz, boolean isSqlCamelCase) {

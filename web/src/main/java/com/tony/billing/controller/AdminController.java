@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
@@ -43,7 +44,8 @@ public class AdminController extends BaseController {
     private String pwdSalt;
 
     @RequestMapping(value = "/user/login", method = RequestMethod.POST)
-    public BaseResponse login(@ModelAttribute("request") AdminLoginRequest request, HttpServletResponse httpServletResponse) {
+    public BaseResponse login(@ModelAttribute("request") AdminLoginRequest request, HttpServletRequest httpServletRequest,
+                              HttpServletResponse httpServletResponse) {
         BaseResponse response = new BaseResponse();
         if (StringUtils.isEmpty(request.getUserName())
                 || StringUtils.isEmpty(request.getPassword())) {
