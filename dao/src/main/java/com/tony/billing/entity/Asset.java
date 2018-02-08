@@ -9,6 +9,7 @@ public class Asset {
     private Long id;
     private String name;
     private String type;
+    private String parentType;
     private Long amount;
     private Date createTime;
     private Date modifyTime;
@@ -59,5 +60,13 @@ public class Asset {
 
     public void setModifyTime(Date modifyTime) {
         this.modifyTime = modifyTime;
+    }
+
+    public String getParentType() {
+        return parentType;
+    }
+
+    public void setParentType(String parentType) {
+        this.parentType = parentType;
     }
 }
