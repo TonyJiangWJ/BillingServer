@@ -22,14 +22,15 @@ import java.util.Map;
 
 /**
  * Author by TonyJiang on 2017/7/1.
+ * 权限校验
  */
 @Component
-public class InterceptorDemo implements HandlerInterceptor {
+public class AuthorityInterceptor implements HandlerInterceptor {
 
     @Autowired
     private AuthUtil authUtil;
 
-    private Logger logger = LoggerFactory.getLogger(InterceptorDemo.class);
+    private Logger logger = LoggerFactory.getLogger(AuthorityInterceptor.class);
 
     @Override
     public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o) throws Exception {
@@ -71,25 +72,5 @@ public class InterceptorDemo implements HandlerInterceptor {
             }
         }
         return false;
-    }
-
-
-    private void demo(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
-        Cookie[] cookies = httpServletRequest.getCookies();
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                logger.debug("cookie[name:{} value:{}]", cookie.getName(), cookie.getValue());
-            }
-            String url = httpServletRequest.getRequestURL().toString();
-            logger.info("headerInfo:{}", httpServletRequest.getHeader("Host"));
-            httpServletResponse.setHeader("Access-Control-Allow-Origin", url.substring(0, 7 + url.substring(7).indexOf("/")));
-            httpServletResponse.setHeader("Access-Control-Allow-Credentials", "true");
-        } else {
-            httpServletResponse.setHeader("Access-Control-Allow-Origin", "*");
-        }
-        Cookie cookie = new Cookie("preDemoCookieName", "preDemoCookieValue");
-        cookie.setPath("/");
-        cookie.setMaxAge(60880);
-        httpServletResponse.addCookie(cookie);
     }
 }
