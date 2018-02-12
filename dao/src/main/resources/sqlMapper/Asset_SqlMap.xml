@@ -3,17 +3,22 @@
 <mapper namespace="com.tony.billing.dao.mapper.AssetMapper">
     <sql id="all">
         id id,
+        user_id userId,
         name name,
         type type,
+        parent_type parentType,
         amount amount,
-        createTime createTime,
-        modifyTime modifyTime
+        create_time createTime,
+        modify_time modifyTime
     </sql>
     <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.tony.billing.entity.Asset">
-        INSERT INTO (
+        INSERT INTO t_asset (
         <trim suffixOverrides=",">
             <if test=" id!=null ">
                 id,
+            </if>
+            <if test=" userId!=null ">
+                user_id,
             </if>
             <if test=" name!=null and name!='' ">
                 name,
@@ -21,14 +26,17 @@
             <if test=" type!=null and type!='' ">
                 type,
             </if>
+            <if test=" parentType!=null and parentType!='' ">
+                parent_type,
+            </if>
             <if test=" amount!=null ">
                 amount,
             </if>
             <if test=" createTime!=null ">
-                createTime,
+                create_time,
             </if>
             <if test=" modifyTime!=null ">
-                modifyTime,
+                modify_time,
             </if>
         </trim>
         ) VALUES (
@@ -36,11 +44,17 @@
             <if test=" id!=null ">
                 #{id,jdbcType=BIGINT},
             </if>
+            <if test=" userId!=null">
+                #{userId,jdbcType=BIGINT},
+            </if>
             <if test=" name!=null and name!='' ">
                 #{name,jdbcType=VARCHAR},
             </if>
             <if test=" type!=null and type!='' ">
                 #{type,jdbcType=VARCHAR},
+            </if>
+            <if test=" parentType!=null and parentType!='' ">
+                #{parentType,jdbcType=VARCHAR},
             </if>
             <if test=" amount!=null ">
                 #{amount,jdbcType=BIGINT},
@@ -55,10 +69,13 @@
         )
     </insert>
     <update id="update" parameterType="com.tony.billing.entity.Asset">
-        UPDATE null
+        UPDATE t_asset
         <trim prefix="SET" suffixOverrides=",">
             <if test=" id!=null ">
                 id=#{id,jdbcType=BIGINT},
+            </if>
+            <if test=" userId!=null ">
+                user_id=#{userId,jdbcType=BIGINT},
             </if>
             <if test=" name!=null and name!='' ">
                 name=#{name,jdbcType=VARCHAR},
@@ -66,24 +83,30 @@
             <if test=" type!=null and type!='' ">
                 type=#{type,jdbcType=VARCHAR},
             </if>
+            <if test=" parentType!=null and parentType!='' ">
+                parent_type=#{parentType,jdbcType=VARCHAR},
+            </if>
             <if test=" amount!=null ">
                 amount=#{amount,jdbcType=BIGINT},
             </if>
             <if test=" createTime!=null ">
-                createTime=#{createTime,jdbcType=TIMESTAMP},
+                create_time=#{createTime,jdbcType=TIMESTAMP},
             </if>
             <if test=" modifyTime!=null ">
-                modifyTime=#{modifyTime,jdbcType=TIMESTAMP},
+                modify_time=#{modifyTime,jdbcType=TIMESTAMP},
             </if>
         </trim>
     </update>
     <select id="page" parameterType="java.util.Map" resultType="com.tony.billing.entity.Asset">
         SELECT
         <include refid="all"/>
-        FROM
+        FROM t_asset
         <trim prefix="WHERE" prefixOverrides="and">
             <if test=" id!=null ">
                 and id=#{id,jdbcType=BIGINT}
+            </if>
+            <if test=" userId!=null ">
+                and user_id=#{userId,jdbcType=BIGINT}
             </if>
             <if test=" name!=null and name!='' ">
                 and name=#{name,jdbcType=VARCHAR}
@@ -91,14 +114,17 @@
             <if test=" type!=null and type!='' ">
                 and type=#{type,jdbcType=VARCHAR}
             </if>
+            <if test=" parentType!=null and parentType!='' ">
+                and parent_type=#{parentType,jdbcType=VARCHAR}
+            </if>
             <if test=" amount!=null ">
                 and amount=#{amount,jdbcType=BIGINT}
             </if>
             <if test=" createTime!=null ">
-                and createTime=#{createTime,jdbcType=TIMESTAMP}
+                and create_time=#{createTime,jdbcType=TIMESTAMP}
             </if>
             <if test=" modifyTime!=null ">
-                and modifyTime=#{modifyTime,jdbcType=TIMESTAMP}
+                and modify_time=#{modifyTime,jdbcType=TIMESTAMP}
             </if>
         </trim>
         ORDER BY
@@ -114,10 +140,13 @@
     <select id="list" parameterType="com.tony.billing.entity.Asset" resultType="com.tony.billing.entity.Asset">
         SELECT
         <include refid="all"/>
-        FROM
+        FROM t_asset
         <trim prefix="WHERE" prefixOverrides="and">
             <if test=" id!=null ">
                 and id=#{id,jdbcType=BIGINT}
+            </if>
+            <if test=" userId!=null ">
+                and user_id=#{userId,jdbcType=BIGINT}
             </if>
             <if test=" name!=null and name!='' ">
                 and name=#{name,jdbcType=VARCHAR}
@@ -125,14 +154,17 @@
             <if test=" type!=null and type!='' ">
                 and type=#{type,jdbcType=VARCHAR}
             </if>
+            <if test=" parentType!=null and parentType!='' ">
+                and parent_type=#{parentType,jdbcType=VARCHAR}
+            </if>
             <if test=" amount!=null ">
                 and amount=#{amount,jdbcType=BIGINT}
             </if>
             <if test=" createTime!=null ">
-                and createTime=#{createTime,jdbcType=TIMESTAMP}
+                and create_time=#{createTime,jdbcType=TIMESTAMP}
             </if>
             <if test=" modifyTime!=null ">
-                and modifyTime=#{modifyTime,jdbcType=TIMESTAMP}
+                and modify_time=#{modifyTime,jdbcType=TIMESTAMP}
             </if>
         </trim>
     </select>

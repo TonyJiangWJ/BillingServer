@@ -3,31 +3,45 @@
 <mapper namespace="com.tony.billing.dao.mapper.LiabilityMapper">
     <sql id="all">
         id id,
-        createTime createTime,
-        repaymentDay repaymentDay,
+        user_id userId,
+        create_time createTime,
+        modify_time modifyTime,
+        repayment_day repaymentDay,
         name name,
         type type,
+        parent_type parentType,
         amount amount,
         installment installment,
-        index index
+        `index` 'index',
+        status status,
+        paid paid
     </sql>
     <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.tony.billing.entity.Liability">
-        INSERT INTO (
+        INSERT INTO t_liability (
         <trim suffixOverrides=",">
             <if test=" id!=null ">
                 id,
             </if>
+            <if test=" userId!=null ">
+                user_id,
+            </if>
             <if test=" createTime!=null ">
-                createTime,
+                create_time,
+            </if>
+            <if test=" modifyTime!=null ">
+                modify_time,
             </if>
             <if test=" repaymentDay!=null ">
-                repaymentDay,
+                repayment_day,
             </if>
             <if test=" name!=null and name!='' ">
                 name,
             </if>
             <if test=" type!=null and type!='' ">
                 type,
+            </if>
+            <if test=" parentType!=null and parentType!='' ">
+                parent_type,
             </if>
             <if test=" amount!=null ">
                 amount,
@@ -38,14 +52,26 @@
             <if test=" index!=null ">
                 index,
             </if>
+            <if test=" status!=null ">
+                status,
+            </if>
+            <if test=" paid!=null ">
+                paid,
+            </if>
         </trim>
         ) VALUES (
         <trim suffixOverrides=",">
             <if test=" id!=null ">
                 #{id,jdbcType=BIGINT},
             </if>
+            <if test=" userId!=null ">
+                #{userId,jdbcType=BIGINT},
+            </if>
             <if test=" createTime!=null ">
                 #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test=" modifyTime!=null ">
+                #{modifyTime,jdbcType=TIMESTAMP},
             </if>
             <if test=" repaymentDay!=null ">
                 #{repaymentDay,jdbcType=TIMESTAMP},
@@ -56,6 +82,9 @@
             <if test=" type!=null and type!='' ">
                 #{type,jdbcType=VARCHAR},
             </if>
+            <if test=" parentType!=null and parentType!='' ">
+                #{parentType,jdbcType=VARCHAR},
+            </if>
             <if test=" amount!=null ">
                 #{amount,jdbcType=BIGINT},
             </if>
@@ -65,26 +94,41 @@
             <if test=" index!=null ">
                 #{index,jdbcType=INTEGER},
             </if>
+            <if test=" status!=null ">
+                #{status,jdbcType=INTEGER},
+            </if>
+            <if test=" paid!=null ">
+                #{paid,jdbcType=BIGINT},
+            </if>
         </trim>
         )
     </insert>
     <update id="update" parameterType="com.tony.billing.entity.Liability">
-        UPDATE null
+        UPDATE t_liability
         <trim prefix="SET" suffixOverrides=",">
             <if test=" id!=null ">
                 id=#{id,jdbcType=BIGINT},
             </if>
+            <if test=" userId!=null ">
+                user_id=#{userId,jdbcType=BIGINT},
+            </if>
             <if test=" createTime!=null ">
-                createTime=#{createTime,jdbcType=TIMESTAMP},
+                create_time=#{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test=" modifyTime!=null ">
+                modify_time=#{modifyTime,jdbcType=TIMESTAMP},
             </if>
             <if test=" repaymentDay!=null ">
-                repaymentDay=#{repaymentDay,jdbcType=TIMESTAMP},
+                repayment_day=#{repaymentDay,jdbcType=TIMESTAMP},
             </if>
             <if test=" name!=null and name!='' ">
                 name=#{name,jdbcType=VARCHAR},
             </if>
             <if test=" type!=null and type!='' ">
                 type=#{type,jdbcType=VARCHAR},
+            </if>
+            <if test=" parentType!=null and parentType!='' ">
+                parent_type=#{parentType,jdbcType=VARCHAR},
             </if>
             <if test=" amount!=null ">
                 amount=#{amount,jdbcType=BIGINT},
@@ -95,27 +139,42 @@
             <if test=" index!=null ">
                 index=#{index,jdbcType=INTEGER},
             </if>
+            <if test=" status!=null ">
+                status=#{status,jdbcType=INTEGER},
+            </if>
+            <if test=" paid!=null ">
+                paid=#{paid,jdbcType=BIGINT},
+            </if>
         </trim>
     </update>
     <select id="page" parameterType="java.util.Map" resultType="com.tony.billing.entity.Liability">
         SELECT
         <include refid="all"/>
-        FROM
+        FROM t_liability
         <trim prefix="WHERE" prefixOverrides="and">
             <if test=" id!=null ">
                 and id=#{id,jdbcType=BIGINT}
             </if>
+            <if test=" userId!=null ">
+                and user_id=#{userId,jdbcType=BIGINT}
+            </if>
             <if test=" createTime!=null ">
-                and createTime=#{createTime,jdbcType=TIMESTAMP}
+                and create_time=#{createTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test=" modifyTime!=null ">
+                and modify_time=#{modifyTime,jdbcType=TIMESTAMP}
             </if>
             <if test=" repaymentDay!=null ">
-                and repaymentDay=#{repaymentDay,jdbcType=TIMESTAMP}
+                and repayment_day=#{repaymentDay,jdbcType=TIMESTAMP}
             </if>
             <if test=" name!=null and name!='' ">
                 and name=#{name,jdbcType=VARCHAR}
             </if>
             <if test=" type!=null and type!='' ">
                 and type=#{type,jdbcType=VARCHAR}
+            </if>
+            <if test=" parentType!=null and parentType!='' ">
+                and parent_type=#{parentType,jdbcType=VARCHAR}
             </if>
             <if test=" amount!=null ">
                 and amount=#{amount,jdbcType=BIGINT}
@@ -125,6 +184,12 @@
             </if>
             <if test=" index!=null ">
                 and index=#{index,jdbcType=INTEGER}
+            </if>
+            <if test=" status!=null ">
+                and status=#{status,jdbcType=INTEGER}
+            </if>
+            <if test=" paid!=null ">
+                and paid=#{paid,jdbcType=BIGINT}
             </if>
         </trim>
         ORDER BY
@@ -140,22 +205,31 @@
     <select id="list" resultType="com.tony.billing.entity.Liability" parameterType="com.tony.billing.entity.Liability">
         SELECT
         <include refid="all"/>
-        FROM
+        FROM t_liability
         <trim prefix="WHERE" prefixOverrides="and">
             <if test=" id!=null ">
                 and id=#{id,jdbcType=BIGINT}
             </if>
+            <if test=" userId!=null ">
+                and user_id=#{userId,jdbcType=BIGINT}
+            </if>
             <if test=" createTime!=null ">
-                and createTime=#{createTime,jdbcType=TIMESTAMP}
+                and create_time=#{createTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test=" modifyTime!=null ">
+                and modify_time=#{modifyTime,jdbcType=TIMESTAMP}
             </if>
             <if test=" repaymentDay!=null ">
-                and repaymentDay=#{repaymentDay,jdbcType=TIMESTAMP}
+                and repayment_day=#{repaymentDay,jdbcType=TIMESTAMP}
             </if>
             <if test=" name!=null and name!='' ">
                 and name=#{name,jdbcType=VARCHAR}
             </if>
             <if test=" type!=null and type!='' ">
                 and type=#{type,jdbcType=VARCHAR}
+            </if>
+            <if test=" parentType!=null and parentType!='' ">
+                and parent_type=#{parentType,jdbcType=VARCHAR}
             </if>
             <if test=" amount!=null ">
                 and amount=#{amount,jdbcType=BIGINT}
@@ -165,6 +239,12 @@
             </if>
             <if test=" index!=null ">
                 and index=#{index,jdbcType=INTEGER}
+            </if>
+            <if test=" status!=null ">
+                and status=#{status,jdbcType=INTEGER}
+            </if>
+            <if test=" paid!=null ">
+                and paid=#{paid,jdbcType=BIGINT}
             </if>
         </trim>
     </select>

@@ -8,15 +8,18 @@ import java.util.Date;
 public class Liability {
 
     private Long id;
+    private Long userId;
     private Date createTime;
     private Date repaymentDay;
     private Date modifyTime;
     private String name;
     private String type;
+    private String parentType;
     private Long amount;
     private Integer status;
     private Integer installment;
     private Integer index;
+    private Long paid;
 
     public Long getId() {
         return id;
@@ -24,6 +27,14 @@ public class Liability {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     public Date getCreateTime() {
@@ -56,6 +67,14 @@ public class Liability {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getParentType() {
+        return parentType;
+    }
+
+    public void setParentType(String parentType) {
+        this.parentType = parentType;
     }
 
     public Long getAmount() {
@@ -96,5 +115,13 @@ public class Liability {
 
     public void setStatus(Integer status) {
         this.status = status;
+    }
+
+    public Long getPaid() {
+        return paid;
+    }
+
+    public void setPaid(Long paid) {
+        this.paid = paid;
     }
 }

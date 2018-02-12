@@ -8,9 +8,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 /**
- * <p>
- * </p>
- * <li></li>
  *
  * @author jiangwj20966 2018/2/9
  */
@@ -23,7 +20,7 @@ public class ThymeleafController {
         return "hello";
     }
 
-    @RequestMapping("/asset/asset")
+    @RequestMapping("/thymeleaf/asset")
     public String asset(Model model, @ModelAttribute("request") BaseRequest request) {
         model.addAttribute("totalLiability", 8000);
         return "/asset/asset";

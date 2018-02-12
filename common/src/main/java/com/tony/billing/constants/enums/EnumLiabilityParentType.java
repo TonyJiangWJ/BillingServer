@@ -4,27 +4,27 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Author by Tony- on 2018/1/27
+ * @author TonyJiang on 2018/2/12
  */
-public enum EnumAssetParentType {
-    CRASH("1", "现金"),
-    ALIPAY("2", "支付宝"),
+public enum EnumLiabilityParentType {
+    ALIPAY("1", "支付宝"),
+    CREDIT("2", "信用卡"),
     JD("3", "京东"),
-    BANK_CARD("4", "银行卡"),
+    XIAOMI("4", "小米"),
     OTHER("99", "其他");
 
     private String type;
     private String desc;
-    private static Map<String, EnumAssetParentType> pool = new HashMap<>();
+
+    private static Map<String, EnumLiabilityParentType> pool = new HashMap<>();
 
     static {
-        for (EnumAssetParentType types : EnumAssetParentType.values()) {
+        for (EnumLiabilityParentType types : EnumLiabilityParentType.values()) {
             pool.put(types.getType(), types);
         }
     }
 
-
-    EnumAssetParentType(String type, String desc) {
+    EnumLiabilityParentType(String type, String desc) {
         this.type = type;
         this.desc = desc;
     }
@@ -37,7 +37,7 @@ public enum EnumAssetParentType {
         return desc;
     }
 
-    public static EnumAssetParentType getEnumByType(String type) {
+    public static EnumLiabilityParentType getEnumByType(String type) {
         return pool.get(type);
     }
 }

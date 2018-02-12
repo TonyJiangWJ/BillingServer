@@ -4,8 +4,8 @@
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <title>资产概览</title>
-    <link rel="stylesheet" type="text/css" th:href="@{/layui/css/layui.css}" href="../../static/layui/css/layui.css"/>
-    <script type="text/javascript" th:src="@{/layui/layui.js}" src="../../static/layui/layui.js"></script>
+    <link rel="stylesheet" type="text/css" th:href="@{/layui/css/layui.css}" href="../../../static/layui/css/layui.css"/>
+    <script type="text/javascript" th:src="@{/layui/layui.js}" src="../../../static/layui/layui.js"></script>
 </head>
 <script>
     layui.use('element', function () {
@@ -21,59 +21,23 @@
         <div>
             <h2>
                 <span style="margin-left: 5px;">总资产</span>
-                <span th:text="'$2000'" style="color: green;">￥6620</span>
+                <span th:text="'￥'+${assetManageDTO.totalAsset}/100" style="color: green;">￥6620</span>
                 <button style="margin-left: 5px;" class="layui-btn layui-btn-xs layui-btn-normal">展开全部</button>
                 <button class="layui-btn layui-btn-xs layui-btn-warm">关闭全部</button>
             </h2>
         </div>
         <div style="margin: 5px;">
-            <div class="layui-collapse layui-text">
+            <div class="layui-collapse layui-text" th:each="asset,assetStatus:${assetManageDTO.assetModels}">
                 <div class="layui-colla-item">
                     <div class="layui-colla-title">
-                        <h4>支付宝 <span th:text="'$2000'">￥1000</span></h4>
+                        <h4><span th:text="${asset.name}">支付宝</span> <span th:text="${asset.total}/100">￥1000</span></h4>
                     </div>
                     <div class="layui-colla-content">
-                        <ul>
-                            <li>余额 <span th:text="'$2000'">￥0</span></li>
-                            <li>余利宝 <span th:text="'$2000'">￥600</span></li>
-                            <li>余额宝 <span th:text="'$2000'">￥398</span></li>
-                            <li>基金 <span th:text="'$2000'">￥100</span></li>
-                            <li>黄金 <span th:text="'$2000'">￥2</span></li>
+                        <ul th:each="detail:${asset.assetList}">
+                            <li><span th:text="${detail.name}">余额</span> <span th:text="${detail.amount}/100">￥0</span></li>
                         </ul>
                     </div>
                 </div>
-                <div class="layui-colla-item">
-                    <div class="layui-colla-title">
-                        <h4>京东 <span th:text="'$2000'">￥5000</span></h4>
-                    </div>
-                    <div class="layui-colla-content">
-                        <ul>
-                            <li>小金库 <span th:text="'$2000'">￥800</span></li>
-                            <li>理财金 <span th:text="'$2000'">￥4200</span></li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="layui-colla-item">
-                    <div class="layui-colla-title">
-                        <h4>银行卡 <span th:text="'$2000'">￥400</span></h4>
-                    </div>
-                    <div class="layui-colla-content">
-                        <ul>
-                            <li>招行卡 <span th:text="'$2000'">￥400</span></li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="layui-colla-item">
-                    <div class="layui-colla-title">
-                        <h4>其他 <span th:text="'$2000'">￥220</span></h4>
-                    </div>
-                    <div class="layui-colla-content">
-                        <ul>
-                            <li>现金 <span th:text="'$2000'">￥220</span></li>
-                        </ul>
-                    </div>
-                </div>
-
             </div>
         </div>
     </div>
@@ -81,57 +45,21 @@
         <div>
             <h2>
                 <span style="margin-left: 5px;">总负债</span>
-                <span th:text="'$'+${totalLiability}" style="color: red;">￥6000</span>
+                <span th:text="'￥'+${assetManageDTO.totalLiability}/100" style="color: red;">￥6000</span>
                 <button style="margin-left: 5px;" class="layui-btn layui-btn-xs layui-btn-normal">展开全部</button>
                 <button class="layui-btn layui-btn-xs layui-btn-warm">关闭全部</button>
             </h2>
         </div>
         <div style="margin: 5px;">
-            <div class="layui-collapse layui-text">
+            <div class="layui-collapse layui-text" th:each="liability:${assetManageDTO.liabilityModels}">
                 <div class="layui-colla-item">
                     <div class="layui-colla-title">
-                        <h4>支付宝 <span th:text="'$2000'">￥2000</span></h4>
+                        <h4><span th:text="${liability.name}">支付宝</span> <span th:text="${liability.total}/100">￥2000</span></h4>
                     </div>
                     <div class="layui-colla-content">
-                        <ul>
+                        <ul th:each="detail:${liability.liabilityList}">
                             <li>
-                                花呗 <span th:text="'$2000'">￥2000</span>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="layui-colla-item">
-                    <div class="layui-colla-title">
-                        <h4>信用卡 <span th:text="'$2000'">￥2000</span></h4>
-                    </div>
-                    <div class="layui-colla-content">
-                        <ul>
-                            <li>
-                                招行信用卡 <span th:text="'$2000'">￥2000</span>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="layui-colla-item">
-                    <div class="layui-colla-title">
-                        <h4>京东 <span th:text="'$2000'">￥2000</span></h4>
-                    </div>
-                    <div class="layui-colla-content">
-                        <ul>
-                            <li>
-                                白条 <span th:text="'$2000'">￥2000</span>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="layui-colla-item">
-                    <div class="layui-colla-title">
-                        <h4>小米 <span th:text="'$2000'">￥2000</span></h4>
-                    </div>
-                    <div class="layui-colla-content">
-                        <ul>
-                            <li>
-                                小米分期 <span th:text="'$2000'">￥2000</span>
+                                <span th:text="${detail.name}">花呗</span> <span th:text="${detail.amount}/100">￥2000</span>
                             </li>
                         </ul>
                     </div>
@@ -140,7 +68,7 @@
         </div>
     </div>
     <div class="layui-col-md12 layui-col-xs12">
-        <div style="margin: 5px;"><h2>净资产<span th:text="'￥'+'-2000'">800</span></h2></div>
+        <div style="margin: 5px;"><h2>净资产<span th:text="'￥'+${assetManageDTO.cleanAsset}/100">800</span></h2></div>
     </div>
     <div class="layui-col-md12 layui-col-xs12">
         <fieldset class="layui-elem-field layui-field-title">
