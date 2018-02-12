@@ -38,7 +38,6 @@ public class LoginResultInterceptor {
         loginLog.setCode(response.getCode());
         loginLog.setMsg(response.getMsg());
         loginLogService.addLog(loginLog);
-
         logger.info("{} 请求登录, 结果：{}", loginLog.getUserName(), loginLog.getLoginResult());
         logger.info("ip地址：{}", loginLog.getLoginIp());
         Long id;

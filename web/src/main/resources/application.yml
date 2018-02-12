@@ -26,7 +26,7 @@ spring:
       database: 0
       host: 112.74.175.214
       port: 6379
-      password:
+      password: 
       pool:
         max-active: 8
         max-wait: -1
@@ -34,6 +34,8 @@ spring:
         min-idle: 0
       timeout: 3000
 
+    thymeleaf:
+      cache: false
 # MyBatis
 mybatis:
     typeAliasesPackage: com.tony.billing.entity
