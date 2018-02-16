@@ -10,9 +10,9 @@ import com.tony.billing.response.BaseResponse;
 import com.tony.billing.service.AdminService;
 import com.tony.billing.util.AuthUtil;
 import com.tony.billing.util.CodeGeneratorUtil;
-import com.tony.billing.util.Md5Util;
 import com.tony.billing.util.RSAUtil;
 import com.tony.billing.util.ResponseUtil;
+import com.tony.billing.util.ShaSignHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
@@ -43,7 +44,8 @@ public class AdminController extends BaseController {
     private String pwdSalt;
 
     @RequestMapping(value = "/user/login", method = RequestMethod.POST)
-    public BaseResponse login(@ModelAttribute("request") AdminLoginRequest request, HttpServletResponse httpServletResponse) {
+    public BaseResponse login(@ModelAttribute("request") AdminLoginRequest request, HttpServletRequest httpServletRequest,
+                              HttpServletResponse httpServletResponse) {
         BaseResponse response = new BaseResponse();
         if (StringUtils.isEmpty(request.getUserName())
                 || StringUtils.isEmpty(request.getPassword())) {
@@ -52,7 +54,7 @@ public class AdminController extends BaseController {
         try {
             Admin loginAdmin = new Admin();
             loginAdmin.setUserName(request.getUserName());
-            loginAdmin.setPassword(md5(rsaUtil.decrypt(request.getPassword())));
+            loginAdmin.setPassword(sha256(rsaUtil.decrypt(request.getPassword())));
             logger.debug("salt:{}", pwdSalt);
             if (loginAdmin.getPassword() == null) {
                 return ResponseUtil.error(response);
@@ -81,7 +83,7 @@ public class AdminController extends BaseController {
             }
             Admin admin = new Admin();
             admin.setUserName(registerRequest.getUserName());
-            admin.setPassword(md5(rsaUtil.decrypt(registerRequest.getPassword())));
+            admin.setPassword(sha256(rsaUtil.decrypt(registerRequest.getPassword())));
             if (admin.getPassword() == null) {
                 return ResponseUtil.error(response);
             }
@@ -118,8 +120,8 @@ public class AdminController extends BaseController {
         ModifyAdmin modifyAdmin = new ModifyAdmin();
 
         modifyAdmin.setId(request.getUserId());
-        modifyAdmin.setNewPassword(md5(request.getNewPassword()));
-        modifyAdmin.setPassword(md5(request.getOldPassword()));
+        modifyAdmin.setNewPassword(sha256(request.getNewPassword()));
+        modifyAdmin.setPassword(sha256(request.getOldPassword()));
         if (adminService.modifyPwd(modifyAdmin)) {
             return ResponseUtil.success(response);
         } else {
@@ -127,7 +129,11 @@ public class AdminController extends BaseController {
         }
     }
 
-    private String md5(String pwd) {
-        return Md5Util.md5(pwd + pwdSalt);
+    private String sha256(String pwd) {
+        if (pwd != null) {
+            return ShaSignHelper.sign(pwd, pwdSalt);
+        } else {
+            return null;
+        }
     }
 }

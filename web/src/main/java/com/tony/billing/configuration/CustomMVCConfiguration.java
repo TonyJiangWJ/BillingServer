@@ -1,6 +1,6 @@
 package com.tony.billing.configuration;
 
-import com.tony.billing.interceptors.InterceptorDemo;
+import com.tony.billing.interceptors.AuthorityInterceptor;
 import com.tony.billing.interceptors.LoginInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -21,7 +21,7 @@ import java.util.List;
 public class CustomMVCConfiguration extends WebMvcConfigurerAdapter {
 
     @Autowired
-    private InterceptorDemo interceptorDemo;
+    private AuthorityInterceptor authorityInterceptor;
     @Autowired
     private LoginInterceptor loginInterceptor;
 
@@ -47,10 +47,13 @@ public class CustomMVCConfiguration extends WebMvcConfigurerAdapter {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(interceptorDemo)
+        registry.addInterceptor(authorityInterceptor)
                 .excludePathPatterns("/bootDemo/user/login*")
                 .excludePathPatterns("/bootDemo/user/register/put*")
-                .addPathPatterns("/bootDemo/**");
+                .excludePathPatterns("/thymeleaf/login*")
+                .excludePathPatterns("/thymeleaf/register/put*")
+                .addPathPatterns("/bootDemo/**")
+                .addPathPatterns("/thymeleaf/**");
         registry.addInterceptor(loginInterceptor).addPathPatterns("/bootDemo/user/login*")
                 .addPathPatterns("/bootDemo/user/register/put*");
         super.addInterceptors(registry);

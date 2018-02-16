@@ -13,14 +13,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 @Order(0)
-@WebFilter(filterName = "csrfFilter", urlPatterns = "/*")
+@WebFilter(filterName = "CORSFilter", urlPatterns = "/*")
 public class CORSFilter extends OncePerRequestFilter {
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
-        logger.info("收到请求{}", JSON.toJSONString(httpServletRequest.getParameterMap()));
+        logger.debug("收到请求{}", JSON.toJSONString(httpServletRequest.getParameterMap()));
         httpServletResponse.setHeader("Access-Control-Allow-Origin", httpServletRequest.getHeader("Origin"));
         httpServletResponse.setHeader("Access-Control-Allow-Credentials", "true");
         filterChain.doFilter(httpServletRequest, httpServletResponse);

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>资产概览</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/layui/css/layui.css}" href="../../../static/layui/css/layui.css"/>
+    <script type="text/javascript" th:src="@{/layui/layui.js}" src="../../../static/layui/layui.js"></script>
+    <script type="text/javascript" th:src="@{/scripts/jquery-3.1.1.min.js}" src="../../../static/scripts/jquery-3.1.1.min.js"></script>
+</head>
+<script>
+    layui.use(['element','jquery'], function () {
+        var element = layui.element;
+        var $ = layui.$;
+    });
+
+    function toggleHideOrExpand(self) {
+        $(self).next('.layui-timeline-content').find('.layui-collapse').toggle("hide");
+    }
+
+</script>
+<body>
+<div class="layui-container">
+    <fieldset class="layui-elem-field layui-field-title">
+        <legend>概览</legend>
+    </fieldset>
+    <div class="layui-col-md6 layui-col-xs12">
+        <div>
+            <h2>
+                <span style="margin-left: 5px;">总资产</span>
+                <span th:text="'￥'+${assetManageDTO.totalAsset}/100" style="color: green;">￥6620</span>
+                <button style="margin-left: 5px;" class="layui-btn layui-btn-xs layui-btn-normal">展开全部</button>
+                <button class="layui-btn layui-btn-xs layui-btn-warm">关闭全部</button>
+            </h2>
+        </div>
+        <div style="margin: 5px;">
+            <div class="layui-collapse layui-text" th:each="asset,assetStatus:${assetManageDTO.assetModels}">
+                <div class="layui-colla-item">
+                    <div class="layui-colla-title">
+                        <h4><span th:text="${asset.name}">支付宝</span> <span th:text="${asset.total}/100">￥1000</span></h4>
+                    </div>
+                    <div class="layui-colla-content">
+                        <ul th:each="detail:${asset.assetList}">
+                            <li><span th:text="${detail.name}">余额</span> <span th:text="${detail.amount}/100">￥0</span></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="layui-col-md6 layui-col-xs12">
+        <div>
+            <h2>
+                <span style="margin-left: 5px;">总负债</span>
+                <span th:text="'￥'+${assetManageDTO.totalLiability}/100" style="color: red;">￥6000</span>
+                <button style="margin-left: 5px;" class="layui-btn layui-btn-xs layui-btn-normal">展开全部</button>
+                <button class="layui-btn layui-btn-xs layui-btn-warm">关闭全部</button>
+            </h2>
+        </div>
+        <div style="margin: 5px;">
+            <div class="layui-collapse layui-text" th:each="liability:${assetManageDTO.liabilityModels}">
+                <div class="layui-colla-item">
+                    <div class="layui-colla-title">
+                        <h4><span th:text="${liability.name}">支付宝</span> <span th:text="${liability.total}/100">￥2000</span></h4>
+                    </div>
+                    <div class="layui-colla-content">
+                        <ul th:each="detail:${liability.liabilityList}">
+                            <li>
+                                <span th:text="${detail.name}">花呗</span> <span th:text="${detail.amount}/100">￥2000</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="layui-col-md12 layui-col-xs12">
+        <div style="margin: 5px;"><h2>净资产<span th:text="'￥'+${assetManageDTO.cleanAsset}/100">800</span></h2></div>
+    </div>
+    <div class="layui-col-md12 layui-col-xs12">
+        <fieldset class="layui-elem-field layui-field-title">
+            <legend>分期还款</legend>
+        </fieldset>
+        <div>
+            <ul class="layui-timeline">
+                <li class="layui-timeline-item" th:each="monthLiability:${assetManageDTO.monthLiabilityModels}">
+                    <i class="layui-icon layui-timeline-axis" onclick="toggleHideOrExpand(this)">&#xe63f;</i>
+                    <div class="layui-timeline-content layui-text">
+                        <h3 class="layui-timeline-title">
+                            <span th:text="${monthLiability.month}">2018年2月</span> <span>￥</span><span th:text="${monthLiability.total}/100">6000</span>
+                        </h3>
+                        <div style="display: none" class="layui-collapse" th:each="liabilityModel:${monthLiability.liabilityModels}">
+                            <div class="layui-colla-item">
+                                <h4 class="layui-colla-title"><span th:text="${liabilityModel.name}">支付宝</span> <span th:text="${liabilityModel.total}/100">￥2000</span></h4>
+                                <div class="layui-colla-content">
+                                    <ul th:each="detail:${liabilityModel.liabilityList}">
+                                        <li>
+                                            <span th:text="${detail.name}">花呗</span> <span th:text="${detail.amount}/100">￥2000</span> <span th:text="${detail.index}">1</span><span>/</span><span th:text="${detail.installment}">12</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
