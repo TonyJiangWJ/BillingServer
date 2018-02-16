@@ -46,8 +46,10 @@ DROP TABLE IF EXISTS `t_asset`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `t_asset` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `user_id` bigint(20) NOT NULL,
   `name` varchar(128) DEFAULT NULL,
   `type` varchar(16) DEFAULT NULL,
+  `parent_type` varchar(16) NOT NULL,
   `amount` bigint(20) NOT NULL,
   `create_time` datetime NOT NULL,
   `modify_time` datetime DEFAULT NULL,
@@ -168,13 +170,19 @@ DROP TABLE IF EXISTS `t_liability`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `t_liability` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `create_time` datetime NOT NULL,
-  `repayment_day` datetime NOT NULL,
-  `name` varchar(128) DEFAULT NULL,
-  `type` varchar(16) DEFAULT NULL,
-  `amount` bigint(20) DEFAULT NULL,
-  `installment` int(11) DEFAULT NULL,
-  `index` int(11) DEFAULT NULL,
+  `user_id` bigint(20) NOT NULL,
+  `create_time` datetime NOT NULL COMMENT '创建时间',
+  `modify_time` datetime NOT NULL COMMENT '修改时间',
+  `repayment_day` datetime NOT NULL COMMENT '还款时间',
+  `name` varchar(128) DEFAULT NULL COMMENT '名称',
+  `type` varchar(16) DEFAULT NULL COMMENT '类型',
+  `parent_type` varchar(16) NOT NULL,
+  `amount` bigint(20) DEFAULT NULL COMMENT '总金额 单位分',
+  `installment` int(11) DEFAULT NULL COMMENT '分期总期数',
+  `index` int(11) DEFAULT NULL COMMENT '第几期',
+  `isDelete` tinyint(4) NOT NULL DEFAULT '0' COMMENT '是否删除0否 1是',
+  `status` int(11) NOT NULL DEFAULT '0' COMMENT '当前状态0 未还，1已还',
+  `paid` bigint(20) NOT NULL DEFAULT '0' COMMENT '已还金额',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -210,4 +218,4 @@ CREATE TABLE `t_tag_info` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-01-11 17:20:49
+-- Dump completed on 2018-02-13 21:14:21

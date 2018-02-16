@@ -5,7 +5,7 @@ import java.util.Date;
 /**
  * 分期负债
  */
-public class Liability {
+public class Liability implements Comparable<Liability> {
 
     private Long id;
     private Long userId;
@@ -123,5 +123,19 @@ public class Liability {
 
     public void setPaid(Long paid) {
         this.paid = paid;
+    }
+
+    @Override
+    public int compareTo(Liability o) {
+        if (o == null) {
+            return 1;
+        }
+        Liability target = (Liability) o;
+        if (this.repaymentDay.getTime() > target.getRepaymentDay().getTime()) {
+            return 1;
+        } else if (this.repaymentDay.getTime() == target.getRepaymentDay().getTime()) {
+            return 0;
+        }
+        return -1;
     }
 }

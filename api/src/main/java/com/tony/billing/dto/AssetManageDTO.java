@@ -2,6 +2,7 @@ package com.tony.billing.dto;
 
 import com.tony.billing.model.AssetModel;
 import com.tony.billing.model.LiabilityModel;
+import com.tony.billing.model.MonthLiabilityModel;
 
 import java.util.List;
 
@@ -15,6 +16,7 @@ public class AssetManageDTO {
     private Long cleanAsset;// 净资产
     private List<AssetModel> assetModels;
     private List<LiabilityModel> liabilityModels;
+    private List<MonthLiabilityModel> monthLiabilityModels;
 
     public Long getTotalAsset() {
         return totalAsset;
@@ -54,5 +56,13 @@ public class AssetManageDTO {
 
     public void setLiabilityModels(List<LiabilityModel> liabilityModels) {
         this.liabilityModels = liabilityModels;
+    }
+
+    public List<MonthLiabilityModel> getMonthLiabilityModels() {
+        return monthLiabilityModels;
+    }
+
+    public void setMonthLiabilityModels(List<MonthLiabilityModel> monthLiabilityModels) {
+        this.monthLiabilityModels = monthLiabilityModels;
     }
 }

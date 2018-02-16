@@ -45,6 +45,8 @@ public class AssetManageController extends BaseController {
         assetManageDTO.setTotalLiability(getTotalLiability(assetManageDTO.getLiabilityModels()));
         // 计算净资产
         assetManageDTO.setCleanAsset(assetManageDTO.getTotalAsset() - assetManageDTO.getTotalLiability());
+        // 计算每月还款信息
+        assetManageDTO.setMonthLiabilityModels(liabilityService.getMonthLiabilityModelsByUserId(request.getUserId()));
         model.addAttribute("assetManageDTO", assetManageDTO);
         return "/thymeleaf/asset/manage";
     }
