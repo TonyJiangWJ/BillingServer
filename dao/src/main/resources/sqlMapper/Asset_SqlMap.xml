@@ -168,4 +168,10 @@
             </if>
         </trim>
     </select>
+
+    <select id="getById" parameterType="Long" resultType="com.tony.billing.entity.Asset">
+        SELECT
+        <include refid="all"/>
+        FROM t_asset WHERE id=#{id,jdbcType=BIGINT}
+    </select>
 </mapper>

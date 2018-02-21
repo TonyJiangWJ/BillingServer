@@ -248,4 +248,11 @@
             </if>
         </trim>
     </select>
+
+    <select id="getById" resultType="com.tony.billing.entity.Liability" parameterType="Long">
+        SELECT
+        <include refid="all"/>
+        FROM t_liability
+        WHERE id=#{id, jdbcType=BIGINT}
+    </select>
 </mapper>

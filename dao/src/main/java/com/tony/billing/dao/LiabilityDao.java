@@ -13,4 +13,6 @@ public interface LiabilityDao {
     List<Liability> page(Map params);
 
     List<Liability> list(Liability liability);
+
+    Liability getLiabilityById(Long id);
 }

@@ -6,6 +6,7 @@ import com.tony.billing.entity.Liability;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -22,6 +23,7 @@ public class LiabilityDaoImpl implements LiabilityDao {
 
     @Override
     public Long update(Liability liability) {
+        liability.setModifyTime(new Date());
         return liabilityMapper.update(liability);
     }
 
@@ -33,5 +35,10 @@ public class LiabilityDaoImpl implements LiabilityDao {
     @Override
     public List<Liability> list(Liability liability) {
         return liabilityMapper.list(liability);
+    }
+
+    @Override
+    public Liability getLiabilityById(Long id) {
+        return liabilityMapper.getById(id);
     }
 }

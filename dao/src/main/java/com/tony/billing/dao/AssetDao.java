@@ -14,4 +14,6 @@ public interface AssetDao {
     List<Asset> page(Map params);
 
     List<Asset> list(Asset asset);
+
+    Asset getAssetById(Long id);
 }

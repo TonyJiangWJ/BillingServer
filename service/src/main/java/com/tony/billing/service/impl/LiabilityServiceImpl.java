@@ -94,6 +94,17 @@ public class LiabilityServiceImpl implements LiabilityService {
         return monthLiabilityModels;
     }
 
+    @Override
+    public LiabilityDTO getLiabilityInfoById(Long id) {
+        Liability liability = liabilityDao.getLiabilityById(id);
+        return bindDTO(liability);
+    }
+
+    @Override
+    public boolean modifyLiabilityInfoById(Liability liability) {
+        return liabilityDao.update(liability) > 0;
+    }
+
     private void insertIntoModels(List<LiabilityModel> liabilityModels, Liability liability) {
         boolean inserted = false;
         for (LiabilityModel model : liabilityModels) {
@@ -155,6 +166,9 @@ public class LiabilityServiceImpl implements LiabilityService {
     }
 
     private LiabilityDTO bindDTO(Liability liability) {
+        if (liability == null) {
+            return null;
+        }
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         LiabilityDTO liabilityDTO = new LiabilityDTO();
         liabilityDTO.setId(liability.getId());

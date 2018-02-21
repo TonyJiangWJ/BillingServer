@@ -1,5 +1,6 @@
 package com.tony.billing.service;
 
+import com.tony.billing.dto.LiabilityDTO;
 import com.tony.billing.entity.Liability;
 import com.tony.billing.model.LiabilityModel;
 import com.tony.billing.model.MonthLiabilityModel;
@@ -23,4 +24,18 @@ public interface LiabilityService {
      * @return
      */
     List<MonthLiabilityModel> getMonthLiabilityModelsByUserId(Long userId);
+
+    /**
+     * 查看负债详情
+     * @param id
+     * @return
+     */
+    LiabilityDTO getLiabilityInfoById(Long id);
+
+    /**
+     * 修改负债信息
+     * @param liability
+     * @return
+     */
+    boolean modifyLiabilityInfoById(Liability liability);
 }
