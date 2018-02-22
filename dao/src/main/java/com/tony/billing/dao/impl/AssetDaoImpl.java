@@ -6,6 +6,7 @@ import com.tony.billing.entity.Asset;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -22,6 +23,7 @@ public class AssetDaoImpl implements AssetDao {
 
     @Override
     public Long update(Asset asset) {
+        asset.setModifyTime(new Date());
         return assetMapper.update(asset);
     }
 
@@ -33,5 +35,10 @@ public class AssetDaoImpl implements AssetDao {
     @Override
     public List<Asset> list(Asset asset) {
         return assetMapper.list(asset);
+    }
+
+    @Override
+    public Asset getAssetById(Long id) {
+        return assetMapper.getById(id);
     }
 }

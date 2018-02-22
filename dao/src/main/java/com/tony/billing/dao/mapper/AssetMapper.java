@@ -15,4 +15,5 @@ public interface AssetMapper {
 
     List<Asset> list(Asset asset);
 
+    Asset getById(Long id);
 }

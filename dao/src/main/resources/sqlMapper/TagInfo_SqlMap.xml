@@ -57,9 +57,6 @@
     <update id="update" parameterType="com.tony.billing.entity.TagInfo">
         UPDATE t_tag_info
         <trim prefix="SET" suffixOverrides=",">
-            <if test=" id!=null ">
-                id=#{id,jdbcType=BIGINT},
-            </if>
             <if test=" tagName!=null and tagName!='' ">
                 tagName=#{tagName,jdbcType=VARCHAR},
             </if>

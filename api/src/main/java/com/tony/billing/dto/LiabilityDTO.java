@@ -8,6 +8,7 @@ public class LiabilityDTO {
     private String name;
     private String type;
     private Long amount;
+    private Long paid;
     private Integer status;
     private Integer installment;
     private Integer index;
@@ -75,5 +76,13 @@ public class LiabilityDTO {
 
     public void setRepaymentDay(String repaymentDay) {
         this.repaymentDay = repaymentDay;
+    }
+
+    public Long getPaid() {
+        return paid;
+    }
+
+    public void setPaid(Long paid) {
+        this.paid = paid;
     }
 }

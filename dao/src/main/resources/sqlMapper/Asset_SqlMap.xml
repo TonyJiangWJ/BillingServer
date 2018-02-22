@@ -71,9 +71,6 @@
     <update id="update" parameterType="com.tony.billing.entity.Asset">
         UPDATE t_asset
         <trim prefix="SET" suffixOverrides=",">
-            <if test=" id!=null ">
-                id=#{id,jdbcType=BIGINT},
-            </if>
             <if test=" userId!=null ">
                 user_id=#{userId,jdbcType=BIGINT},
             </if>
@@ -96,6 +93,7 @@
                 modify_time=#{modifyTime,jdbcType=TIMESTAMP},
             </if>
         </trim>
+        WHERE id=#{id, jdbcType=BIGINT}
     </update>
     <select id="page" parameterType="java.util.Map" resultType="com.tony.billing.entity.Asset">
         SELECT
@@ -167,5 +165,11 @@
                 and modify_time=#{modifyTime,jdbcType=TIMESTAMP}
             </if>
         </trim>
+    </select>
+
+    <select id="getById" parameterType="Long" resultType="com.tony.billing.entity.Asset">
+        SELECT
+        <include refid="all"/>
+        FROM t_asset WHERE id=#{id,jdbcType=BIGINT}
     </select>
 </mapper>

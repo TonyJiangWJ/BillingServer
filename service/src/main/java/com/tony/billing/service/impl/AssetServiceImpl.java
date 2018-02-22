@@ -38,6 +38,17 @@ public class AssetServiceImpl implements AssetService {
         return assetModels;
     }
 
+    @Override
+    public AssetDTO getAssetInfoById(Long id) {
+        Asset asset = assetDao.getAssetById(id);
+        return bindDTO(asset);
+    }
+
+    @Override
+    public boolean modifyAssetInfoById(Asset asset) {
+        return assetDao.update(asset) > 0;
+    }
+
     private void insertIntoModelList(List<AssetModel> assetModels, Asset asset) {
         boolean inserted = false;
         for (AssetModel assetModel : assetModels) {
@@ -59,6 +70,9 @@ public class AssetServiceImpl implements AssetService {
     }
 
     private AssetDTO bindDTO(Asset asset) {
+        if (asset == null) {
+            return null;
+        }
         AssetDTO assetDTO = new AssetDTO();
         assetDTO.setAmount(asset.getAmount());
         assetDTO.setId(asset.getId());

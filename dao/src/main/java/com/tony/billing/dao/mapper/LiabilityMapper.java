@@ -13,4 +13,6 @@ public interface LiabilityMapper {
     List<Liability> page(Map params);
 
     List<Liability> list(Liability liability);
+
+    Liability getById(Long id);
 }

@@ -4,13 +4,16 @@
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <title>资产概览</title>
-    <link rel="stylesheet" type="text/css" th:href="@{/layui/css/layui.css}" href="../../../static/layui/css/layui.css"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/layui/css/layui.css}"
+          href="../../../static/layui/css/layui.css"/>
     <script type="text/javascript" th:src="@{/layui/layui.js}" src="../../../static/layui/layui.js"></script>
-    <script type="text/javascript" th:src="@{/scripts/jquery-3.1.1.min.js}" src="../../../static/scripts/jquery-3.1.1.min.js"></script>
+    <script type="text/javascript" th:src="@{/scripts/jquery-3.1.1.min.js}"
+            src="../../../static/scripts/jquery-3.1.1.min.js"></script>
 </head>
 <script>
-    layui.use(['element','jquery'], function () {
+    layui.use(['element', 'jquery', 'form', 'layer'], function () {
         var element = layui.element;
+        var form = layui.form;
         var $ = layui.$;
     });
 
@@ -18,7 +21,144 @@
         $(self).next('.layui-timeline-content').find('.layui-collapse').toggle("hide");
     }
 
+    function expandAll(self) {
+        $(self).parents('div').eq(0).next('div').find('.layui-colla-content').addClass('layui-show');
+    }
+
+    function collapseAll(self) {
+        $(self).parents('div').eq(0).next('div').find('.layui-colla-content').removeClass('layui-show');
+    }
+
+    function showAssetLayer(self) {
+        var id = $(self).find("input[name=id]").val();
+        $.ajax({
+            url: "/thymeleaf/asset/detail/get",
+            data: {
+                "id": id
+            },
+            success: function (resp) {
+                if (resp.code === '0001') {
+                    $('#assetId').val(id);
+                    $('#assetType').val(resp.assetInfo.name);
+                    $('#assetAmount').val((resp.assetInfo.amount / 100).toFixed(2));
+
+                    layer.open({
+                        type: 1,
+                        content: $('#assetLayerContent'),
+                        title: "资产",
+                        btn: ['确定', '关闭'],
+                        yes: function () {
+                            var request = {};
+                            request.id = id;
+                            request.amount = $('#assetAmount').val() * 100;
+                            $.ajax({
+                                url: "/thymeleaf/asset/update",
+                                data: request,
+                                success: function (resp) {
+                                    if (resp.code === '0001') {
+                                        layer.alert("修改成功", function () {
+                                            window.location.reload();
+                                        });
+                                    } else {
+                                        layer.alert("修改失败");
+                                    }
+                                }
+                            });
+                        }
+                    });
+                } else {
+                    layer.alert("获取详情失败");
+                }
+            }
+        });
+
+    }
+
+    function showLiabilityLayer(self) {
+        var id = $(self).find("input[name=id]").val();
+        $.ajax({
+            url: "/thymeleaf/liability/detail/get",
+            data: {
+                "id": id
+            },
+            success: function (resp) {
+                if (resp.code === "0001") {
+                    $('#liabilityType').val(resp.liability.name);
+                    $('#liabilityAmount').val((resp.liability.amount / 100).toFixed(2));
+                    if (resp.liability.installment !== 1) {
+                        $('#liabilityAmount').attr("readonly", "readonly");
+                    }
+                    $('#liabilityPaid').val((resp.liability.paid / 100).toFixed(2));
+                    layer.open({
+                        type: 1,
+                        content: $('#liabilityLayerContent'),
+                        title: "负债",
+                        btn: ['确定', '关闭'],
+                        yes: function () {
+                            var request = {};
+                            request.id = id;
+                            request.amount = $('#liabilityAmount').val() * 100;
+                            request.paid = $('#liabilityPaid').val() * 100;
+                            $.ajax({
+                                url: "/thymeleaf/liability/update",
+                                data: request,
+                                success: function (resp) {
+                                    if (resp.code === '0001') {
+                                        layer.alert("修改成功", function () {
+                                            window.location.reload();
+                                        })
+                                    } else {
+                                        layer.alert("修改失败");
+                                    }
+                                }
+                            });
+                        }
+                    });
+                }
+            }
+        })
+
+    }
 </script>
+<div style="display: none;" id="assetLayerContent">
+    <div class="layui-form" style="margin: 20px 20px 20px 0;">
+        <input id="assetId" type="hidden"/>
+        <div class="layui-form-item">
+            <label class="layui-form-label">类别</label>
+            <div class="layui-input-inline">
+                <input class="layui-input" id="assetType" value="支付宝" type="text" readonly="readonly"/>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">金额</label>
+            <div class="layui-input-inline">
+                <input class="layui-input" id="assetAmount" type="text" placeholder="金额"/>
+            </div>
+        </div>
+    </div>
+</div>
+<div style="display: none;" id="liabilityLayerContent">
+    <div class="layui-form" style="margin: 20px 20px 20px 0;">
+        <div class="layui-form-item">
+            <label class="layui-form-label">类别</label>
+            <div class="layui-input-inline">
+                <input class="layui-input" id="liabilityType" value="花呗" type="text" readonly="readonly"/>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">金额</label>
+            <div class="layui-input-inline">
+                <input class="layui-input" id="liabilityAmount" type="text" placeholder="金额"/>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">已还金额</label>
+            <div class="layui-input-inline">
+                <input class="layui-input" id="liabilityPaid" type="text" placeholder="已还金额"/>
+            </div>
+        </div>
+    </div>
+</div>
 <body>
 <div class="layui-container">
     <fieldset class="layui-elem-field layui-field-title">
@@ -29,19 +169,26 @@
             <h2>
                 <span style="margin-left: 5px;">总资产</span>
                 <span th:text="'￥'+${assetManageDTO.totalAsset}/100" style="color: green;">￥6620</span>
-                <button style="margin-left: 5px;" class="layui-btn layui-btn-xs layui-btn-normal">展开全部</button>
-                <button class="layui-btn layui-btn-xs layui-btn-warm">关闭全部</button>
+                <button style="margin-left: 5px;" class="layui-btn layui-btn-xs layui-btn-normal"
+                        onclick="expandAll(this)">展开全部
+                </button>
+                <button class="layui-btn layui-btn-xs layui-btn-warm" onclick="collapseAll(this)">关闭全部</button>
             </h2>
         </div>
         <div style="margin: 5px;">
             <div class="layui-collapse layui-text" th:each="asset,assetStatus:${assetManageDTO.assetModels}">
                 <div class="layui-colla-item">
                     <div class="layui-colla-title">
-                        <h4><span th:text="${asset.name}">支付宝</span> <span th:text="${asset.total}/100">￥1000</span></h4>
+                        <h4><span th:text="${asset.name}">支付宝</span> <span th:text="${asset.total}/100">￥1000</span>
+                        </h4>
                     </div>
                     <div class="layui-colla-content">
                         <ul th:each="detail:${asset.assetList}">
-                            <li><span th:text="${detail.name}">余额</span> <span th:text="${detail.amount}/100">￥0</span></li>
+                            <li onclick="showAssetLayer(this)">
+                                <input type="hidden" name="id" value="1" th:value="${detail.id}"/>
+                                <span th:text="${detail.name}">余额</span>&nbsp;
+                                <span th:text="${detail.amount}/100">￥0</span>
+                            </li>
                         </ul>
                     </div>
                 </div>
@@ -53,20 +200,26 @@
             <h2>
                 <span style="margin-left: 5px;">总负债</span>
                 <span th:text="'￥'+${assetManageDTO.totalLiability}/100" style="color: red;">￥6000</span>
-                <button style="margin-left: 5px;" class="layui-btn layui-btn-xs layui-btn-normal">展开全部</button>
-                <button class="layui-btn layui-btn-xs layui-btn-warm">关闭全部</button>
+                <button style="margin-left: 5px;" class="layui-btn layui-btn-xs layui-btn-normal"
+                        onclick="expandAll(this)">展开全部
+                </button>
+                <button class="layui-btn layui-btn-xs layui-btn-warm" onclick="collapseAll(this)">关闭全部</button>
             </h2>
         </div>
         <div style="margin: 5px;">
             <div class="layui-collapse layui-text" th:each="liability:${assetManageDTO.liabilityModels}">
                 <div class="layui-colla-item">
                     <div class="layui-colla-title">
-                        <h4><span th:text="${liability.name}">支付宝</span> <span th:text="${liability.total}/100">￥2000</span></h4>
+                        <h4>
+                            <span th:text="${liability.name}">支付宝</span>&nbsp;
+                            <span th:text="'￥'+${liability.total}/100">￥2000</span>
+                        </h4>
                     </div>
                     <div class="layui-colla-content">
                         <ul th:each="detail:${liability.liabilityList}">
                             <li>
-                                <span th:text="${detail.name}">花呗</span> <span th:text="${detail.amount}/100">￥2000</span>
+                                <span th:text="${detail.name}">花呗</span>&nbsp;
+                                <span th:text="'￥'+(${detail.amount}-${detail.paid})/100">￥2000</span>
                             </li>
                         </ul>
                     </div>
@@ -87,15 +240,27 @@
                     <i class="layui-icon layui-timeline-axis" onclick="toggleHideOrExpand(this)">&#xe63f;</i>
                     <div class="layui-timeline-content layui-text">
                         <h3 class="layui-timeline-title">
-                            <span th:text="${monthLiability.month}">2018年2月</span> <span>￥</span><span th:text="${monthLiability.total}/100">6000</span>
+                            <span th:text="${monthLiability.month}">2018年2月</span>&nbsp;
+                            <span th:text="'￥'+${monthLiability.total}/100">￥6000</span>
                         </h3>
-                        <div style="display: none" class="layui-collapse" th:each="liabilityModel:${monthLiability.liabilityModels}">
+                        <div style="display: none" class="layui-collapse"
+                             th:each="liabilityModel:${monthLiability.liabilityModels}">
                             <div class="layui-colla-item">
-                                <h4 class="layui-colla-title"><span th:text="${liabilityModel.name}">支付宝</span> <span th:text="${liabilityModel.total}/100">￥2000</span></h4>
+                                <h4 class="layui-colla-title">
+                                    <span th:text="${liabilityModel.name}">支付宝</span>&nbsp;
+                                    <span th:text="'￥'+${liabilityModel.total}/100">￥2000</span>
+                                </h4>
                                 <div class="layui-colla-content">
                                     <ul th:each="detail:${liabilityModel.liabilityList}">
-                                        <li>
-                                            <span th:text="${detail.name}">花呗</span> <span th:text="${detail.amount}/100">￥2000</span> <span th:text="${detail.index}">1</span><span>/</span><span th:text="${detail.installment}">12</span>
+                                        <li onclick="showLiabilityLayer(this)">
+                                            <input type="hidden" name="id" value="1" th:value="${detail.id}"/>
+                                            <span th:text="${detail.name}">花呗</span>&nbsp;
+                                            <span th:text="${detail.amount}/100">￥2000</span>
+                                            <span th:if="${detail.paid} ne 0">
+                                                (<span th:text="${detail.paid}/100" style="color: #20f700;">100</span>)
+                                            </span>
+                                            &nbsp;
+                                            <span th:text="${detail.index}">1</span><span>/</span><span th:text="${detail.installment}">12</span>
                                         </li>
                                     </ul>
                                 </div>
