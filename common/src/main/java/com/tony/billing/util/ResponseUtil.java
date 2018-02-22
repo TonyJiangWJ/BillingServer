@@ -20,11 +20,18 @@ public class ResponseUtil {
     private static final String MSG_ERROR = "失败";
     private static final String MSG_LOGIN_VERIFY = "not login";
 
+    public static BaseResponse sysError(){
+        return sysError(new BaseResponse());
+    }
 
     public static BaseResponse sysError(BaseResponse response) {
         response.setCode(CODE_SYS_ERROR);
         response.setMsg(MSG_SYS_ERROR);
         return response;
+    }
+
+    public static BaseResponse success() {
+        return success(new BaseResponse());
     }
 
     public static BaseResponse success(BaseResponse response) {
@@ -33,16 +40,28 @@ public class ResponseUtil {
         return response;
     }
 
+    public static BaseResponse paramError() {
+        return paramError(new BaseResponse());
+    }
+
     public static BaseResponse paramError(BaseResponse response) {
         response.setCode(CODE_PARAM_ERROR);
         response.setMsg(MSG_PARAM_ERROR);
         return response;
     }
 
+    public static BaseResponse dataNotExisting() {
+        return dataNotExisting(new BaseResponse());
+    }
+
     public static BaseResponse dataNotExisting(BaseResponse response) {
         response.setMsg(MSG_DATA_NOT_EXIST);
         response.setCode(CODE_DATA_NOT_EXIST);
         return response;
+    }
+
+    public static BaseResponse error() {
+        return error(new BaseResponse());
     }
 
     public static BaseResponse error(BaseResponse response) {

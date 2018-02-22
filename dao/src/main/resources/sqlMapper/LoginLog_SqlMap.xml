@@ -71,9 +71,6 @@
     <update id="update" parameterType="com.tony.billing.entity.LoginLog">
         UPDATE t_login_log
         <trim prefix="SET" suffixOverrides=",">
-            <if test=" id!=null ">
-                id=#{id,jdbcType=BIGINT},
-            </if>
             <if test=" userName!=null and userName!='' ">
                 user_name=#{userName,jdbcType=VARCHAR},
             </if>
@@ -96,6 +93,7 @@
                 modify_time=#{modifyTime,jdbcType=TIMESTAMP},
             </if>
         </trim>
+        WHERE id=#{id, jdbcType=BIGINT}
     </update>
     <select id="page" parameterType="java.util.Map" resultType="com.tony.billing.entity.LoginLog">
         SELECT

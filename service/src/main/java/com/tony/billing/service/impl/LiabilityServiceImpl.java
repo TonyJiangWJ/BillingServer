@@ -1,6 +1,7 @@
 package com.tony.billing.service.impl;
 
 import com.tony.billing.constants.enums.EnumLiabilityParentType;
+import com.tony.billing.constants.enums.EnumLiabilityStatus;
 import com.tony.billing.dao.LiabilityDao;
 import com.tony.billing.dto.LiabilityDTO;
 import com.tony.billing.entity.Liability;
@@ -102,6 +103,9 @@ public class LiabilityServiceImpl implements LiabilityService {
 
     @Override
     public boolean modifyLiabilityInfoById(Liability liability) {
+        if (liability.getAmount().equals(liability.getPaid())) {
+            liability.setStatus(EnumLiabilityStatus.PAID.getStatus());
+        }
         return liabilityDao.update(liability) > 0;
     }
 
@@ -110,7 +114,7 @@ public class LiabilityServiceImpl implements LiabilityService {
         for (LiabilityModel model : liabilityModels) {
             if (StringUtils.equals(model.getType(), liability.getParentType())) {
                 insertIntoDTOList(model.getLiabilityList(), liability);
-                model.setTotal(model.getTotal() + liability.getAmount());
+                model.setTotal(model.getTotal() + liability.getAmount() - liability.getPaid());
                 inserted = true;
                 break;
             }
@@ -118,7 +122,7 @@ public class LiabilityServiceImpl implements LiabilityService {
         if (!inserted) {
             LiabilityModel liabilityModel = new LiabilityModel();
             insertIntoDTOList(liabilityModel.getLiabilityList(), liability);
-            liabilityModel.setTotal(liabilityModel.getTotal() + liability.getAmount());
+            liabilityModel.setTotal(liabilityModel.getTotal() + liability.getAmount() - liability.getPaid());
             liabilityModel.setType(liability.getParentType());
             liabilityModel.setName(EnumLiabilityParentType.getEnumByType(liability.getParentType()).getDesc());
             liabilityModels.add(liabilityModel);
@@ -130,7 +134,7 @@ public class LiabilityServiceImpl implements LiabilityService {
         for (LiabilityModel model : liabilityModels) {
             if (StringUtils.equals(model.getType(), liability.getParentType())) {
                 model.getLiabilityList().add(bindDTO(liability));
-                model.setTotal(model.getTotal() + liability.getAmount());
+                model.setTotal(model.getTotal() + liability.getAmount() - liability.getPaid());
                 inserted = true;
                 break;
             }
@@ -138,7 +142,7 @@ public class LiabilityServiceImpl implements LiabilityService {
         if (!inserted) {
             LiabilityModel liabilityModel = new LiabilityModel();
             liabilityModel.getLiabilityList().add(bindDTO(liability));
-            liabilityModel.setTotal(liabilityModel.getTotal() + liability.getAmount());
+            liabilityModel.setTotal(liabilityModel.getTotal() + liability.getAmount() - liability.getPaid());
             liabilityModel.setType(liability.getParentType());
             liabilityModel.setName(EnumLiabilityParentType.getEnumByType(liability.getParentType()).getDesc());
             liabilityModels.add(liabilityModel);
@@ -155,7 +159,7 @@ public class LiabilityServiceImpl implements LiabilityService {
         boolean inserted = false;
         for (LiabilityDTO dto : dtoList) {
             if (StringUtils.equals(dto.getType(), liability.getType())) {
-                dto.setAmount(dto.getAmount() + liability.getAmount());
+                dto.setAmount(dto.getAmount() + liability.getAmount() - liability.getPaid());
                 inserted = true;
                 break;
             }
@@ -173,6 +177,7 @@ public class LiabilityServiceImpl implements LiabilityService {
         LiabilityDTO liabilityDTO = new LiabilityDTO();
         liabilityDTO.setId(liability.getId());
         liabilityDTO.setAmount(liability.getAmount());
+        liabilityDTO.setPaid(liability.getPaid());
         liabilityDTO.setIndex(liability.getIndex());
         liabilityDTO.setInstallment(liability.getInstallment());
         liabilityDTO.setName(liability.getName());
