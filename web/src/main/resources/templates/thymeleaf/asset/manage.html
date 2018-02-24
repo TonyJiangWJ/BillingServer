@@ -54,7 +54,7 @@
                         yes: function () {
                             var request = {};
                             request.id = id;
-                            request.amount = $('#assetAmount').val() * 100;
+                            request.amount = ($('#assetAmount').val() * 100).toFixed(0);
                             $.ajax({
                                 url: "/thymeleaf/asset/update",
                                 data: request,
@@ -101,8 +101,8 @@
                         yes: function () {
                             var request = {};
                             request.id = id;
-                            request.amount = $('#liabilityAmount').val() * 100;
-                            request.paid = $('#liabilityPaid').val() * 100;
+                            request.amount = ($('#liabilityAmount').val() * 100).toFixed(0);
+                            request.paid = ($('#liabilityPaid').val() * 100).toFixed(0);
                             $.ajax({
                                 url: "/thymeleaf/liability/update",
                                 data: request,
