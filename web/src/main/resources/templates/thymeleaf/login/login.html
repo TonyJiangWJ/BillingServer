@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.thymeleaf.org" layout:decorater="layout/default">
+<head>
+    <title>用户登录</title>
+    <!--/*-->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    <link rel="stylesheet" type="text/css" th:href="@{/layui/css/layui.css}"
+          href="../../../static/layui/css/layui.css"/>
+    <script type="text/javascript" th:src="@{/layui/layui.js}" src="../../../static/layui/layui.js"></script>
+    <script type="text/javascript" th:src="@{/scripts/jquery-3.1.1.min.js}"
+            src="../../../static/scripts/jquery-3.1.1.min.js"></script>
+    <!--*/-->
+</head>
+<body>
+
+<div class="layui-container">
+    <div layout:fragment="content">
+    <div style="margin: 60px auto 0;max-width: 400px;box-shadow: 0 0 8px rgba(0,0,0,.1);padding: 50px 50px 30px;" class="layui-form">
+        <div class="layui-form-item">
+            <label class="layui-form-label">用户名</label>
+            <div class="layui-input-inline">
+                <input type="text" class="layui-input" name="userName" placeholder="用户名"/>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">密码</label>
+            <div class="layui-input-inline">
+                <input type="text" class="layui-input" name="userName" placeholder="密码"/>
+            </div>
+        </div>
+
+        <button class="layui-btn layui-btn-radius" style="width: 100%;">登录</button>
+    </div>
+    </div>
+</div>
+</body>
+</html>

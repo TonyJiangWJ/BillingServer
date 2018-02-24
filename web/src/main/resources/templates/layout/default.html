@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>default title</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/layui/css/layui.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/global.css}"/>
+    <script type="text/javascript" th:src="@{/layui/layui.js}"></script>
+    <script type="text/javascript" th:src="@{/scripts/jquery-3.1.1.min.js}"></script>
+</head>
+<script layout:fragment="script" id="script">
+        /* default script */
+</script>
+<section layout:fragment="outBody">
+    <div style="display: none;">default out body content</div>
+</section>
+<body>
+<div th:replace="fragments/header :: header">
+    <p>this is default header</p>
+</div>
+<div class="layui-container">
+
+    <div layout:fragment="content" id="content">
+        <p>this is default content</p>
+    </div>
+
+</div>
+<!-- #{rsa.public.key_base64} -->
+</body>
+</html>

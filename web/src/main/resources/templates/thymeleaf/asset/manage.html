@@ -1,16 +1,20 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.thymeleaf.org" layout:decorator="layout/default">
 <head>
+    <title>资产概览</title>
+    <!--/* codes in this block will be removed at Thymeleaf parsing time!-->
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <title>资产概览</title>
+    <title>default title</title>
     <link rel="stylesheet" type="text/css" th:href="@{/layui/css/layui.css}"
           href="../../../static/layui/css/layui.css"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/global.css}" href="../../../static/css/global.css"/>
     <script type="text/javascript" th:src="@{/layui/layui.js}" src="../../../static/layui/layui.js"></script>
     <script type="text/javascript" th:src="@{/scripts/jquery-3.1.1.min.js}"
             src="../../../static/scripts/jquery-3.1.1.min.js"></script>
+    <!--*/-->
 </head>
-<script>
+<script layout:fragment="script" th:inline="javascript">
+
     layui.use(['element', 'jquery', 'form', 'layer'], function () {
         var element = layui.element;
         var form = layui.form;
@@ -120,47 +124,49 @@
 
     }
 </script>
-<div style="display: none;" id="assetLayerContent">
-    <div class="layui-form" style="margin: 20px 20px 20px 0;">
-        <input id="assetId" type="hidden"/>
-        <div class="layui-form-item">
-            <label class="layui-form-label">类别</label>
-            <div class="layui-input-inline">
-                <input class="layui-input" id="assetType" value="支付宝" type="text" readonly="readonly"/>
+
+<div layout:fragment="outBody">
+    <div style="display: none;" id="assetLayerContent">
+        <div class="layui-form" style="margin: 20px 20px 20px 0;">
+            <input id="assetId" type="hidden"/>
+            <div class="layui-form-item">
+                <label class="layui-form-label">类别</label>
+                <div class="layui-input-inline">
+                    <input class="layui-input" id="assetType" value="支付宝" type="text" readonly="readonly"/>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">金额</label>
+                <div class="layui-input-inline">
+                    <input class="layui-input" id="assetAmount" type="text" placeholder="金额"/>
+                </div>
             </div>
         </div>
-        <div class="layui-form-item">
-            <label class="layui-form-label">金额</label>
-            <div class="layui-input-inline">
-                <input class="layui-input" id="assetAmount" type="text" placeholder="金额"/>
+    </div>
+    <div style="display: none;" id="liabilityLayerContent">
+        <div class="layui-form" style="margin: 20px 20px 20px 0;">
+            <div class="layui-form-item">
+                <label class="layui-form-label">类别</label>
+                <div class="layui-input-inline">
+                    <input class="layui-input" id="liabilityType" value="花呗" type="text" readonly="readonly"/>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">金额</label>
+                <div class="layui-input-inline">
+                    <input class="layui-input" id="liabilityAmount" type="text" placeholder="金额"/>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">已还金额</label>
+                <div class="layui-input-inline">
+                    <input class="layui-input" id="liabilityPaid" type="text" placeholder="已还金额"/>
+                </div>
             </div>
         </div>
     </div>
 </div>
-<div style="display: none;" id="liabilityLayerContent">
-    <div class="layui-form" style="margin: 20px 20px 20px 0;">
-        <div class="layui-form-item">
-            <label class="layui-form-label">类别</label>
-            <div class="layui-input-inline">
-                <input class="layui-input" id="liabilityType" value="花呗" type="text" readonly="readonly"/>
-            </div>
-        </div>
-        <div class="layui-form-item">
-            <label class="layui-form-label">金额</label>
-            <div class="layui-input-inline">
-                <input class="layui-input" id="liabilityAmount" type="text" placeholder="金额"/>
-            </div>
-        </div>
-        <div class="layui-form-item">
-            <label class="layui-form-label">已还金额</label>
-            <div class="layui-input-inline">
-                <input class="layui-input" id="liabilityPaid" type="text" placeholder="已还金额"/>
-            </div>
-        </div>
-    </div>
-</div>
-<body>
-<div class="layui-container">
+<section layout:fragment="content" th:with="title = 'Hello'">
     <fieldset class="layui-elem-field layui-field-title">
         <legend>概览</legend>
     </fieldset>
@@ -228,7 +234,10 @@
         </div>
     </div>
     <div class="layui-col-md12 layui-col-xs12">
-        <div style="margin: 5px;"><h2>净资产<span th:text="'￥'+${assetManageDTO.cleanAsset}/100">800</span></h2></div>
+        <div style="margin: 5px;">
+            <h2>净资产<span style="color: #ff0000;" th:color="${assetManageDTO.cleanAsset}>0 ? '#01F700' : '#ff0000'"
+                         th:text="'￥'+${assetManageDTO.cleanAsset}/100">800</span></h2>
+        </div>
     </div>
     <div class="layui-col-md12 layui-col-xs12">
         <fieldset class="layui-elem-field layui-field-title">
@@ -260,7 +269,8 @@
                                                 (<span th:text="${detail.paid}/100" style="color: #20f700;">100</span>)
                                             </span>
                                             &nbsp;
-                                            <span th:text="${detail.index}">1</span><span>/</span><span th:text="${detail.installment}">12</span>
+                                            <span th:text="${detail.index}">1</span><span>/</span><span
+                                                th:text="${detail.installment}">12</span>
                                         </li>
                                     </ul>
                                 </div>
@@ -271,7 +281,5 @@
             </ul>
         </div>
     </div>
-</div>
-
-</body>
+</section>
 </html>

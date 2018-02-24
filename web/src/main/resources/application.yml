@@ -36,6 +36,7 @@ spring:
 
     thymeleaf:
       cache: false
+      prefix: classpath:/templates/
 # MyBatis
 mybatis:
     typeAliasesPackage: com.tony.billing.entity
