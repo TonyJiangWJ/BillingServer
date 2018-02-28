@@ -51,6 +51,7 @@ public class CustomMVCConfiguration extends WebMvcConfigurerAdapter {
                 .excludePathPatterns("/bootDemo/user/login*")
                 .excludePathPatterns("/bootDemo/user/register/put*")
                 .excludePathPatterns("/thymeleaf/login*")
+                .excludePathPatterns("/thymeleaf/login/put*")
                 .excludePathPatterns("/thymeleaf/register/put*")
                 .addPathPatterns("/bootDemo/**")
                 .addPathPatterns("/thymeleaf/**");
