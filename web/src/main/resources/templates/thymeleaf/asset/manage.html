@@ -15,10 +15,14 @@
 </head>
 <script layout:fragment="script" th:inline="javascript">
 
-    layui.use(['element', 'jquery', 'form', 'layer'], function () {
+    layui.use(['element', 'jquery', 'form', 'layer', 'laydate'], function () {
         var element = layui.element;
         var form = layui.form;
         var $ = layui.$;
+        var laydate = layui.laydate;
+        laydate.render({
+            elem: '#repaymentDay'
+        });
     });
 
     function toggleHideOrExpand(self) {
@@ -123,6 +127,15 @@
         })
 
     }
+
+    function showAddLiability() {
+        layer.open({
+            type: 1,
+            title: "添加分期账单",
+            content: $('#addLiabilityLayerContent'),
+            btn: ["确定", "关闭"]
+        })
+    }
 </script>
 
 <div layout:fragment="outBody">
@@ -161,6 +174,50 @@
                 <label class="layui-form-label">已还金额</label>
                 <div class="layui-input-inline">
                     <input class="layui-input" id="liabilityPaid" type="text" placeholder="已还金额"/>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div style="display: none;" id="addLiabilityLayerContent">
+        <div class="layui-form" style="margin: 20px 20px 20px 0;">
+            <div class="layui-form-item">
+                <label class="layui-form-label">父类别</label>
+                <div class="layui-input-inline">
+                    <select id="liabilityParent" class="layui-select">
+                        <option th:each="selectItem:${liabilityParentList}" th:value="${selectItem.type}" value="code" th:text="${selectItem.desc}">支付宝</option>
+                        <!--/*-->
+                        <option>信用卡</option>
+                        <option>京东</option>
+                        <option>小米</option>
+                        <!--*/-->
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">子类别</label>
+                <div class="layui-input-inline">
+                    <select id="liabilityChildType" class="layui-select">
+                        <option value="">未选择</option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">分期期数</label>
+                <div class="layui-input-inline">
+                    <input name="installment" id="installment" class="layui-input" placeholder="分期期数" type="number"/>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">首期还款日</label>
+                <div class="layui-input-inline">
+                    <input name="repaymentDay" id="repaymentDay" type="text" class="layui-input" placeholder="首期还款日"/>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">总金额</label>
+                <div class="layui-input-inline">
+                    <input name="amount" id="amount" type="number" class="layui-input" placeholder="总金额"/>
                 </div>
             </div>
         </div>
@@ -241,8 +298,9 @@
     </div>
     <div class="layui-col-md12 layui-col-xs12">
         <fieldset class="layui-elem-field layui-field-title">
-            <legend>分期还款</legend>
+            <legend>分期还款 <button class="layui-btn layui-btn-xs layui-btn-normal" onclick="showAddLiability()">添加分期账单</button></legend>
         </fieldset>
+
         <div>
             <ul class="layui-timeline">
                 <li class="layui-timeline-item" th:each="monthLiability:${assetManageDTO.monthLiabilityModels}">

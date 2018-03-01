@@ -18,6 +18,8 @@ public class AssetDaoImpl implements AssetDao {
 
     @Override
     public Long insert(Asset asset) {
+        asset.setCreateTime(new Date());
+        asset.setModifyTime(new Date());
         return assetMapper.insert(asset);
     }
 

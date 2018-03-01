@@ -36,4 +36,6 @@ mybatis:
     mapperLocations: classpath:/sqlMapper/*SqlMap.xml
     configLocation: classpath:/mybatis-config-test.xml
 
-
+rsa:
+    key:
+        path: D:/

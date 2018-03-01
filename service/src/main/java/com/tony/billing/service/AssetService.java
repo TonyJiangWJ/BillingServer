@@ -25,4 +25,11 @@ public interface AssetService {
      * @return
      */
     boolean modifyAssetInfoById(Asset asset);
+
+    /**
+     * 创建资产信息
+     * @param asset
+     * @return
+     */
+    Long addAsset(Asset asset);
 }

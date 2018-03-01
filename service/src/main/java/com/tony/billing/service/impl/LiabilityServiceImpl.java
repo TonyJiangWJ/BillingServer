@@ -1,7 +1,9 @@
 package com.tony.billing.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.tony.billing.constants.enums.EnumLiabilityParentType;
 import com.tony.billing.constants.enums.EnumLiabilityStatus;
+import com.tony.billing.constants.enums.EnumLiabilityType;
 import com.tony.billing.dao.LiabilityDao;
 import com.tony.billing.dto.LiabilityDTO;
 import com.tony.billing.entity.Liability;
@@ -12,11 +14,15 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -107,6 +113,51 @@ public class LiabilityServiceImpl implements LiabilityService {
             liability.setStatus(EnumLiabilityStatus.PAID.getStatus());
         }
         return liabilityDao.update(liability) > 0;
+    }
+
+    @Override
+    @Transactional
+    public boolean createLiabilityInfo(Liability liability) throws SQLException {
+        Date repaymentDay = liability.getRepaymentDay();
+        int installment = liability.getInstallment();
+        liability.setName(EnumLiabilityType.getEnumByType(liability.getType()).getDesc());
+        if (installment == 1) {
+            return liabilityDao.insert(liability) > 0;
+        } else {
+            Long totalAmount = liability.getAmount();
+            Long perInstallmentAmount = totalAmount / installment;
+            long overflow = 0L;
+            if (totalAmount % installment != 0) {
+                overflow = totalAmount - perInstallmentAmount * installment;
+            }
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(repaymentDay);
+            List<Liability> newLiabilities = new ArrayList<>();
+            Liability newRecord = null;
+
+            for (int i = 1; i <= installment; i++) {
+                newRecord = new Liability();
+                if (installment == i && overflow != 0) {
+                    newRecord.setAmount(perInstallmentAmount + overflow);
+                } else {
+                    newRecord.setAmount(perInstallmentAmount);
+                }
+                newRecord.setIndex(i + 1);
+                newRecord.setInstallment(installment);
+                newRecord.setName(liability.getName());
+                newRecord.setParentType(liability.getParentType());
+                newRecord.setRepaymentDay(calendar.getTime());
+                newRecord.setType(liability.getType());
+                newRecord.setUserId(liability.getUserId());
+                newLiabilities.add(newRecord);
+                if(liabilityDao.insert(newRecord)<=0) {
+                    throw new SQLException("error insert");
+                }
+                calendar.add(Calendar.MONTH, 1);
+            }
+            logger.info("new Inserted:{}", JSON.toJSONString(newLiabilities));
+        }
+        return true;
     }
 
     private void insertIntoModels(List<LiabilityModel> liabilityModels, Liability liability) {

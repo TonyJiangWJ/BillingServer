@@ -1,5 +1,6 @@
 package com.tony.billing.dao.impl;
 
+import com.tony.billing.constants.enums.EnumLiabilityStatus;
 import com.tony.billing.dao.LiabilityDao;
 import com.tony.billing.dao.mapper.LiabilityMapper;
 import com.tony.billing.entity.Liability;
@@ -18,6 +19,9 @@ public class LiabilityDaoImpl implements LiabilityDao {
 
     @Override
     public Long insert(Liability liability) {
+        liability.setCreateTime(new Date());
+        liability.setModifyTime(new Date());
+        liability.setStatus(EnumLiabilityStatus.UNPAID.getStatus());
         return liabilityMapper.insert(liability);
     }
 

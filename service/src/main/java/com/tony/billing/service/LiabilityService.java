@@ -5,6 +5,7 @@ import com.tony.billing.entity.Liability;
 import com.tony.billing.model.LiabilityModel;
 import com.tony.billing.model.MonthLiabilityModel;
 
+import java.sql.SQLException;
 import java.util.List;
 
 public interface LiabilityService {
@@ -38,4 +39,11 @@ public interface LiabilityService {
      * @return
      */
     boolean modifyLiabilityInfoById(Liability liability);
+
+    /**
+     * 创建负债信息
+     * @param liability
+     * @return
+     */
+    boolean createLiabilityInfo(Liability liability) throws SQLException;
 }

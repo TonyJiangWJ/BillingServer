@@ -5,7 +5,7 @@
         id id,
         user_id userId,
         name name,
-        type type,
+        `type` type,
         parent_type parentType,
         amount amount,
         create_time createTime,
@@ -24,7 +24,7 @@
                 name,
             </if>
             <if test=" type!=null and type!='' ">
-                type,
+                `type`,
             </if>
             <if test=" parentType!=null and parentType!='' ">
                 parent_type,
@@ -78,7 +78,7 @@
                 name=#{name,jdbcType=VARCHAR},
             </if>
             <if test=" type!=null and type!='' ">
-                type=#{type,jdbcType=VARCHAR},
+                `type`=#{type,jdbcType=VARCHAR},
             </if>
             <if test=" parentType!=null and parentType!='' ">
                 parent_type=#{parentType,jdbcType=VARCHAR},
@@ -110,7 +110,7 @@
                 and name=#{name,jdbcType=VARCHAR}
             </if>
             <if test=" type!=null and type!='' ">
-                and type=#{type,jdbcType=VARCHAR}
+                and `type`=#{type,jdbcType=VARCHAR}
             </if>
             <if test=" parentType!=null and parentType!='' ">
                 and parent_type=#{parentType,jdbcType=VARCHAR}
@@ -150,7 +150,7 @@
                 and name=#{name,jdbcType=VARCHAR}
             </if>
             <if test=" type!=null and type!='' ">
-                and type=#{type,jdbcType=VARCHAR}
+                and `type`=#{type,jdbcType=VARCHAR}
             </if>
             <if test=" parentType!=null and parentType!='' ">
                 and parent_type=#{parentType,jdbcType=VARCHAR}
