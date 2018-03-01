@@ -41,7 +41,7 @@ public class AssetServiceImpl implements AssetService {
     @Override
     public AssetDTO getAssetInfoById(Long id) {
         Asset asset = assetDao.getAssetById(id);
-        return bindDTO(asset);
+        return new AssetDTO(asset);
     }
 
     @Override
@@ -53,7 +53,7 @@ public class AssetServiceImpl implements AssetService {
         boolean inserted = false;
         for (AssetModel assetModel : assetModels) {
             if (StringUtils.equals(asset.getParentType(), assetModel.getType())) {
-                assetModel.getAssetList().add(bindDTO(asset));
+                assetModel.getAssetList().add(new AssetDTO(asset));
                 assetModel.setTotal(asset.getAmount() + assetModel.getTotal());
                 inserted = true;
                 break;
@@ -61,7 +61,7 @@ public class AssetServiceImpl implements AssetService {
         }
         if (!inserted) {
             AssetModel assetModel = new AssetModel();
-            assetModel.getAssetList().add(bindDTO(asset));
+            assetModel.getAssetList().add(new AssetDTO(asset));
             assetModel.setType(asset.getParentType());
             assetModel.setName(EnumAssetParentType.getEnumByType(asset.getParentType()).getDesc());
             assetModel.setTotal(asset.getAmount() + assetModel.getTotal());
@@ -69,16 +69,4 @@ public class AssetServiceImpl implements AssetService {
         }
     }
 
-    private AssetDTO bindDTO(Asset asset) {
-        if (asset == null) {
-            return null;
-        }
-        AssetDTO assetDTO = new AssetDTO();
-        assetDTO.setAmount(asset.getAmount());
-        assetDTO.setId(asset.getId());
-        assetDTO.setName(asset.getName());
-        assetDTO.setType(asset.getType());
-        assetDTO.setParentType(asset.getParentType());
-        return assetDTO;
-    }
 }

@@ -98,7 +98,7 @@ public class LiabilityServiceImpl implements LiabilityService {
     @Override
     public LiabilityDTO getLiabilityInfoById(Long id) {
         Liability liability = liabilityDao.getLiabilityById(id);
-        return bindDTO(liability);
+        return new LiabilityDTO(liability);
     }
 
     @Override
@@ -133,7 +133,7 @@ public class LiabilityServiceImpl implements LiabilityService {
         boolean inserted = false;
         for (LiabilityModel model : liabilityModels) {
             if (StringUtils.equals(model.getType(), liability.getParentType())) {
-                model.getLiabilityList().add(bindDTO(liability));
+                model.getLiabilityList().add(new LiabilityDTO(liability));
                 model.setTotal(model.getTotal() + liability.getAmount() - liability.getPaid());
                 inserted = true;
                 break;
@@ -141,7 +141,7 @@ public class LiabilityServiceImpl implements LiabilityService {
         }
         if (!inserted) {
             LiabilityModel liabilityModel = new LiabilityModel();
-            liabilityModel.getLiabilityList().add(bindDTO(liability));
+            liabilityModel.getLiabilityList().add(new LiabilityDTO(liability));
             liabilityModel.setTotal(liabilityModel.getTotal() + liability.getAmount() - liability.getPaid());
             liabilityModel.setType(liability.getParentType());
             liabilityModel.setName(EnumLiabilityParentType.getEnumByType(liability.getParentType()).getDesc());
@@ -165,26 +165,8 @@ public class LiabilityServiceImpl implements LiabilityService {
             }
         }
         if (!inserted) {
-            dtoList.add(bindDTO(liability));
+            dtoList.add(new LiabilityDTO(liability));
         }
-    }
-
-    private LiabilityDTO bindDTO(Liability liability) {
-        if (liability == null) {
-            return null;
-        }
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        LiabilityDTO liabilityDTO = new LiabilityDTO();
-        liabilityDTO.setId(liability.getId());
-        liabilityDTO.setAmount(liability.getAmount());
-        liabilityDTO.setPaid(liability.getPaid());
-        liabilityDTO.setIndex(liability.getIndex());
-        liabilityDTO.setInstallment(liability.getInstallment());
-        liabilityDTO.setName(liability.getName());
-        liabilityDTO.setRepaymentDay(simpleDateFormat.format(liability.getRepaymentDay()));
-        liabilityDTO.setStatus(liability.getStatus());
-        liabilityDTO.setType(liability.getType());
-        return liabilityDTO;
     }
 
     private void countDownMonthAmount(MonthLiabilityModel model) {

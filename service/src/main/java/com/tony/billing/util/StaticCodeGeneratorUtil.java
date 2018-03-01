@@ -2,9 +2,6 @@ package com.tony.billing.util;
 
 
 import com.tony.billing.annotation.Table;
-import com.tony.billing.entity.Asset;
-import com.tony.billing.entity.Budget;
-import com.tony.billing.entity.Liability;
 import com.tony.billing.entity.LoginLog;
 
 import java.lang.reflect.Field;

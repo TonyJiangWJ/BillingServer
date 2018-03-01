@@ -1,9 +1,34 @@
 package com.tony.billing.dto;
 
+import com.tony.billing.entity.Liability;
+
+import java.text.SimpleDateFormat;
+
 /**
  * @author TonyJiang on 2018/2/12
  */
 public class LiabilityDTO {
+
+    public LiabilityDTO() {
+
+    }
+
+    public LiabilityDTO(Liability liability) {
+        if (liability != null) {
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+            this.id = liability.getId();
+            this.amount = liability.getAmount();
+            this.paid = liability.getPaid();
+            this.index = liability.getIndex();
+            this.installment = liability.getInstallment();
+            this.name = liability.getName();
+            this.repaymentDay = simpleDateFormat.format(liability.getRepaymentDay());
+            this.status = liability.getStatus();
+            this.type = liability.getType();
+        }
+    }
+
     private Long id;
     private String name;
     private String type;

@@ -1,5 +1,6 @@
 package com.tony.billing.controller.thymeleaf;
 
+import com.tony.billing.constants.enums.EnumLiabilityParentType;
 import com.tony.billing.controller.BaseController;
 import com.tony.billing.dto.AssetDTO;
 import com.tony.billing.dto.AssetManageDTO;
@@ -54,6 +55,8 @@ public class AssetManageController extends BaseController {
         // 计算每月还款信息
         assetManageDTO.setMonthLiabilityModels(liabilityService.getMonthLiabilityModelsByUserId(request.getUserId()));
         model.addAttribute("assetManageDTO", assetManageDTO);
+
+        model.addAttribute("liabilityParentList", EnumLiabilityParentType.toList());
         return "/thymeleaf/asset/manage";
     }
 
