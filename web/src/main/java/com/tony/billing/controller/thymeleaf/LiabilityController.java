@@ -6,7 +6,7 @@ import com.tony.billing.entity.Liability;
 import com.tony.billing.request.liability.LiabilityDetailRequest;
 import com.tony.billing.request.liability.LiabilityUpdateRequest;
 import com.tony.billing.response.BaseResponse;
-import com.tony.billing.response.LiabilityDetailResponse;
+import com.tony.billing.response.liability.LiabilityDetailResponse;
 import com.tony.billing.service.LiabilityService;
 import com.tony.billing.util.ResponseUtil;
 import org.springframework.stereotype.Controller;

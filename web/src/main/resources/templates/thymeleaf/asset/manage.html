@@ -23,6 +23,10 @@
         laydate.render({
             elem: '#repaymentDay'
         });
+
+        form.on('select(liabilityParent)', function () {
+            loadChildLiabilityType();
+        })
     });
 
     function toggleHideOrExpand(self) {
@@ -133,8 +137,56 @@
             type: 1,
             title: "添加分期账单",
             content: $('#addLiabilityLayerContent'),
-            btn: ["确定", "关闭"]
+            btn: ["确定", "关闭"],
+            yes: function () {
+                var newLiability = {};
+                newLiability.parentType = $('#liabilityParent').val();
+                newLiability.type = $('#liabilityChildType').val();
+                newLiability.installment = $('#installment').val();
+                newLiability.repaymentDay = $('#repaymentDay').val();
+                newLiability.amount = ($('#amount').val() * 100).toFixed(0);
+                $.ajax({
+                    url: "/thymeleaf/liability/put",
+                    type: "post",
+                    data: newLiability,
+                    success: function (resp) {
+                        if (resp.code === '0001') {
+                            layer.alert("添加成功", function () {
+                                window.location.reload();
+                            });
+                        } else {
+                            layer.alert("添加失败");
+                        }
+                    }
+                })
+            }
         })
+    }
+
+    function loadChildLiabilityType() {
+        var liabilityParentType = $('#liabilityParent').val();
+        if (isNotEmpty(liabilityParentType)) {
+            $.ajax({
+                url: "/thymeleaf/list/liability/type/by/parent/" + liabilityParentType,
+                type: "post",
+                success: function (resp) {
+                    if (resp.code === "0001") {
+                        var options = '<option value="">未选择</option>';
+                        var types = resp.liabilityTypes;
+                        /*<![CDATA[ */
+                        for (var i = 0, l = types.length; i < l; i++) {
+                            options += '<option value="' + types[i].type + '">' + types[i].typeName + '</option>';
+                        }
+                        /* ]]>*/
+                        $('#liabilityChildType').html(options);
+                        layui.use('form', function () {
+                            var form = layui.form;
+                            form.render();
+                        });
+                    }
+                }
+            });
+        }
     }
 </script>
 
@@ -184,8 +236,11 @@
             <div class="layui-form-item">
                 <label class="layui-form-label">父类别</label>
                 <div class="layui-input-inline">
-                    <select id="liabilityParent" class="layui-select">
-                        <option th:each="selectItem:${liabilityParentList}" th:value="${selectItem.type}" value="code" th:text="${selectItem.desc}">支付宝</option>
+                    <select id="liabilityParent" class="layui-select" lay-filter="liabilityParent">
+                        <option value="">未选择</option>
+                        <option th:each="selectItem:${liabilityParentList}" th:value="${selectItem.type}" value="code"
+                                th:text="${selectItem.desc}">支付宝
+                        </option>
                         <!--/*-->
                         <option>信用卡</option>
                         <option>京东</option>
@@ -197,7 +252,7 @@
             <div class="layui-form-item">
                 <label class="layui-form-label">子类别</label>
                 <div class="layui-input-inline">
-                    <select id="liabilityChildType" class="layui-select">
+                    <select id="liabilityChildType" class="layui-select" lay-filter="liabilityChild">
                         <option value="">未选择</option>
                     </select>
                 </div>
@@ -292,13 +347,14 @@
     </div>
     <div class="layui-col-md12 layui-col-xs12">
         <div style="margin: 5px;">
-            <h2>净资产<span style="color: #ff0000;" th:color="${assetManageDTO.cleanAsset}>0 ? '#01F700' : '#ff0000'"
-                         th:text="'￥'+${assetManageDTO.cleanAsset}/100">800</span></h2>
+            <h2>净资产<span style="color: #ff0000;" th:style="'color: '+(${assetManageDTO.cleanAsset}>0 ? '#008000' : '#ff0000')" th:text="'￥'+${assetManageDTO.cleanAsset}/100">800</span></h2>
         </div>
     </div>
     <div class="layui-col-md12 layui-col-xs12">
         <fieldset class="layui-elem-field layui-field-title">
-            <legend>分期还款 <button class="layui-btn layui-btn-xs layui-btn-normal" onclick="showAddLiability()">添加分期账单</button></legend>
+            <legend>分期还款
+                <button class="layui-btn layui-btn-xs layui-btn-normal" onclick="showAddLiability()">添加分期账单</button>
+            </legend>
         </fieldset>
 
         <div>

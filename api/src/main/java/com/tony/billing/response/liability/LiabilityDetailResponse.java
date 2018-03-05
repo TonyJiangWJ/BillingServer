@@ -1,6 +1,7 @@
-package com.tony.billing.response;
+package com.tony.billing.response.liability;
 
 import com.tony.billing.dto.LiabilityDTO;
+import com.tony.billing.response.BaseResponse;
 
 /**
  * <p>

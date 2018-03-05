@@ -6,6 +6,7 @@ import com.tony.billing.constants.enums.EnumLiabilityStatus;
 import com.tony.billing.constants.enums.EnumLiabilityType;
 import com.tony.billing.dao.LiabilityDao;
 import com.tony.billing.dto.LiabilityDTO;
+import com.tony.billing.dto.LiabilityTypeDTO;
 import com.tony.billing.entity.Liability;
 import com.tony.billing.model.LiabilityModel;
 import com.tony.billing.model.MonthLiabilityModel;
@@ -122,6 +123,7 @@ public class LiabilityServiceImpl implements LiabilityService {
         int installment = liability.getInstallment();
         liability.setName(EnumLiabilityType.getEnumByType(liability.getType()).getDesc());
         if (installment == 1) {
+            liability.setIndex(1);
             return liabilityDao.insert(liability) > 0;
         } else {
             Long totalAmount = liability.getAmount();
@@ -142,7 +144,7 @@ public class LiabilityServiceImpl implements LiabilityService {
                 } else {
                     newRecord.setAmount(perInstallmentAmount);
                 }
-                newRecord.setIndex(i + 1);
+                newRecord.setIndex(i);
                 newRecord.setInstallment(installment);
                 newRecord.setName(liability.getName());
                 newRecord.setParentType(liability.getParentType());
@@ -158,6 +160,18 @@ public class LiabilityServiceImpl implements LiabilityService {
             logger.info("new Inserted:{}", JSON.toJSONString(newLiabilities));
         }
         return true;
+    }
+
+    @Override
+    public List<LiabilityTypeDTO> getLiabilityTypesByParent(String parentType) {
+
+        List<LiabilityTypeDTO> liabilityTypes = new ArrayList<>();
+        for (EnumLiabilityType enumLiabilityType : EnumLiabilityType.values()) {
+            if (StringUtils.equals(parentType, enumLiabilityType.getParentType())) {
+                liabilityTypes.add(new LiabilityTypeDTO(enumLiabilityType.getDesc(), enumLiabilityType.getType(), enumLiabilityType.getParentType()));
+            }
+        }
+        return liabilityTypes;
     }
 
     private void insertIntoModels(List<LiabilityModel> liabilityModels, Liability liability) {
