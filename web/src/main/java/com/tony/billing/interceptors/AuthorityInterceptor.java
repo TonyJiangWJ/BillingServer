@@ -37,8 +37,12 @@ public class AuthorityInterceptor implements HandlerInterceptor {
 
         if (!isUserLogin(httpServletRequest)) {
             logger.info("user not login:{}", JSON.toJSONString(CookieUtil.getCookie("token", httpServletRequest)));
-            httpServletResponse.setContentType("application/json;charset=UTF-8");
-            httpServletResponse.getWriter().write(JSON.toJSONString(ResponseUtil.loginError()));
+            if (httpServletRequest.getServletPath().contains("thymeleaf")) {
+                httpServletResponse.sendRedirect("/thymeleaf/login.html");
+            } else {
+                httpServletResponse.setContentType("application/json;charset=UTF-8");
+                httpServletResponse.getWriter().write(JSON.toJSONString(ResponseUtil.loginError()));
+            }
             return false;
         }
         return true;

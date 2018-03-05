@@ -5,9 +5,14 @@ import com.tony.billing.dao.AdminDao;
 import com.tony.billing.entity.Admin;
 import com.tony.billing.entity.ModifyAdmin;
 import com.tony.billing.service.AdminService;
+import com.tony.billing.util.RSAUtil;
 import com.tony.billing.util.RedisUtils;
+import com.tony.billing.util.ShaSignHelper;
 import com.tony.billing.util.TokenUtil;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -19,13 +24,27 @@ import java.util.Date;
 @Service
 public class AdminServiceImpl implements AdminService {
 
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
+
     @Resource
     private AdminDao adminDao;
 
     private final Long VERIFY_TIME = 3600 * 24 * 1000L;
 
+    @Resource
+    private RSAUtil rsaUtil;
+
+    @Value("${pwd.salt:springboot}")
+    private String pwdSalt;
+
     @Override
     public Admin login(Admin admin) {
+        admin.setPassword(sha256(rsaUtil.decrypt(admin.getPassword())));
+        if (admin.getPassword() == null) {
+            logger.error("password error");
+            return null;
+        }
+        logger.debug("salt:{}", pwdSalt);
         Admin checkUser = adminDao.preLogin(admin);
         if (checkUser != null) {
             RedisUtils.del(checkUser.getTokenId());
@@ -47,6 +66,11 @@ public class AdminServiceImpl implements AdminService {
             admin.setCreateTime(new Date());
             admin.setModifyTime(admin.getCreateTime());
             admin.setVersion(1);
+            admin.setPassword(sha256(rsaUtil.decrypt(admin.getPassword())));
+            if (admin.getPassword() == null) {
+                logger.error("password error");
+                return -1L;
+            }
             admin.setIsDeleted(EnumDeleted.NOT_DELETED.val());
             if (adminDao.register(admin) > 0) {
                 return admin.getId();
@@ -64,6 +88,11 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public boolean modifyPwd(ModifyAdmin admin) {
+        admin.setNewPassword(sha256(admin.getNewPassword()));
+        admin.setPassword(sha256(admin.getPassword()));
+        if (admin.getNewPassword() == null) {
+            return false;
+        }
         Admin stored = adminDao.getAdminById(admin.getId());
         if (stored != null && StringUtils.equals(stored.getPassword(), admin.getPassword())) {
             stored.setPassword(admin.getNewPassword());
@@ -79,5 +108,13 @@ public class AdminServiceImpl implements AdminService {
         admin1.setUserName(admin.getUserName());
         admin1.setLastLogin(admin.getLastLogin());
         return admin1;
+    }
+
+    private String sha256(String pwd) {
+        if (pwd != null) {
+            return ShaSignHelper.sign(pwd, pwdSalt);
+        } else {
+            return null;
+        }
     }
 }

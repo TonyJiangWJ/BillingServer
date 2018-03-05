@@ -1,6 +1,12 @@
 package com.tony.billing.constants.enums;
 
+import org.apache.commons.lang3.ArrayUtils;
+import org.springframework.util.CollectionUtils;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -39,5 +45,13 @@ public enum EnumLiabilityParentType {
 
     public static EnumLiabilityParentType getEnumByType(String type) {
         return pool.get(type);
+    }
+
+    /**
+     * return unmodifiableList
+     * @return
+     */
+    public static List<EnumLiabilityParentType> toList() {
+        return Arrays.asList(EnumLiabilityParentType.values());
     }
 }

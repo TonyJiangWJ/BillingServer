@@ -1,5 +1,7 @@
 package com.tony.billing.dto;
 
+import com.tony.billing.entity.Asset;
+
 /**
  * @author TonyJiang on 2018/2/12
  */
@@ -9,6 +11,20 @@ public class AssetDTO {
     private String parentType;
     private Long id;
     private Long amount;
+
+    public AssetDTO() {
+
+    }
+
+    public AssetDTO(Asset asset) {
+        if (asset != null) {
+            this.amount = asset.getAmount();
+            this.id = asset.getId();
+            this.name = asset.getName();
+            this.type = asset.getType();
+            this.parentType = asset.getParentType();
+        }
+    }
 
     public String getName() {
         return name;

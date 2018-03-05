@@ -1,20 +1,32 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.thymeleaf.org" layout:decorator="layout/default">
 <head>
+    <title>资产概览</title>
+    <!--/* codes in this block will be removed at Thymeleaf parsing time!-->
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <title>资产概览</title>
+    <title>default title</title>
     <link rel="stylesheet" type="text/css" th:href="@{/layui/css/layui.css}"
           href="../../../static/layui/css/layui.css"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/global.css}" href="../../../static/css/global.css"/>
     <script type="text/javascript" th:src="@{/layui/layui.js}" src="../../../static/layui/layui.js"></script>
     <script type="text/javascript" th:src="@{/scripts/jquery-3.1.1.min.js}"
             src="../../../static/scripts/jquery-3.1.1.min.js"></script>
+    <!--*/-->
 </head>
-<script>
-    layui.use(['element', 'jquery', 'form', 'layer'], function () {
+<script layout:fragment="script" th:inline="javascript">
+
+    layui.use(['element', 'jquery', 'form', 'layer', 'laydate'], function () {
         var element = layui.element;
         var form = layui.form;
         var $ = layui.$;
+        var laydate = layui.laydate;
+        laydate.render({
+            elem: '#repaymentDay'
+        });
+
+        form.on('select(liabilityParent)', function () {
+            loadChildLiabilityType();
+        })
     });
 
     function toggleHideOrExpand(self) {
@@ -119,48 +131,154 @@
         })
 
     }
+
+    function showAddLiability() {
+        layer.open({
+            type: 1,
+            title: "添加分期账单",
+            content: $('#addLiabilityLayerContent'),
+            btn: ["确定", "关闭"],
+            yes: function () {
+                var newLiability = {};
+                newLiability.parentType = $('#liabilityParent').val();
+                newLiability.type = $('#liabilityChildType').val();
+                newLiability.installment = $('#installment').val();
+                newLiability.repaymentDay = $('#repaymentDay').val();
+                newLiability.amount = ($('#amount').val() * 100).toFixed(0);
+                $.ajax({
+                    url: "/thymeleaf/liability/put",
+                    type: "post",
+                    data: newLiability,
+                    success: function (resp) {
+                        if (resp.code === '0001') {
+                            layer.alert("添加成功", function () {
+                                window.location.reload();
+                            });
+                        } else {
+                            layer.alert("添加失败");
+                        }
+                    }
+                })
+            }
+        })
+    }
+
+    function loadChildLiabilityType() {
+        var liabilityParentType = $('#liabilityParent').val();
+        if (isNotEmpty(liabilityParentType)) {
+            $.ajax({
+                url: "/thymeleaf/list/liability/type/by/parent/" + liabilityParentType,
+                type: "post",
+                success: function (resp) {
+                    if (resp.code === "0001") {
+                        var options = '<option value="">未选择</option>';
+                        var types = resp.liabilityTypes;
+                        /*<![CDATA[ */
+                        for (var i = 0, l = types.length; i < l; i++) {
+                            options += '<option value="' + types[i].type + '">' + types[i].typeName + '</option>';
+                        }
+                        /* ]]>*/
+                        $('#liabilityChildType').html(options);
+                        layui.use('form', function () {
+                            var form = layui.form;
+                            form.render();
+                        });
+                    }
+                }
+            });
+        }
+    }
 </script>
-<div style="display: none;" id="assetLayerContent">
-    <div class="layui-form" style="margin: 20px 20px 20px 0;">
-        <input id="assetId" type="hidden"/>
-        <div class="layui-form-item">
-            <label class="layui-form-label">类别</label>
-            <div class="layui-input-inline">
-                <input class="layui-input" id="assetType" value="支付宝" type="text" readonly="readonly"/>
+
+<div layout:fragment="outBody">
+    <div style="display: none;" id="assetLayerContent">
+        <div class="layui-form" style="margin: 20px 20px 20px 0;">
+            <input id="assetId" type="hidden"/>
+            <div class="layui-form-item">
+                <label class="layui-form-label">类别</label>
+                <div class="layui-input-inline">
+                    <input class="layui-input" id="assetType" value="支付宝" type="text" readonly="readonly"/>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">金额</label>
+                <div class="layui-input-inline">
+                    <input class="layui-input" id="assetAmount" type="text" placeholder="金额"/>
+                </div>
             </div>
         </div>
-        <div class="layui-form-item">
-            <label class="layui-form-label">金额</label>
-            <div class="layui-input-inline">
-                <input class="layui-input" id="assetAmount" type="text" placeholder="金额"/>
+    </div>
+    <div style="display: none;" id="liabilityLayerContent">
+        <div class="layui-form" style="margin: 20px 20px 20px 0;">
+            <div class="layui-form-item">
+                <label class="layui-form-label">类别</label>
+                <div class="layui-input-inline">
+                    <input class="layui-input" id="liabilityType" value="花呗" type="text" readonly="readonly"/>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">金额</label>
+                <div class="layui-input-inline">
+                    <input class="layui-input" id="liabilityAmount" type="text" placeholder="金额"/>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">已还金额</label>
+                <div class="layui-input-inline">
+                    <input class="layui-input" id="liabilityPaid" type="text" placeholder="已还金额"/>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div style="display: none;" id="addLiabilityLayerContent">
+        <div class="layui-form" style="margin: 20px 20px 20px 0;">
+            <div class="layui-form-item">
+                <label class="layui-form-label">父类别</label>
+                <div class="layui-input-inline">
+                    <select id="liabilityParent" class="layui-select" lay-filter="liabilityParent">
+                        <option value="">未选择</option>
+                        <option th:each="selectItem:${liabilityParentList}" th:value="${selectItem.type}" value="code"
+                                th:text="${selectItem.desc}">支付宝
+                        </option>
+                        <!--/*-->
+                        <option>信用卡</option>
+                        <option>京东</option>
+                        <option>小米</option>
+                        <!--*/-->
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">子类别</label>
+                <div class="layui-input-inline">
+                    <select id="liabilityChildType" class="layui-select" lay-filter="liabilityChild">
+                        <option value="">未选择</option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">分期期数</label>
+                <div class="layui-input-inline">
+                    <input name="installment" id="installment" class="layui-input" placeholder="分期期数" type="number"/>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">首期还款日</label>
+                <div class="layui-input-inline">
+                    <input name="repaymentDay" id="repaymentDay" type="text" class="layui-input" placeholder="首期还款日"/>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">总金额</label>
+                <div class="layui-input-inline">
+                    <input name="amount" id="amount" type="number" class="layui-input" placeholder="总金额"/>
+                </div>
             </div>
         </div>
     </div>
 </div>
-<div style="display: none;" id="liabilityLayerContent">
-    <div class="layui-form" style="margin: 20px 20px 20px 0;">
-        <div class="layui-form-item">
-            <label class="layui-form-label">类别</label>
-            <div class="layui-input-inline">
-                <input class="layui-input" id="liabilityType" value="花呗" type="text" readonly="readonly"/>
-            </div>
-        </div>
-        <div class="layui-form-item">
-            <label class="layui-form-label">金额</label>
-            <div class="layui-input-inline">
-                <input class="layui-input" id="liabilityAmount" type="text" placeholder="金额"/>
-            </div>
-        </div>
-        <div class="layui-form-item">
-            <label class="layui-form-label">已还金额</label>
-            <div class="layui-input-inline">
-                <input class="layui-input" id="liabilityPaid" type="text" placeholder="已还金额"/>
-            </div>
-        </div>
-    </div>
-</div>
-<body>
-<div class="layui-container">
+<section layout:fragment="content">
     <fieldset class="layui-elem-field layui-field-title">
         <legend>概览</legend>
     </fieldset>
@@ -228,12 +346,17 @@
         </div>
     </div>
     <div class="layui-col-md12 layui-col-xs12">
-        <div style="margin: 5px;"><h2>净资产<span th:text="'￥'+${assetManageDTO.cleanAsset}/100">800</span></h2></div>
+        <div style="margin: 5px;">
+            <h2>净资产<span style="color: #ff0000;" th:style="'color: '+(${assetManageDTO.cleanAsset}>0 ? '#008000' : '#ff0000')" th:text="'￥'+${assetManageDTO.cleanAsset}/100">800</span></h2>
+        </div>
     </div>
     <div class="layui-col-md12 layui-col-xs12">
         <fieldset class="layui-elem-field layui-field-title">
-            <legend>分期还款</legend>
+            <legend>分期还款
+                <button class="layui-btn layui-btn-xs layui-btn-normal" onclick="showAddLiability()">添加分期账单</button>
+            </legend>
         </fieldset>
+
         <div>
             <ul class="layui-timeline">
                 <li class="layui-timeline-item" th:each="monthLiability:${assetManageDTO.monthLiabilityModels}">
@@ -260,7 +383,8 @@
                                                 (<span th:text="${detail.paid}/100" style="color: #20f700;">100</span>)
                                             </span>
                                             &nbsp;
-                                            <span th:text="${detail.index}">1</span><span>/</span><span th:text="${detail.installment}">12</span>
+                                            <span th:text="${detail.index}">1</span><span>/</span><span
+                                                th:text="${detail.installment}">12</span>
                                         </li>
                                     </ul>
                                 </div>
@@ -271,7 +395,5 @@
             </ul>
         </div>
     </div>
-</div>
-
-</body>
+</section>
 </html>

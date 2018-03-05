@@ -1,0 +1,64 @@
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.thymeleaf.org"
+      layout:decorator="layout/default">
+<head>
+    <title>用户登录</title>
+    <!--/* codes in this block will be removed at Thymeleaf parsing time!-->
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>default title</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/layui/css/layui.css}"
+          href="../../../static/layui/css/layui.css"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/global.css}" href="../../../static/css/global.css"/>
+    <script type="text/javascript" th:src="@{/layui/layui.js}" src="../../../static/layui/layui.js"></script>
+    <script type="text/javascript" th:src="@{/scripts/jquery-3.1.1.min.js}"
+            src="../../../static/scripts/jquery-3.1.1.min.js"></script>
+    <!--*/-->
+</head>
+<script layout:fragment="script" th:inline="javascript">
+
+    layui.use(['layer'], function (){
+       var layer = layui.layer;
+    });
+
+    function doLogin() {
+        var userName = $('#userName').val();
+        var password = $('#password').val();
+        if(isEmpty(userName)) {
+            layer.alert("请输入用户名");
+            return false;
+        }
+        if(isEmpty(password)) {
+            layer.alert("请输入密码");
+            return false;
+        }
+        $("#password").val(getRsaCipher(password, [[#{rsa.public.key}]]));
+        $('#loginForm').submit();
+    }
+
+</script>
+
+
+<div class="layui-container">
+    <div layout:fragment="content">
+        <div style="margin: 60px auto 0;max-width: 400px;box-shadow: 0 0 8px rgba(0,0,0,.1);padding: 50px 50px 30px;"
+             class="layui-form">
+            <form id="loginForm" action="/thymeleaf/login/put" method="post">
+            <div class="layui-form-item">
+                <label class="layui-form-label">用户名</label>
+                <div class="layui-input-inline">
+                    <input type="text" class="layui-input" name="userName" id="userName" placeholder="用户名"/>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">密码</label>
+                <div class="layui-input-inline">
+                    <input type="password" class="layui-input" name="password" id="password" placeholder="密码"/>
+                </div>
+            </div>
+            </form>
+            <button class="layui-btn layui-btn-radius" style="width: 100%;" onclick="doLogin()">登录</button>
+        </div>
+    </div>
+</div>
+
+</html>

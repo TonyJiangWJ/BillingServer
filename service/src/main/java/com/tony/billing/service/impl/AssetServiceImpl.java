@@ -1,6 +1,7 @@
 package com.tony.billing.service.impl;
 
 import com.tony.billing.constants.enums.EnumAssetParentType;
+import com.tony.billing.constants.enums.EnumAssetType;
 import com.tony.billing.dao.AssetDao;
 import com.tony.billing.dto.AssetDTO;
 import com.tony.billing.entity.Asset;
@@ -41,7 +42,7 @@ public class AssetServiceImpl implements AssetService {
     @Override
     public AssetDTO getAssetInfoById(Long id) {
         Asset asset = assetDao.getAssetById(id);
-        return bindDTO(asset);
+        return new AssetDTO(asset);
     }
 
     @Override
@@ -49,11 +50,17 @@ public class AssetServiceImpl implements AssetService {
         return assetDao.update(asset) > 0;
     }
 
+    @Override
+    public Long addAsset(Asset asset) {
+        asset.setName(EnumAssetType.getEnumByType(asset.getType()).getDesc());
+        return assetDao.insert(asset);
+    }
+
     private void insertIntoModelList(List<AssetModel> assetModels, Asset asset) {
         boolean inserted = false;
         for (AssetModel assetModel : assetModels) {
             if (StringUtils.equals(asset.getParentType(), assetModel.getType())) {
-                assetModel.getAssetList().add(bindDTO(asset));
+                assetModel.getAssetList().add(new AssetDTO(asset));
                 assetModel.setTotal(asset.getAmount() + assetModel.getTotal());
                 inserted = true;
                 break;
@@ -61,7 +68,7 @@ public class AssetServiceImpl implements AssetService {
         }
         if (!inserted) {
             AssetModel assetModel = new AssetModel();
-            assetModel.getAssetList().add(bindDTO(asset));
+            assetModel.getAssetList().add(new AssetDTO(asset));
             assetModel.setType(asset.getParentType());
             assetModel.setName(EnumAssetParentType.getEnumByType(asset.getParentType()).getDesc());
             assetModel.setTotal(asset.getAmount() + assetModel.getTotal());
@@ -69,16 +76,4 @@ public class AssetServiceImpl implements AssetService {
         }
     }
 
-    private AssetDTO bindDTO(Asset asset) {
-        if (asset == null) {
-            return null;
-        }
-        AssetDTO assetDTO = new AssetDTO();
-        assetDTO.setAmount(asset.getAmount());
-        assetDTO.setId(asset.getId());
-        assetDTO.setName(asset.getName());
-        assetDTO.setType(asset.getType());
-        assetDTO.setParentType(asset.getParentType());
-        return assetDTO;
-    }
 }

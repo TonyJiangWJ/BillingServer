@@ -1,10 +1,13 @@
 package com.tony.billing.service;
 
+import com.tony.billing.constants.enums.EnumLiabilityType;
 import com.tony.billing.dto.LiabilityDTO;
+import com.tony.billing.dto.LiabilityTypeDTO;
 import com.tony.billing.entity.Liability;
 import com.tony.billing.model.LiabilityModel;
 import com.tony.billing.model.MonthLiabilityModel;
 
+import java.sql.SQLException;
 import java.util.List;
 
 public interface LiabilityService {
@@ -38,4 +41,13 @@ public interface LiabilityService {
      * @return
      */
     boolean modifyLiabilityInfoById(Liability liability);
+
+    /**
+     * 创建负债信息
+     * @param liability
+     * @return
+     */
+    boolean createLiabilityInfo(Liability liability) throws SQLException;
+
+    List<LiabilityTypeDTO> getLiabilityTypesByParent(String parentType);
 }
