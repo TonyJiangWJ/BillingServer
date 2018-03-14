@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.thymeleaf.org" layout:decorator="/layout/default">
+<head>
+    <title>账单列表</title>
+    <!--/*-->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    <link rel="stylesheet" type="text/css" th:href="@{/layui/css/layui.css}"
+          href="../../../static/layui/css/layui.css"/>
+    <script type="text/javascript" th:src="@{/layui/layui.js}" src="../../../static/layui/layui.js"></script>
+    <script type="text/javascript" th:src="@{/scripts/jquery-3.1.1.min.js}"
+            src="../../../static/scripts/jquery-3.1.1.min.js"></script>
+    <!--*/-->
+    <script layout:fragment="script" th:inline="javascript">
+        layui.use('table', function () {
+            var table = layui.table;
+            table.render();
+        })
+    </script>
+</head>
+<body>
+<div layout:fragment="layout_header">
+    <div th:replace="/fragments/header::header('bill')">
+        <div>this is child file</div>
+    </div>
+</div>
+<section layout:fragment="content">
+    <div class="layui-form">
+        <table class="layui-table" id="table">
+            <thead>
+            <tr>
+                <th>订单编号</th>
+                <th>创建时间</th>
+                <th>交易对方</th>
+                <th>交易类型</th>
+                <th>商品名称</th>
+                <th>备注</th>
+                <th>金额</th>
+                <th>收入/支出</th>
+                <th>交易状态</th>
+                <th>是否已删除</th>
+                <th>显示状态</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="record:${response.costRecordList}">
+                <td th:text="${record.tradeNo}">2018030421001004540571850687</td>
+                <td th:text="${record.createTime}">2018-03-04 18:55:27</td>
+                <td th:text="${record.location}">外婆家(湖滨银泰C区店)</td>
+                <td th:text="${record.orderType}">即时到账交易</td>
+                <td th:text="${record.goodsName}">支付宝条码支付</td>
+                <td th:text="${record.memo}"></td>
+                <td th:text="${record.money}">127.00</td>
+                <td th:text="${record.inOutType}">支出</td>
+                <td th:text="${record.orderStatus}">交易成功</td>
+                <td th:text="${record.isDelete}">未删除</td>
+                <td th:text="${record.isHidden}">显示</td>
+            </tr>
+            <!--/*-->
+            <tr>
+                <td>2018030421001004540571850687</td>
+                <td>2018-03-04 18:55:27</td>
+                <td>外婆家(湖滨银泰C区店)</td>
+                <td>即时到账交易</td>
+                <td>支付宝条码支付</td>
+                <td></td>
+                <td>127.00</td>
+                <td>支出</td>
+                <td>交易成功</td>
+                <td>未删除</td>
+                <td>显示</td>
+            </tr>
+            <tr>
+                <td>2018030421001004540571850687</td>
+                <td>2018-03-04 18:55:27</td>
+                <td>外婆家(湖滨银泰C区店)</td>
+                <td>即时到账交易</td>
+                <td>支付宝条码支付</td>
+                <td></td>
+                <td>127.00</td>
+                <td>支出</td>
+                <td>交易成功</td>
+                <td>未删除</td>
+                <td>显示</td>
+            </tr>
+            <tr>
+                <td>2018030421001004540571850687</td>
+                <td>2018-03-04 18:55:27</td>
+                <td>外婆家(湖滨银泰C区店)</td>
+                <td>即时到账交易</td>
+                <td>支付宝条码支付</td>
+                <td></td>
+                <td>127.00</td>
+                <td>支出</td>
+                <td>交易成功</td>
+                <td>未删除</td>
+                <td>显示</td>
+            </tr>
+            <tr>
+                <td>2018030421001004540571850687</td>
+                <td>2018-03-04 18:55:27</td>
+                <td>外婆家(湖滨银泰C区店)</td>
+                <td>即时到账交易</td>
+                <td>支付宝条码支付</td>
+                <td></td>
+                <td>127.00</td>
+                <td>支出</td>
+                <td>交易成功</td>
+                <td>未删除</td>
+                <td>显示</td>
+            </tr>
+            <tr>
+                <td>2018030421001004540571850687</td>
+                <td>2018-03-04 18:55:27</td>
+                <td>外婆家(湖滨银泰C区店)</td>
+                <td>即时到账交易</td>
+                <td>支付宝条码支付</td>
+                <td></td>
+                <td>127.00</td>
+                <td>支出</td>
+                <td>交易成功</td>
+                <td>未删除</td>
+                <td>显示</td>
+            </tr>
+            <!--*/-->
+            </tbody>
+        </table>
+    </div>
+</section>
+</body>
+</html>

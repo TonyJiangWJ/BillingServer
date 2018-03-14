@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.thymeleaf.org"
+      layout:decorator="/layout/default">
+<head>
+    <title>fragment_demo</title>
+    <!-- /* -->
+    <meta charset="UTF-8"/>
+    <!-- */ -->
+</head>
+<body>
+<div layout:fragment="layout_header">
+    <div th:replace="/fragments/header::header('bill')">
+        <div>this is child file</div>
+    </div>
+</div>
+</body>
+</html>
