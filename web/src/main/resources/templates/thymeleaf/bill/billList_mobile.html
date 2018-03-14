@@ -12,20 +12,166 @@
     <script type="text/javascript" th:src="@{/scripts/jquery-3.1.1.min.js}"
             src="../../../static/scripts/jquery-3.1.1.min.js"></script>
     <!--*/-->
-    <script layout:fragment="script" th:inline="javascript">
-        layui.use('table', function () {
+    <script th:inline="javascript">
+        layui.use(['table', 'laypage', 'form', 'layer', 'laydate'], function () {
             var table = layui.table;
+            var laypage = layui.laypage;
+            var laydate = layui.laydate;
+            var $ = layui.$;
+            // console.log('current page [[${response.pageNo}]]');
             table.render();
+            laypage.render({
+                elem: 'pager',
+                count: /*[[${response.totalItem}]]*/1000
+                // layout: ['count', 'prev', 'page', 'next', 'limit', 'skip']
+                , curr: /*[[${response.pageNo}]]*/1
+                , limit: /*[[${response.pageSize}]]*/10
+                , groups: 3
+                , layout: ['limit', 'prev', 'page', 'next']
+                , jump: function (obj, first) {
+                    // console.log(obj)
+                    if (first) {
+                        return;
+                    }
+                    $('#pageNo').val(obj.curr);
+                    $('#pageSize').val(obj.limit);
+                    doSubmit();
+                }
+            });
+            var laydates = $('.laydate');
+            /*<![CDATA[ */
+            for (var i = 0, l = laydates.length; i < l; i++) {
+                var id = $(laydates[i]).attr('id');
+                console.log('render id:' + id);
+                laydate.render({
+                    elem: '#' + $(laydates[i]).attr('id')
+                })
+            }
+            /* ]]> */
         });
 
-        function toggleDetail(self){
+        function toggleDetail(self) {
             var next = $(self).next('tr');
-            if(next.is(":hidden")) {
+            if (next.is(":hidden")) {
                 next.slideDown();
-            }else{
+            } else {
                 next.slideUp();
             }
         }
+
+        /*<![CDATA[ */
+        function nextPage() {
+            var pageNoTarget = $('#pageNo');
+            var pageNo = isNotEmpty(pageNoTarget.val()) ? parseInt(pageNoTarget.val()) : 1;
+            if (pageNo >= /*[[${response.totalPage}]]*/ 1) {
+                return;
+            }
+            pageNoTarget.val(pageNo + 1);
+            doSubmit();
+        }
+
+        function prevPage() {
+            var pageNoTarget = $('#pageNo');
+            var pageNo = isNotEmpty(pageNoTarget.val()) ? parseInt(pageNoTarget.val()) : 1;
+            if (pageNo <= 1) {
+                return;
+            } else {
+                pageNoTarget.val(pageNo - 1)
+            }
+            doSubmit();
+        }
+
+        function doFilter() {
+            var content = $('#contentFilter').val();
+            var endDate = $('#endDateFilter').val();
+            var startDate = $('#startDateFilter').val();
+            // TODO check filters
+            $('#content').val(content);
+            $('#endDate').val(endDate);
+            $('#startDate').val(startDate);
+            resetPageInfo();
+            doSubmit();
+        }
+
+        function clearFilters() {
+            $('#contentFilter').val("");
+            $('#endDateFilter').val("");
+            $('#startDateFilter').val("");
+            $('#content').val("");
+            $('#endDate').val("");
+            $('#startDate').val("");
+        }
+
+        function resetPageInfo() {
+            $('#pageNo').val('');
+            $('#pageSize').val('');
+        }
+
+        function doSubmit() {
+            $('#billListForm').submit();
+        }
+
+        $(function () {
+            $('#showInOnly').on('click', function () {
+                $('#inOutType').val('收入');
+                resetPageInfo();
+                doSubmit();
+            });
+
+            $('#showOutOnly').on('click', function () {
+                $('#inOutType').val('支出');
+                resetPageInfo();
+                doSubmit();
+            });
+
+            $('#showAllInOut').on('click', function () {
+                $('#inOutType').val('');
+                resetPageInfo();
+                doSubmit();
+            });
+
+            $('#toggleAdvance').on('click', function() {
+                $('#advance').toggle()
+            });
+
+            $('#hideDeleted').on('click', function(){
+               $('#isDelete').val('0');
+               resetPageInfo();
+               doSubmit();
+            });
+
+            $('#showDeleted').on('click', function () {
+                $('#isDelete').val('');
+                resetPageInfo();
+                doSubmit();
+            });
+
+            $('#deletedOnly').on('click', function(){
+                $('#isDelete').val('1');
+                resetPageInfo();
+                doSubmit();
+            });
+
+            $('#showAllDisplayStatus').on('click', function(){
+                $('#isHidden').val('');
+                resetPageInfo();
+                doSubmit();
+            });
+
+            $('#showHiddenOnly').on('click', function () {
+                $('#isHidden').val('隐藏');
+                resetPageInfo();
+                doSubmit();
+            });
+
+            $('#showDisplayOnly').on('click', function(){
+                $('#isDelete').val('显示');
+                resetPageInfo();
+                doSubmit();
+            });
+
+        });
+        /* ]]> */
     </script>
 </head>
 <body>
@@ -47,53 +193,77 @@
             </thead>
             <tbody>
             <th:block th:each="record:${response.costRecordList}">
-            <tr onclick="toggleDetail(this)">
-                <td>
-                    <div>
+                <tr onclick="toggleDetail(this)">
+                    <td>
                         <div>
-                            <span th:text="${record.goodsName}">支付宝条码支付</span>
-                            <span style="position: relative;float: right; padding-right: 5px;" th:text="${record.inOutType}">支出</span>
+                            <div>
+                                <div style="display:inline-block;width: 260px;overflow: hidden;-ms-text-overflow: ellipsis;text-overflow: ellipsis; white-space: nowrap;">
+                                    <span th:text="${record.goodsName}">KFC_PREAFPHZPREAFPHZ11201520307612341167293</span>
+                                </div>
+                                <span style="position: relative;float: right; padding-right: 5px;"
+                                      th:text="${record.inOutType}">支出</span>
+                            </div>
+                            <div>
+                                <h1 style="position: relative;float: right;padding-right: 5px;"
+                                    th:text="${record.money}">127.00</h1>
+                            </div>
+                            <div>
+                                <span th:text="${record.createTime}">2018-03-04 18:55:27</span>
+                            </div>
                         </div>
-                        <div>
-                            <h1 style="position: relative;float: right;padding-right: 5px;" th:text="${record.money}">127.00</h1>
-                        </div>
-                        <div>
-                            <span th:text="${record.createTime}">2018-03-04 18:55:27</span>
-                        </div>
-                    </div>
-                </td>
-            </tr>
-            <tr style="background: #eae8e4;display: none;">
-                <td>
-                    <div th:text="${record.tradeNo}">2018030421001004540571850687</div>
-                    <div><label>地点：</label><span th:text="${record.location}">外婆家(湖滨银泰C区店)</span> </div>
-                    <div><label>备注：</label><span th:text="${record.memo}"></span></div>
-                    <div th:text="${record.orderType}">即时到账交易</div>
-                    <div th:text="${record.orderStatus}">交易成功</div>
-                    <div th:text="${record.isDelete}">未删除</div>
-                    <div th:text="${record.isHidden}">显示</div>
-                </td>
-            </tr>
+                    </td>
+                </tr>
+                <tr style="background: #f0f0f0;display: none;">
+                    <td>
+                        <div th:text="${record.tradeNo}">2018030421001004540571850687</div>
+                        <div><label>地点：</label><span th:text="${record.location}">外婆家(湖滨银泰C区店)</span></div>
+                        <div><label>商品名称：</label><span th:text="${record.goodsName}">支付宝条码支付</span></div>
+                        <div><label>备注：</label><span th:text="${record.memo}"></span></div>
+                        <div th:text="${record.orderType}">即时到账交易</div>
+                        <div th:text="${record.orderStatus}">交易成功</div>
+                        <div th:if="${record.isDelete eq 0 ? '未删除' : '已删除'}">未删除</div>
+                        <div th:text="${record.isHidden}">显示</div>
+                    </td>
+                </tr>
             </th:block>
-            <!--<tr >-->
-                <!--<td >2018030421001004540571850687</td>-->
-                <!--<td th:text="${record.createTime}">2018-03-04 18:55:27</td>-->
-                <!--<td>外婆家(湖滨银泰C区店)</td>-->
-                <!--<td th:text="${record.orderType}">即时到账交易</td>-->
-                <!--<td th:text="${record.goodsName}">支付宝条码支付</td>-->
-                <!--<td th:text="${record.memo}"></td>-->
-                <!--<td th:text="${record.money}">127.00</td>-->
-                <!--<td th:text="${record.inOutType}">支出</td>-->
-                <!--<td th:text="${record.orderStatus}">交易成功</td>-->
-                <!--<td th:text="${record.isDelete}">未删除</td>-->
-                <!--<td th:text="${record.isHidden}">显示</td>-->
-            <!--</tr>-->
             <!--/*-->
             <tr onclick="toggleDetail(this)">
                 <td>
                     <div>
                         <div>
-                            <span>支付宝条码支付</span>
+                            <div style="display:inline-block;width: 250px;overflow: hidden;-ms-text-overflow: ellipsis;text-overflow: ellipsis; white-space: nowrap;">
+                                <span style="width: 100%;">KFC_PREAFPHZPREAFPHZ11201520307612341167293</span>
+                            </div>
+                            <span style="position: relative;float: right; padding-right: 5px;">支出</span>
+                        </div>
+                        <div>
+                            <h1 style="position: relative;float: right;padding-right: 5px;">127.00</h1>
+                        </div>
+                        <div>
+                            <span>2018-03-04 18:55:27</span>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr style="background: #eae8e4;display: none;">
+                <td>
+                    <div>2018030421001004540571850687</div>
+                    <div><label>地点：</label> 外婆家(湖滨银泰C区店)</div>
+                    <div><label>商品名称：</label>支付宝条码支付</div>
+                    <div><label>备注：</label></div>
+                    <div>即时到账交易</div>
+                    <div>交易成功</div>
+                    <div>未删除</div>
+                    <div>显示</div>
+                </td>
+            </tr>
+            <tr onclick="toggleDetail(this)">
+                <td>
+                    <div>
+                        <div>
+                            <div style="display:inline-block;width: 250px;overflow: hidden;-ms-text-overflow: ellipsis;text-overflow: ellipsis; white-space: nowrap;">
+                                <span style="width: 100%;">KFC_PREAFPHZPREAFPHZ11201520307612341167293</span>
+                            </div>
                             <span style="position: relative;float: right; padding-right: 5px;">支出</span>
                         </div>
                         <div>
@@ -145,109 +315,61 @@
                     <div>显示</div>
                 </td>
             </tr>
-            <tr onclick="toggleDetail(this)">
-                <td>
-                    <div>
-                        <div>
-                            <span>支付宝条码支付</span>
-                            <span style="position: relative;float: right; padding-right: 5px;">支出</span>
-                        </div>
-                        <div>
-                            <h1 style="position: relative;float: right;padding-right: 5px;">127.00</h1>
-                        </div>
-                        <div>
-                            <span>2018-03-04 18:55:27</span>
-                        </div>
-                    </div>
-                </td>
-            </tr>
-            <tr style="background: #eae8e4;display: none;">
-                <td>
-                    <div>2018030421001004540571850687</div>
-                    <div><label>地点：</label> 外婆家(湖滨银泰C区店)</div>
-                    <div><label>商品名称：</label>支付宝条码支付</div>
-                    <div><label>备注：</label></div>
-                    <div>即时到账交易</div>
-                    <div>交易成功</div>
-                    <div>未删除</div>
-                    <div>显示</div>
-                </td>
-            </tr>
-            <!--<tr>-->
-                <!--<td>2018-03-04 18:55:27</td>-->
-                <!--<td>支付宝条码支付</td>-->
-                <!--<td>127.00</td>-->
-                <!--<td>支出</td>-->
-            <!--</tr>-->
-            <!--<tr>-->
-                <!--<td>2018-03-04 18:55:27</td>-->
-                <!--<td>支付宝条码支付</td>-->
-                <!--<td>127.00</td>-->
-                <!--<td>支出</td>-->
-            <!--</tr>-->
-            <!---->
-            <!--<tr>-->
-                <!--<td>2018030421001004540571850687</td>-->
-                <!--<td>2018-03-04 18:55:27</td>-->
-                <!--<td>外婆家(湖滨银泰C区店)</td>-->
-                <!--<td>即时到账交易</td>-->
-                <!--<td>支付宝条码支付</td>-->
-                <!--<td></td>-->
-                <!--<td>127.00</td>-->
-                <!--<td>支出</td>-->
-                <!--<td>交易成功</td>-->
-                <!--<td>未删除</td>-->
-                <!--<td>显示</td>-->
-            <!--</tr>-->
-            <!--<tr>-->
-                <!--<td>2018030421001004540571850687</td>-->
-                <!--<td>2018-03-04 18:55:27</td>-->
-                <!--<td>外婆家(湖滨银泰C区店)</td>-->
-                <!--<td>即时到账交易</td>-->
-                <!--<td>支付宝条码支付</td>-->
-                <!--<td></td>-->
-                <!--<td>127.00</td>-->
-                <!--<td>支出</td>-->
-                <!--<td>交易成功</td>-->
-                <!--<td>未删除</td>-->
-                <!--<td>显示</td>-->
-            <!--</tr>-->
-            <!--<tr>-->
-                <!--<td>2018030421001004540571850687</td>-->
-                <!--<td>2018-03-04 18:55:27</td>-->
-                <!--<td>外婆家(湖滨银泰C区店)</td>-->
-                <!--<td>即时到账交易</td>-->
-                <!--<td>支付宝条码支付</td>-->
-                <!--<td></td>-->
-                <!--<td>127.00</td>-->
-                <!--<td>支出</td>-->
-                <!--<td>交易成功</td>-->
-                <!--<td>未删除</td>-->
-                <!--<td>显示</td>-->
-            <!--</tr>-->
-            <!--<tr>-->
-                <!--<td>2018030421001004540571850687</td>-->
-                <!--<td>2018-03-04 18:55:27</td>-->
-                <!--<td>外婆家(湖滨银泰C区店)</td>-->
-                <!--<td>即时到账交易</td>-->
-                <!--<td>支付宝条码支付</td>-->
-                <!--<td></td>-->
-                <!--<td>127.00</td>-->
-                <!--<td>支出</td>-->
-                <!--<td>交易成功</td>-->
-                <!--<td>未删除</td>-->
-                <!--<td>显示</td>-->
-            <!--</tr>-->
             <!--*/-->
             </tbody>
         </table>
         <div>
-            <div class="layui-btn-container" style="margin: 5px;">
-                <button class="layui-btn layui-btn-primary">上一页</button>
-                <button class="layui-btn layui-btn-primary">下一页</button>
+            <div class="layui-form">
+                <div class="layui-form-item" style="margin-bottom: 0;" th:object="${request}">
+                    <div style="display: inline-flex">
+                    <input placeholder="起始日期" type="text" class="layui-input laydate" id="startDateFilter"
+                           th:value="*{startDate}"
+                           style="width: 100px;margin: 0 10px 10px 0;display: inline-block"/>
+                    <input placeholder="截止日期" type="text" class="layui-input laydate" id="endDateFilter"
+                           th:value="*{endDate}"
+                           style="width: 100px;margin: 0 10px 10px 0;display: inline-block"/>
+                    <input placeholder="查找内容" type="text" class="layui-input" id="contentFilter" th:value="*{content}"
+                           style="width: 100px;margin: 0 10px 10px 0;display: inline-block"/>
+                    </div>
+                    <div style="display: inline-flex">
+                    <button style="margin: 0 10px 10px 0" class="layui-btn layui-btn-primary" onclick="doFilter()">筛选
+                    </button>
+                    <button style="margin: 0 10px 10px 0" class="layui-btn layui-btn-primary" onclick="clearFilters()">
+                        清空
+                    </button>
+                    </div>
+                </div>
             </div>
+            <div id="pager"></div>
+            <div class="layui-btn-container">
+                <button class="layui-btn layui-btn-primary" id="showInOnly">只显示收入</button>
+                <button class="layui-btn layui-btn-primary" id="showOutOnly">只显示支出</button>
+                <button class="layui-btn layui-btn-primary" id="showAllInOut">显示全部</button>
+                <button class="layui-btn layui-btn-primary" id="toggleAdvance">高级选项</button>
+            </div>
+            <div class="layui-btn-container" id="advance" style="display: none;">
+                <button class="layui-btn layui-btn-primary" id="hideDeleted">隐藏已删除</button>
+                <button class="layui-btn layui-btn-primary" id="showDeleted">显示已删除</button>
+                <button class="layui-btn layui-btn-primary" id="deletedOnly">只显示已删除</button>
+                <button class="layui-btn layui-btn-primary" id="showAllDisplayStatus">显示全部项目</button>
+                <button class="layui-btn layui-btn-primary" id="showHiddenOnly">只显示隐藏项目</button>
+                <button class="layui-btn layui-btn-primary" id="showDisplayOnly">只显示非隐藏项目</button>
+            </div>
+
         </div>
     </div>
+    <form id="billListForm" action="/thymeleaf/bill/billList" method="post" th:object="${request}">
+        <input type="hidden" name="pageNo" id="pageNo" th:value="*{pageNo}"/>
+        <input type="hidden" name="pageSize" id="pageSize" th:value="*{pageSize}"/>
+        <input type="hidden" name="isDelete" id="isDelete" th:value="*{isDelete}"/>
+        <input type="hidden" name="isHidden" id="isHidden" th:value="*{isHidden}"/>
+        <input type="hidden" name="inOutType" id="inOutType" th:value="*{inOutType}"/>
+        <input type="hidden" name="startDate" id="startDate" th:value="*{startDate}"/>
+        <input type="hidden" name="endDate" id="endDate" th:value="*{endDate}"/>
+        <input type="hidden" name="sort" id="sort" th:value="*{sort}"/>
+        <input type="hidden" name="orderBy" id="orderBy" th:value="*{orderBy}"/>
+        <input type="hidden" name="content" id="content" th:value="${content}"/>
+    </form>
 </section>
 </body>
 </html>
