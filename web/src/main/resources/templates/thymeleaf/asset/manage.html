@@ -12,183 +12,184 @@
     <script type="text/javascript" th:src="@{/scripts/jquery-3.1.1.min.js}"
             src="../../../static/scripts/jquery-3.1.1.min.js"></script>
     <!--*/-->
-</head>
-<script th:inline="javascript">
+    <script th:inline="javascript">
 
-    layui.use(['element', 'jquery', 'form', 'layer', 'laydate'], function () {
-        var element = layui.element;
-        var form = layui.form;
-        var $ = layui.$;
-        var laydate = layui.laydate;
-        laydate.render({
-            elem: '#repaymentDay'
+        layui.use(['element', 'jquery', 'form', 'layer', 'laydate'], function () {
+            var element = layui.element;
+            var form = layui.form;
+            var $ = layui.$;
+            var laydate = layui.laydate;
+            laydate.render({
+                elem: '#repaymentDay'
+            });
+
+            form.on('select(liabilityParent)', function () {
+                loadChildLiabilityType();
+            })
         });
 
-        form.on('select(liabilityParent)', function () {
-            loadChildLiabilityType();
-        })
-    });
+        function toggleHideOrExpand(self) {
+            $(self).next('.layui-timeline-content').find('.layui-collapse').toggle("hide");
+        }
 
-    function toggleHideOrExpand(self) {
-        $(self).next('.layui-timeline-content').find('.layui-collapse').toggle("hide");
-    }
+        function expandAll(self) {
+            $(self).parents('div').eq(0).next('div').find('.layui-colla-content').addClass('layui-show');
+        }
 
-    function expandAll(self) {
-        $(self).parents('div').eq(0).next('div').find('.layui-colla-content').addClass('layui-show');
-    }
+        function collapseAll(self) {
+            $(self).parents('div').eq(0).next('div').find('.layui-colla-content').removeClass('layui-show');
+        }
 
-    function collapseAll(self) {
-        $(self).parents('div').eq(0).next('div').find('.layui-colla-content').removeClass('layui-show');
-    }
-
-    function showAssetLayer(self) {
-        var id = $(self).find("input[name=id]").val();
-        $.ajax({
-            url: "/thymeleaf/asset/detail/get",
-            data: {
-                "id": id
-            },
-            success: function (resp) {
-                if (resp.code === '0001') {
-                    $('#assetId').val(id);
-                    $('#assetType').val(resp.assetInfo.name);
-                    $('#assetAmount').val((resp.assetInfo.amount / 100).toFixed(2));
-
-                    layer.open({
-                        type: 1,
-                        content: $('#assetLayerContent'),
-                        title: "资产",
-                        btn: ['确定', '关闭'],
-                        yes: function () {
-                            var request = {};
-                            request.id = id;
-                            request.amount = ($('#assetAmount').val() * 100).toFixed(0);
-                            $.ajax({
-                                url: "/thymeleaf/asset/update",
-                                data: request,
-                                success: function (resp) {
-                                    if (resp.code === '0001') {
-                                        layer.alert("修改成功", function () {
-                                            window.location.reload();
-                                        });
-                                    } else {
-                                        layer.alert("修改失败");
-                                    }
-                                }
-                            });
-                        }
-                    });
-                } else {
-                    layer.alert("获取详情失败");
-                }
-            }
-        });
-
-    }
-
-    function showLiabilityLayer(self) {
-        var id = $(self).find("input[name=id]").val();
-        $.ajax({
-            url: "/thymeleaf/liability/detail/get",
-            data: {
-                "id": id
-            },
-            success: function (resp) {
-                if (resp.code === "0001") {
-                    $('#liabilityType').val(resp.liability.name);
-                    $('#liabilityAmount').val((resp.liability.amount / 100).toFixed(2));
-                    if (resp.liability.installment !== 1) {
-                        $('#liabilityAmount').attr("readonly", "readonly");
-                    }
-                    $('#liabilityPaid').val((resp.liability.paid / 100).toFixed(2));
-                    layer.open({
-                        type: 1,
-                        content: $('#liabilityLayerContent'),
-                        title: "负债",
-                        btn: ['确定', '关闭'],
-                        yes: function () {
-                            var request = {};
-                            request.id = id;
-                            request.amount = ($('#liabilityAmount').val() * 100).toFixed(0);
-                            request.paid = ($('#liabilityPaid').val() * 100).toFixed(0);
-                            $.ajax({
-                                url: "/thymeleaf/liability/update",
-                                data: request,
-                                success: function (resp) {
-                                    if (resp.code === '0001') {
-                                        layer.alert("修改成功", function () {
-                                            window.location.reload();
-                                        })
-                                    } else {
-                                        layer.alert("修改失败");
-                                    }
-                                }
-                            });
-                        }
-                    });
-                }
-            }
-        })
-
-    }
-
-    function showAddLiability() {
-        layer.open({
-            type: 1,
-            title: "添加分期账单",
-            content: $('#addLiabilityLayerContent'),
-            btn: ["确定", "关闭"],
-            yes: function () {
-                var newLiability = {};
-                newLiability.parentType = $('#liabilityParent').val();
-                newLiability.type = $('#liabilityChildType').val();
-                newLiability.installment = $('#installment').val();
-                newLiability.repaymentDay = $('#repaymentDay').val();
-                newLiability.amount = ($('#amount').val() * 100).toFixed(0);
-                $.ajax({
-                    url: "/thymeleaf/liability/put",
-                    type: "post",
-                    data: newLiability,
-                    success: function (resp) {
-                        if (resp.code === '0001') {
-                            layer.alert("添加成功", function () {
-                                window.location.reload();
-                            });
-                        } else {
-                            layer.alert("添加失败");
-                        }
-                    }
-                })
-            }
-        })
-    }
-
-    function loadChildLiabilityType() {
-        var liabilityParentType = $('#liabilityParent').val();
-        if (isNotEmpty(liabilityParentType)) {
+        function showAssetLayer(self) {
+            var id = $(self).find("input[name=id]").val();
             $.ajax({
-                url: "/thymeleaf/list/liability/type/by/parent/" + liabilityParentType,
-                type: "post",
+                url: "/thymeleaf/asset/detail/get",
+                data: {
+                    "id": id
+                },
                 success: function (resp) {
-                    if (resp.code === "0001") {
-                        var options = '<option value="">未选择</option>';
-                        var types = resp.liabilityTypes;
-                        /*<![CDATA[ */
-                        for (var i = 0, l = types.length; i < l; i++) {
-                            options += '<option value="' + types[i].type + '">' + types[i].typeName + '</option>';
-                        }
-                        /* ]]>*/
-                        $('#liabilityChildType').html(options);
-                        layui.use('form', function () {
-                            var form = layui.form;
-                            form.render();
+                    if (resp.code === '0001') {
+                        $('#assetId').val(id);
+                        $('#assetType').val(resp.assetInfo.name);
+                        $('#assetAmount').val((resp.assetInfo.amount / 100).toFixed(2));
+
+                        layer.open({
+                            type: 1,
+                            content: $('#assetLayerContent'),
+                            title: "资产",
+                            btn: ['确定', '关闭'],
+                            yes: function () {
+                                var request = {};
+                                request.id = id;
+                                request.amount = ($('#assetAmount').val() * 100).toFixed(0);
+                                $.ajax({
+                                    url: "/thymeleaf/asset/update",
+                                    data: request,
+                                    success: function (resp) {
+                                        if (resp.code === '0001') {
+                                            layer.alert("修改成功", function () {
+                                                window.location.reload();
+                                            });
+                                        } else {
+                                            layer.alert("修改失败");
+                                        }
+                                    }
+                                });
+                            }
                         });
+                    } else {
+                        layer.alert("获取详情失败");
                     }
                 }
             });
+
         }
-    }
-</script>
+
+        function showLiabilityLayer(self) {
+            var id = $(self).find("input[name=id]").val();
+            $.ajax({
+                url: "/thymeleaf/liability/detail/get",
+                data: {
+                    "id": id
+                },
+                success: function (resp) {
+                    if (resp.code === "0001") {
+                        $('#liabilityType').val(resp.liability.name);
+                        $('#liabilityAmount').val((resp.liability.amount / 100).toFixed(2));
+                        if (resp.liability.installment !== 1) {
+                            $('#liabilityAmount').attr("readonly", "readonly");
+                        }
+                        $('#liabilityPaid').val((resp.liability.paid / 100).toFixed(2));
+                        layer.open({
+                            type: 1,
+                            content: $('#liabilityLayerContent'),
+                            title: "负债",
+                            btn: ['确定', '关闭'],
+                            yes: function () {
+                                var request = {};
+                                request.id = id;
+                                request.amount = ($('#liabilityAmount').val() * 100).toFixed(0);
+                                request.paid = ($('#liabilityPaid').val() * 100).toFixed(0);
+                                $.ajax({
+                                    url: "/thymeleaf/liability/update",
+                                    data: request,
+                                    success: function (resp) {
+                                        if (resp.code === '0001') {
+                                            layer.alert("修改成功", function () {
+                                                window.location.reload();
+                                            })
+                                        } else {
+                                            layer.alert("修改失败");
+                                        }
+                                    }
+                                });
+                            }
+                        });
+                    }
+                }
+            })
+
+        }
+
+        function showAddLiability() {
+            layer.open({
+                type: 1,
+                title: "添加分期账单",
+                content: $('#addLiabilityLayerContent'),
+                btn: ["确定", "关闭"],
+                yes: function () {
+                    var newLiability = {};
+                    newLiability.parentType = $('#liabilityParent').val();
+                    newLiability.type = $('#liabilityChildType').val();
+                    newLiability.installment = $('#installment').val();
+                    newLiability.repaymentDay = $('#repaymentDay').val();
+                    newLiability.amount = ($('#amount').val() * 100).toFixed(0);
+                    $.ajax({
+                        url: "/thymeleaf/liability/put",
+                        type: "post",
+                        data: newLiability,
+                        success: function (resp) {
+                            if (resp.code === '0001') {
+                                layer.alert("添加成功", function () {
+                                    window.location.reload();
+                                });
+                            } else {
+                                layer.alert("添加失败");
+                            }
+                        }
+                    })
+                }
+            })
+        }
+
+        function loadChildLiabilityType() {
+            var liabilityParentType = $('#liabilityParent').val();
+            if (isNotEmpty(liabilityParentType)) {
+                $.ajax({
+                    url: "/thymeleaf/list/liability/type/by/parent/" + liabilityParentType,
+                    type: "post",
+                    success: function (resp) {
+                        if (resp.code === "0001") {
+                            var options = '<option value="">未选择</option>';
+                            var types = resp.liabilityTypes;
+                            /*<![CDATA[ */
+                            for (var i = 0, l = types.length; i < l; i++) {
+                                options += '<option value="' + types[i].type + '">' + types[i].typeName + '</option>';
+                            }
+                            /* ]]>*/
+                            $('#liabilityChildType').html(options);
+                            layui.use('form', function () {
+                                var form = layui.form;
+                                form.render();
+                            });
+                        }
+                    }
+                });
+            }
+        }
+    </script>
+</head>
+
 
 <div layout:fragment="outBody">
     <div style="display: none;" id="assetLayerContent">
