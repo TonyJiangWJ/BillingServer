@@ -13,6 +13,8 @@ import com.tony.billing.service.CostRecordService;
 import com.tony.billing.util.MoneyUtil;
 import com.tony.billing.util.ResponseUtil;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,7 +30,8 @@ import java.util.List;
  *
  * @author jiangwj20966 2018/2/24
  */
-@RequestMapping("thymeleaf")
+@RequestMapping("/thymeleaf")
+@Controller
 public class BillController extends BaseController {
 
 
@@ -44,8 +47,8 @@ public class BillController extends BaseController {
      * @param request
      * @return
      */
-    @RequestMapping(value = "/page/get")
-    public CostRecordPageResponse getPage(@ModelAttribute("request") CostRecordPageRequest request) {
+    @RequestMapping(value = "/bill/billList")
+    public String getPage(@ModelAttribute("request") CostRecordPageRequest request, Model model) {
         CostRecordPageResponse response = new CostRecordPageResponse();
         try {
             CostRecordQuery costRecord = new CostRecordQuery();
@@ -93,14 +96,14 @@ public class BillController extends BaseController {
             response.setPageSize(pagerGrid.getOffset());
             response.setTotalPage(pagerGrid.getTotalPage());
             response.setTotalItem(pagerGrid.getCount());
-            ResponseUtil.success(response);
 
+            model.addAttribute("response", response);
         } catch (Exception e) {
             logger.error("/page/get error", e);
-            ResponseUtil.sysError(response);
+            model.addAttribute("error", ResponseUtil.sysError());
         }
 
-        return response;
+        return "/thymeleaf/bill/billList_mobile";
     }
 
     private String calculateCurrentAmount(List<CostRecordQuery> result) {

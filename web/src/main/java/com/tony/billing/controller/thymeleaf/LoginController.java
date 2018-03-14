@@ -6,6 +6,7 @@ import com.tony.billing.request.admin.AdminLoginRequest;
 import com.tony.billing.service.AdminService;
 import com.tony.billing.util.AuthUtil;
 import com.tony.billing.util.CookieUtil;
+import com.tony.billing.util.RedisUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -16,6 +17,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Map;
 
 /**
  * <p>
@@ -37,8 +39,12 @@ public class LoginController extends BaseController {
     public String login(Model model, HttpServletRequest httpServletRequest) {
         Cookie tokenCookie = CookieUtil.getCookie("token", httpServletRequest);
         try {
-            if (tokenCookie != null && authUtil.getUserTokenId(tokenCookie.getValue()) != null) {
-                return "/thymeleaf/login/success";
+            String tokenId;
+            if (tokenCookie != null && ((tokenId = authUtil.getUserTokenId(tokenCookie.getValue())) != null)) {
+                Map store = RedisUtils.get(tokenId, Admin.class);
+                if (store != null) {
+                    return "/thymeleaf/login/success";
+                }
             }
         } catch (Exception e) {
             logger.error("校验token信息失败", e);
@@ -47,7 +53,9 @@ public class LoginController extends BaseController {
     }
 
     @RequestMapping(value = "/login/put", method = RequestMethod.POST)
-    public String doLogin(Model model, @ModelAttribute("request") AdminLoginRequest request, HttpServletResponse httpServletResponse) {
+    public String doLogin(Model model, @ModelAttribute("request") AdminLoginRequest request,
+                          HttpServletRequest httpServletRequest,
+                          HttpServletResponse httpServletResponse) {
         try {
             Admin loginAdmin = new Admin();
             loginAdmin.setUserName(request.getUserName());

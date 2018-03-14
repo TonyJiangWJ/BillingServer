@@ -278,6 +278,11 @@
         </div>
     </div>
 </div>
+<div layout:fragment="layout_header">
+    <div th:replace="/fragments/header::header('asset')">
+        <div>this is child file</div>
+    </div>
+</div>
 <section layout:fragment="content">
     <fieldset class="layui-elem-field layui-field-title">
         <legend>概览</legend>

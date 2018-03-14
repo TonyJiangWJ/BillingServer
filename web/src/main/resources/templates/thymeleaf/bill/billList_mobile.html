@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.thymeleaf.org" layout:decorator="/layout/default">
+<head>
+    <title>账单列表</title>
+    <!--/*-->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    <link rel="stylesheet" type="text/css" th:href="@{/layui/css/layui.css}"
+          href="../../../static/layui/css/layui.css"/>
+    <script type="text/javascript" th:src="@{/layui/layui.js}" src="../../../static/layui/layui.js"></script>
+    <script type="text/javascript" th:src="@{/scripts/jquery-3.1.1.min.js}"
+            src="../../../static/scripts/jquery-3.1.1.min.js"></script>
+    <!--*/-->
+    <script layout:fragment="script" th:inline="javascript">
+        layui.use('table', function () {
+            var table = layui.table;
+            table.render();
+        });
+
+        function toggleDetail(self){
+            var next = $(self).next('tr');
+            if(next.is(":hidden")) {
+                next.slideDown();
+            }else{
+                next.slideUp();
+            }
+        }
+    </script>
+</head>
+<body>
+<div layout:fragment="layout_header">
+    <div th:replace="/fragments/header::header('bill')">
+        <div>this is child file</div>
+    </div>
+</div>
+<section layout:fragment="content">
+    <div class="layui-form">
+        <table class="layui-table" id="table">
+            <thead>
+            <tr>
+                <!--<th>创建时间</th>-->
+                <!--<th>商品名称</th>-->
+                <!--<th>金额</th>-->
+                <!--<th>收入/支出</th>-->
+            </tr>
+            </thead>
+            <tbody>
+            <th:block th:each="record:${response.costRecordList}">
+            <tr onclick="toggleDetail(this)">
+                <td>
+                    <div>
+                        <div>
+                            <span th:text="${record.goodsName}">支付宝条码支付</span>
+                            <span style="position: relative;float: right; padding-right: 5px;" th:text="${record.inOutType}">支出</span>
+                        </div>
+                        <div>
+                            <h1 style="position: relative;float: right;padding-right: 5px;" th:text="${record.money}">127.00</h1>
+                        </div>
+                        <div>
+                            <span th:text="${record.createTime}">2018-03-04 18:55:27</span>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr style="background: #eae8e4;display: none;">
+                <td>
+                    <div th:text="${record.tradeNo}">2018030421001004540571850687</div>
+                    <div><label>地点：</label><span th:text="${record.location}">外婆家(湖滨银泰C区店)</span> </div>
+                    <div><label>备注：</label><span th:text="${record.memo}"></span></div>
+                    <div th:text="${record.orderType}">即时到账交易</div>
+                    <div th:text="${record.orderStatus}">交易成功</div>
+                    <div th:text="${record.isDelete}">未删除</div>
+                    <div th:text="${record.isHidden}">显示</div>
+                </td>
+            </tr>
+            </th:block>
+            <!--<tr >-->
+                <!--<td >2018030421001004540571850687</td>-->
+                <!--<td th:text="${record.createTime}">2018-03-04 18:55:27</td>-->
+                <!--<td>外婆家(湖滨银泰C区店)</td>-->
+                <!--<td th:text="${record.orderType}">即时到账交易</td>-->
+                <!--<td th:text="${record.goodsName}">支付宝条码支付</td>-->
+                <!--<td th:text="${record.memo}"></td>-->
+                <!--<td th:text="${record.money}">127.00</td>-->
+                <!--<td th:text="${record.inOutType}">支出</td>-->
+                <!--<td th:text="${record.orderStatus}">交易成功</td>-->
+                <!--<td th:text="${record.isDelete}">未删除</td>-->
+                <!--<td th:text="${record.isHidden}">显示</td>-->
+            <!--</tr>-->
+            <!--/*-->
+            <tr onclick="toggleDetail(this)">
+                <td>
+                    <div>
+                        <div>
+                            <span>支付宝条码支付</span>
+                            <span style="position: relative;float: right; padding-right: 5px;">支出</span>
+                        </div>
+                        <div>
+                            <h1 style="position: relative;float: right;padding-right: 5px;">127.00</h1>
+                        </div>
+                        <div>
+                            <span>2018-03-04 18:55:27</span>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr style="background: #eae8e4;display: none;">
+                <td>
+                    <div>2018030421001004540571850687</div>
+                    <div><label>地点：</label> 外婆家(湖滨银泰C区店)</div>
+                    <div><label>商品名称：</label>支付宝条码支付</div>
+                    <div><label>备注：</label></div>
+                    <div>即时到账交易</div>
+                    <div>交易成功</div>
+                    <div>未删除</div>
+                    <div>显示</div>
+                </td>
+            </tr>
+            <tr onclick="toggleDetail(this)">
+                <td>
+                    <div>
+                        <div>
+                            <span>支付宝条码支付</span>
+                            <span style="position: relative;float: right; padding-right: 5px;">支出</span>
+                        </div>
+                        <div>
+                            <h1 style="position: relative;float: right;padding-right: 5px;">127.00</h1>
+                        </div>
+                        <div>
+                            <span>2018-03-04 18:55:27</span>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr style="background: #eae8e4;display: none;">
+                <td>
+                    <div>2018030421001004540571850687</div>
+                    <div><label>地点：</label> 外婆家(湖滨银泰C区店)</div>
+                    <div><label>商品名称：</label>支付宝条码支付</div>
+                    <div><label>备注：</label></div>
+                    <div>即时到账交易</div>
+                    <div>交易成功</div>
+                    <div>未删除</div>
+                    <div>显示</div>
+                </td>
+            </tr>
+            <tr onclick="toggleDetail(this)">
+                <td>
+                    <div>
+                        <div>
+                            <span>支付宝条码支付</span>
+                            <span style="position: relative;float: right; padding-right: 5px;">支出</span>
+                        </div>
+                        <div>
+                            <h1 style="position: relative;float: right;padding-right: 5px;">127.00</h1>
+                        </div>
+                        <div>
+                            <span>2018-03-04 18:55:27</span>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr style="background: #eae8e4;display: none;">
+                <td>
+                    <div>2018030421001004540571850687</div>
+                    <div><label>地点：</label> 外婆家(湖滨银泰C区店)</div>
+                    <div><label>商品名称：</label>支付宝条码支付</div>
+                    <div><label>备注：</label></div>
+                    <div>即时到账交易</div>
+                    <div>交易成功</div>
+                    <div>未删除</div>
+                    <div>显示</div>
+                </td>
+            </tr>
+            <!--<tr>-->
+                <!--<td>2018-03-04 18:55:27</td>-->
+                <!--<td>支付宝条码支付</td>-->
+                <!--<td>127.00</td>-->
+                <!--<td>支出</td>-->
+            <!--</tr>-->
+            <!--<tr>-->
+                <!--<td>2018-03-04 18:55:27</td>-->
+                <!--<td>支付宝条码支付</td>-->
+                <!--<td>127.00</td>-->
+                <!--<td>支出</td>-->
+            <!--</tr>-->
+            <!---->
+            <!--<tr>-->
+                <!--<td>2018030421001004540571850687</td>-->
+                <!--<td>2018-03-04 18:55:27</td>-->
+                <!--<td>外婆家(湖滨银泰C区店)</td>-->
+                <!--<td>即时到账交易</td>-->
+                <!--<td>支付宝条码支付</td>-->
+                <!--<td></td>-->
+                <!--<td>127.00</td>-->
+                <!--<td>支出</td>-->
+                <!--<td>交易成功</td>-->
+                <!--<td>未删除</td>-->
+                <!--<td>显示</td>-->
+            <!--</tr>-->
+            <!--<tr>-->
+                <!--<td>2018030421001004540571850687</td>-->
+                <!--<td>2018-03-04 18:55:27</td>-->
+                <!--<td>外婆家(湖滨银泰C区店)</td>-->
+                <!--<td>即时到账交易</td>-->
+                <!--<td>支付宝条码支付</td>-->
+                <!--<td></td>-->
+                <!--<td>127.00</td>-->
+                <!--<td>支出</td>-->
+                <!--<td>交易成功</td>-->
+                <!--<td>未删除</td>-->
+                <!--<td>显示</td>-->
+            <!--</tr>-->
+            <!--<tr>-->
+                <!--<td>2018030421001004540571850687</td>-->
+                <!--<td>2018-03-04 18:55:27</td>-->
+                <!--<td>外婆家(湖滨银泰C区店)</td>-->
+                <!--<td>即时到账交易</td>-->
+                <!--<td>支付宝条码支付</td>-->
+                <!--<td></td>-->
+                <!--<td>127.00</td>-->
+                <!--<td>支出</td>-->
+                <!--<td>交易成功</td>-->
+                <!--<td>未删除</td>-->
+                <!--<td>显示</td>-->
+            <!--</tr>-->
+            <!--<tr>-->
+                <!--<td>2018030421001004540571850687</td>-->
+                <!--<td>2018-03-04 18:55:27</td>-->
+                <!--<td>外婆家(湖滨银泰C区店)</td>-->
+                <!--<td>即时到账交易</td>-->
+                <!--<td>支付宝条码支付</td>-->
+                <!--<td></td>-->
+                <!--<td>127.00</td>-->
+                <!--<td>支出</td>-->
+                <!--<td>交易成功</td>-->
+                <!--<td>未删除</td>-->
+                <!--<td>显示</td>-->
+            <!--</tr>-->
+            <!--*/-->
+            </tbody>
+        </table>
+        <div>
+            <div class="layui-btn-container" style="margin: 5px;">
+                <button class="layui-btn layui-btn-primary">上一页</button>
+                <button class="layui-btn layui-btn-primary">下一页</button>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html>

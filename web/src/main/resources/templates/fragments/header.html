@@ -7,21 +7,24 @@
 <script type="text/javascript" th:src="@{/scripts/jquery-3.1.1.min.js}"
         src="../../static/scripts/jquery-3.1.1.min.js"></script>
 <body>
-<div th:fragment="header" class="layui-header header header-doc">
+<div th:fragment="header (pageFlag)" class="layui-header header header-doc">
   <div class="layui-main">
-      <a class="logo"><i class="layui-icon" style="font-size: 30px;">&#xe612;</i>登录</a>
+      <a class="logo"><i class="layui-icon" style="font-size: 30px;">&#xe612;</i></a>
   </div>
   <div class="layui-form component">
   </div>
   <ul class="layui-nav" pc="">
-    <li class="layui-nav-item layui-this">
+    <li th:class="${pageFlag eq 'index' or pageFlag eq ''} ? 'layui-nav-item layui-this':'layui-nav-item'" class="layui-nav-item layui-this">
       <a href="index.html" th:href="'#'">首页</a>
     </li>
-    <li class="layui-nav-item">
+    <li th:class="${pageFlag eq 'tool'}?'layui-nav-item layui-this':'layui-nav-item'" class="layui-nav-item layui-this">
       <a href="#">工具</a>
     </li>
-    <li class="layui-nav-item">
-      <a href="javascript:void(0);">账单</a>
+    <li th:class="${pageFlag eq 'bill'}?'layui-nav-item layui-this':'layui-nav-item'" class="layui-nav-item layui-this">
+      <a href="#" th:href="'/thymeleaf/bill/billList'">账单</a>
+    </li>
+    <li th:class="${pageFlag eq 'asset'}?'layui-nav-item layui-this':'layui-nav-item'" class="layui-nav-item layui-this">
+      <a href="#" th:href="'/thymeleaf/asset/manage'">资产列表</a>
     </li>
   </ul>
 </div>
