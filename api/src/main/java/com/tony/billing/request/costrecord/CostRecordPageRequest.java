@@ -1,6 +1,9 @@
 package com.tony.billing.request.costrecord;
 
+import com.tony.billing.entity.CostRecord;
 import com.tony.billing.request.BaseRequest;
+
+import java.lang.reflect.Field;
 
 /**
  * Author jiangwj20966 on 2017/6/2.
@@ -38,7 +41,14 @@ public class CostRecordPageRequest extends BaseRequest {
     }
 
     public void setOrderBy(String orderBy) {
-        this.orderBy = orderBy;
+        this.orderBy = "";
+        Field[] fields = CostRecord.class.getDeclaredFields();
+        for (Field field : fields) {
+            if (field.getName().equals(orderBy)) {
+                this.orderBy = field.getName();
+                break;
+            }
+        }
     }
 
     public Integer getIsHidden() {

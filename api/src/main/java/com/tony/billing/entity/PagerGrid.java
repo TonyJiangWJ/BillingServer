@@ -1,5 +1,7 @@
 package com.tony.billing.entity;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
@@ -126,7 +128,7 @@ public class PagerGrid<T> implements Serializable {
     }
 
     public void setSort(String sort) {
-        this.sort = sort;
+        this.sort = StringUtils.equalsIgnoreCase("desc", sort) ? "desc" : "asc";
     }
 
     public int getPage() {
