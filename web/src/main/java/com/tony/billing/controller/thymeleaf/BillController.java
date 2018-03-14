@@ -96,13 +96,12 @@ public class BillController extends BaseController {
             response.setPageSize(pagerGrid.getOffset());
             response.setTotalPage(pagerGrid.getTotalPage());
             response.setTotalItem(pagerGrid.getCount());
-
             model.addAttribute("response", response);
         } catch (Exception e) {
             logger.error("/page/get error", e);
             model.addAttribute("error", ResponseUtil.sysError());
         }
-
+        model.addAttribute("request", request);
         return "/thymeleaf/bill/billList_mobile";
     }
 
