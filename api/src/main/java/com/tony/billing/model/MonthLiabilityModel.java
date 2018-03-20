@@ -15,6 +15,7 @@ public class MonthLiabilityModel {
 
     private String month;
     private Long total;
+    private Long assetAfterThisMonth;
     private List<LiabilityModel> liabilityModels;
 
     public MonthLiabilityModel() {
@@ -43,5 +44,13 @@ public class MonthLiabilityModel {
 
     public void setLiabilityModels(List<LiabilityModel> liabilityModels) {
         this.liabilityModels = liabilityModels;
+    }
+
+    public Long getAssetAfterThisMonth() {
+        return assetAfterThisMonth;
+    }
+
+    public void setAssetAfterThisMonth(Long assetAfterThisMonth) {
+        this.assetAfterThisMonth = assetAfterThisMonth;
     }
 }

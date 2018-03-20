@@ -371,6 +371,7 @@
                         <h3 class="layui-timeline-title">
                             <span th:text="${monthLiability.month}">2018年2月</span>&nbsp;
                             <span th:text="'￥'+${monthLiability.total}/100">￥6000</span>
+                            <span th:text="'￥'+${monthLiability.assetAfterThisMonth}/100" th:style="'color: '+(${monthLiability.assetAfterThisMonth}>0 ? '#008000' : '#ff0000')">￥6000</span>
                         </h3>
                         <div style="display: none" class="layui-collapse"
                              th:each="liabilityModel:${monthLiability.liabilityModels}">

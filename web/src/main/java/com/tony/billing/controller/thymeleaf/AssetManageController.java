@@ -8,6 +8,7 @@ import com.tony.billing.entity.Asset;
 import com.tony.billing.entity.Liability;
 import com.tony.billing.model.AssetModel;
 import com.tony.billing.model.LiabilityModel;
+import com.tony.billing.model.MonthLiabilityModel;
 import com.tony.billing.request.BaseRequest;
 import com.tony.billing.request.asset.AssetDetailRequest;
 import com.tony.billing.request.asset.AssetUpdateRequest;
@@ -18,6 +19,7 @@ import com.tony.billing.response.liability.LiabilityTypeResponse;
 import com.tony.billing.service.AssetService;
 import com.tony.billing.service.LiabilityService;
 import com.tony.billing.util.ResponseUtil;
+import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -60,8 +62,9 @@ public class AssetManageController extends BaseController {
         assetManageDTO.setCleanAsset(assetManageDTO.getTotalAsset() - assetManageDTO.getTotalLiability());
         // 计算每月还款信息
         assetManageDTO.setMonthLiabilityModels(liabilityService.getMonthLiabilityModelsByUserId(request.getUserId()));
+        // 计算每月还款后剩余
+        assetManageDTO = calAssetAfterMonth(assetManageDTO);
         model.addAttribute("assetManageDTO", assetManageDTO);
-
         model.addAttribute("liabilityParentList", EnumLiabilityParentType.toList());
         return "/thymeleaf/asset/manage";
     }
@@ -136,6 +139,17 @@ public class AssetManageController extends BaseController {
             sum += assetModel.getTotal();
         }
         return sum;
+    }
+
+    private AssetManageDTO calAssetAfterMonth(AssetManageDTO assetManageDTO) {
+        Long totalAsset = assetManageDTO.getTotalAsset();
+        if (CollectionUtils.isNotEmpty(assetManageDTO.getMonthLiabilityModels())) {
+            for (MonthLiabilityModel model : assetManageDTO.getMonthLiabilityModels()) {
+                totalAsset -= model.getTotal();
+                model.setAssetAfterThisMonth(totalAsset);
+            }
+        }
+        return assetManageDTO;
     }
 
 }
