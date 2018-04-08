@@ -58,7 +58,7 @@ public class LoginResultInterceptor {
         String responseView = (String) returnValue;
 
         LoginLog loginLog = new LoginLog();
-        loginLog.setLoginIp(httpServletRequest.getRemoteAddr());
+        loginLog.setLoginIp(httpServletRequest.getHeader("X-Real-IP"));
         loginLog.setUserName(loginRequest.getUserName());
         loginLog.setLoginResult(responseView);
         BaseResponse response = null;
