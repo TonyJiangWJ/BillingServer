@@ -4,6 +4,7 @@ import com.tony.billing.constants.enums.EnumAssetParentType;
 import com.tony.billing.constants.enums.EnumAssetType;
 import com.tony.billing.dao.AssetDao;
 import com.tony.billing.dto.AssetDTO;
+import com.tony.billing.dto.AssetTypeDTO;
 import com.tony.billing.entity.Asset;
 import com.tony.billing.model.AssetModel;
 import com.tony.billing.service.AssetService;
@@ -76,4 +77,8 @@ public class AssetServiceImpl implements AssetService {
         }
     }
 
+    @Override
+    public List<AssetTypeDTO> getAssetTypesByParent(String parentType) {
+        return null;
+    }
 }

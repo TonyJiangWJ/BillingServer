@@ -9,6 +9,7 @@ public class Asset {
     private Long id;
     private Long userId;
     private String name;
+    private String extName;
     private String type;
     private String parentType;
     private Long amount;
@@ -29,6 +30,14 @@ public class Asset {
 
     public void setUserId(Long userId) {
         this.userId = userId;
+    }
+
+    public String getExtName() {
+        return extName;
+    }
+
+    public void setExtName(String extName) {
+        this.extName = extName;
     }
 
     public String getName() {

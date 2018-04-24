@@ -1,5 +1,6 @@
 package com.tony.billing.controller.thymeleaf;
 
+import com.tony.billing.constants.enums.EnumAssetParentType;
 import com.tony.billing.constants.enums.EnumLiabilityParentType;
 import com.tony.billing.controller.BaseController;
 import com.tony.billing.dto.AssetDTO;
@@ -15,6 +16,7 @@ import com.tony.billing.request.asset.AssetUpdateRequest;
 import com.tony.billing.request.liability.LiabilityAddRequest;
 import com.tony.billing.response.BaseResponse;
 import com.tony.billing.response.asset.AssetDetailResponse;
+import com.tony.billing.response.asset.AssetTypeResponse;
 import com.tony.billing.response.liability.LiabilityTypeResponse;
 import com.tony.billing.service.AssetService;
 import com.tony.billing.service.LiabilityService;
@@ -66,6 +68,7 @@ public class AssetManageController extends BaseController {
         assetManageDTO = calAssetAfterMonth(assetManageDTO);
         model.addAttribute("assetManageDTO", assetManageDTO);
         model.addAttribute("liabilityParentList", EnumLiabilityParentType.toList());
+        model.addAttribute("assetParentList", EnumAssetParentType.toList());
         return "/thymeleaf/asset/manage";
     }
 
@@ -100,6 +103,14 @@ public class AssetManageController extends BaseController {
     public LiabilityTypeResponse listLiabilityTypeByParent(@PathVariable("parentType") String parentType) {
         LiabilityTypeResponse response = (LiabilityTypeResponse) ResponseUtil.success(new LiabilityTypeResponse());
         response.setLiabilityTypes(liabilityService.getLiabilityTypesByParent(parentType));
+        return response;
+    }
+
+    @ResponseBody
+    @RequestMapping("/list/asset/type/by/parent/{parentType}")
+    public AssetTypeResponse listAssetTypeByParent(@PathVariable("parentType") String parentType) {
+        AssetTypeResponse response = (AssetTypeResponse) ResponseUtil.success(new AssetTypeResponse());
+        response.setAssetTypes(assetService.getAssetTypesByParent(parentType));
         return response;
     }
 

@@ -409,7 +409,7 @@ t-input {
 .t-textarea {
     display: block;
     width: 100%;
-    padding: 6px 10px;
+    resize: none;
     outline: 0;
     font-size: 12px;
     line-height: 1.42857143;
@@ -429,7 +429,6 @@ t-input {
 
 .t-textarea.t-textarea-source {
     height: 100px;
-    padding-right: 20px;
 }
 
 .t-textarea.t-textarea-target {

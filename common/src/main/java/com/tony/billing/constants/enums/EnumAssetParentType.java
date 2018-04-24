@@ -1,6 +1,8 @@
 package com.tony.billing.constants.enums;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -39,5 +41,9 @@ public enum EnumAssetParentType {
 
     public static EnumAssetParentType getEnumByType(String type) {
         return pool.get(type);
+    }
+
+    public static List<EnumAssetParentType> toList(){
+        return Arrays.asList(values());
     }
 }

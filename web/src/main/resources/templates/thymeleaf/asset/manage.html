@@ -4,7 +4,6 @@
     <!--/* codes in this block will be removed at Thymeleaf parsing time!-->
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <title>default title</title>
     <link rel="stylesheet" type="text/css" th:href="@{/layui/css/layui.css}"
           href="../../../static/layui/css/layui.css"/>
     <link rel="stylesheet" type="text/css" th:href="@{/css/global.css}" href="../../../static/css/global.css"/>
@@ -26,6 +25,10 @@
             form.on('select(liabilityParent)', function () {
                 loadChildLiabilityType();
             })
+
+            form.on('select(assetParent)', function () {
+                loadChildAssetType();
+            })
         });
 
         function toggleHideOrExpand(self) {
@@ -38,6 +41,18 @@
 
         function collapseAll(self) {
             $(self).parents('div').eq(0).next('div').find('.layui-colla-content').removeClass('layui-show');
+        }
+
+        function showAddAsset(self) {
+            layer.open({
+                type: 1,
+                title: "添加资产信息",
+                content: $('#addAssetLayerContent'),
+                btn: ["确定", "关闭"],
+                yes: function () {
+
+                }
+            })
         }
 
         function showAssetLayer(self) {
@@ -187,6 +202,32 @@
                 });
             }
         }
+
+        function loadChildAssetType() {
+            var assetParentType = $('#assetParent').val();
+            if (isNotEmpty(assetParentType)) {
+                $.ajax({
+                    url: "/thymeleaf/list/asset/type/by/parent/" + assetParentType,
+                    type: "post",
+                    success: function (resp) {
+                        if (resp.code === "0001") {
+                            var options = '<option value="">未选择</option>';
+                            var types = resp.assetTypes;
+                            /*<![CDATA[ */
+                            for (var i = 0, l = types.length; i < l; i++) {
+                                options += '<option value="' + types[i].type + '">' + types[i].typeName + '</option>';
+                            }
+                            /* ]]>*/
+                            $('#assetChildType').html(options);
+                            layui.use('form', function () {
+                                var form = layui.form;
+                                form.render();
+                            });
+                        }
+                    }
+                });
+            }
+        }
     </script>
 </head>
 
@@ -196,13 +237,13 @@
         <div class="layui-form" style="margin: 20px 20px 20px 0;">
             <input id="assetId" type="hidden"/>
             <div class="layui-form-item">
-                <label class="layui-form-label">类别</label>
+                <label class="layui-form-label" for="assetType">类别</label>
                 <div class="layui-input-inline">
                     <input class="layui-input" id="assetType" value="支付宝" type="text" readonly="readonly"/>
                 </div>
             </div>
             <div class="layui-form-item">
-                <label class="layui-form-label">金额</label>
+                <label class="layui-form-label" for="assetAmount">金额</label>
                 <div class="layui-input-inline">
                     <input class="layui-input" id="assetAmount" type="text" placeholder="金额"/>
                 </div>
@@ -212,30 +253,69 @@
     <div style="display: none;" id="liabilityLayerContent">
         <div class="layui-form" style="margin: 20px 20px 20px 0;">
             <div class="layui-form-item">
-                <label class="layui-form-label">类别</label>
+                <label class="layui-form-label" for="liabilityType">类别</label>
                 <div class="layui-input-inline">
                     <input class="layui-input" id="liabilityType" value="花呗" type="text" readonly="readonly"/>
                 </div>
             </div>
             <div class="layui-form-item">
-                <label class="layui-form-label">金额</label>
+                <label class="layui-form-label" for="liabilityAmount">金额</label>
                 <div class="layui-input-inline">
                     <input class="layui-input" id="liabilityAmount" type="text" placeholder="金额"/>
                 </div>
             </div>
             <div class="layui-form-item">
-                <label class="layui-form-label">已还金额</label>
+                <label class="layui-form-label" for="liabilityPaid">已还金额</label>
                 <div class="layui-input-inline">
                     <input class="layui-input" id="liabilityPaid" type="text" placeholder="已还金额"/>
                 </div>
             </div>
         </div>
     </div>
-
+    <div style="display: none;" id="addAssetLayerContent">
+        <div class="layui-form" style="margin: 20px 20px 20px 0;">
+            <div class="layui-form-item">
+                <label class="layui-form-label" for="liabilityParent">父类别</label>
+                <div class="layui-input-inline">
+                    <select id="assetParent" class="layui-select" lay-filter="assetParent">
+                        <option value="">未选择</option>
+                        <option th:each="selectItem:${assetParentList}" th:value="${selectItem.type}" value="code"
+                                th:text="${selectItem.desc}">支付宝
+                        </option>
+                        <!--/*-->
+                        <option>信用卡</option>
+                        <option>京东</option>
+                        <option>小米</option>
+                        <!--*/-->
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label" for="liabilityChildType">子类别</label>
+                <div class="layui-input-inline">
+                    <select id="assetChildType" class="layui-select" lay-filter="assetChild">
+                        <option value="">未选择</option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label" for="name">别称</label>
+                <div class="layui-input-inline">
+                    <input name="amount" id="name" type="text" class="layui-input" placeholder="别称"/>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label" for="addAssetAmount">金额</label>
+                <div class="layui-input-inline">
+                    <input name="amount" id="addAssetAmount" type="number" class="layui-input" placeholder="总金额"/>
+                </div>
+            </div>
+        </div>
+    </div>
     <div style="display: none;" id="addLiabilityLayerContent">
         <div class="layui-form" style="margin: 20px 20px 20px 0;">
             <div class="layui-form-item">
-                <label class="layui-form-label">父类别</label>
+                <label class="layui-form-label" for="liabilityParent">父类别</label>
                 <div class="layui-input-inline">
                     <select id="liabilityParent" class="layui-select" lay-filter="liabilityParent">
                         <option value="">未选择</option>
@@ -251,7 +331,7 @@
                 </div>
             </div>
             <div class="layui-form-item">
-                <label class="layui-form-label">子类别</label>
+                <label class="layui-form-label" for="liabilityChildType">子类别</label>
                 <div class="layui-input-inline">
                     <select id="liabilityChildType" class="layui-select" lay-filter="liabilityChild">
                         <option value="">未选择</option>
@@ -259,19 +339,19 @@
                 </div>
             </div>
             <div class="layui-form-item">
-                <label class="layui-form-label">分期期数</label>
+                <label class="layui-form-label" for="installment">分期期数</label>
                 <div class="layui-input-inline">
                     <input name="installment" id="installment" class="layui-input" placeholder="分期期数" type="number"/>
                 </div>
             </div>
             <div class="layui-form-item">
-                <label class="layui-form-label">首期还款日</label>
+                <label class="layui-form-label" for="repaymentDay">首期还款日</label>
                 <div class="layui-input-inline">
                     <input name="repaymentDay" id="repaymentDay" type="text" class="layui-input" placeholder="首期还款日"/>
                 </div>
             </div>
             <div class="layui-form-item">
-                <label class="layui-form-label">总金额</label>
+                <label class="layui-form-label" for="amount">总金额</label>
                 <div class="layui-input-inline">
                     <input name="amount" id="amount" type="number" class="layui-input" placeholder="总金额"/>
                 </div>
@@ -297,6 +377,7 @@
                         onclick="expandAll(this)">展开全部
                 </button>
                 <button class="layui-btn layui-btn-xs layui-btn-warm" onclick="collapseAll(this)">关闭全部</button>
+                <button class="layui-btn layui-btn-xs layui-btn-primary" onclick="showAddAsset(this)">添加资产</button>
             </h2>
         </div>
         <div style="margin: 5px;">
