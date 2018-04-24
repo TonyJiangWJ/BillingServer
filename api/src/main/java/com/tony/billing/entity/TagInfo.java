@@ -1,7 +1,6 @@
 package com.tony.billing.entity;
 
 
-
 import com.tony.billing.annotation.Table;
 
 import java.util.Date;

@@ -1,14 +1,13 @@
 package com.tony.billing.filters;
 
-import com.alibaba.fastjson.JSON;
 import com.tony.billing.filters.wapper.TokenServletRequestWrapper;
 import org.apache.commons.lang3.StringUtils;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.Order;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
+
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebFilter;
@@ -38,7 +37,7 @@ public class FilterDemo extends OncePerRequestFilter {
 
         TokenServletRequestWrapper request = new TokenServletRequestWrapper(httpServletRequest);
 //        synchronized (this) { // 在并发访问的时候过滤器链处理请求容易导致并发问题
-            filterChain.doFilter(request, httpServletResponse);
+        filterChain.doFilter(request, httpServletResponse);
 //        }
 
     }

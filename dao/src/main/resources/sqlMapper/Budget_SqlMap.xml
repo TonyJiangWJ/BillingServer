@@ -117,7 +117,8 @@
     </select>
 
 
-    <select id="findByYearMonth" parameterType="com.tony.billing.entity.Budget" resultType="com.tony.billing.entity.Budget">
+    <select id="findByYearMonth" parameterType="com.tony.billing.entity.Budget"
+            resultType="com.tony.billing.entity.Budget">
         SELECT
         <include refid="all"/>
         FROM t_budget

@@ -5,7 +5,7 @@ import java.util.List;
 
 /**
  * <p>
- *     每月分期还款总额
+ * 每月分期还款总额
  * </p>
  * <li></li>
  *

@@ -14,6 +14,7 @@ public interface AssetService {
 
     /**
      * 根据id获取资产信息
+     *
      * @param id
      * @return
      */
@@ -21,6 +22,7 @@ public interface AssetService {
 
     /**
      * 修改资产信息
+     *
      * @param asset
      * @return
      */
@@ -28,6 +30,7 @@ public interface AssetService {
 
     /**
      * 创建资产信息
+     *
      * @param asset
      * @return
      */

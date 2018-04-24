@@ -8,7 +8,7 @@ public class ShaEncrypt {
 
     /**
      * 传入文本内容，返回 SHA-256 串
-     * 
+     *
      * @param strText
      * @return
      */
@@ -18,11 +18,9 @@ public class ShaEncrypt {
 
     /**
      * 字符串 SHA 加密
-     * 
-     * @param strText
-     *            明文
-     * @param strType
-     *            加密类型
+     *
+     * @param strText 明文
+     * @param strType 加密类型
      * @return
      */
     private static String SHA(final String strText, final String strType) {

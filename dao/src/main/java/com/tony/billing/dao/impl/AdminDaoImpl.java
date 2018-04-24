@@ -26,6 +26,7 @@ public class AdminDaoImpl implements AdminDao {
 
     /**
      * 与数据库中的用户信息进行校验
+     *
      * @param admin
      * @return
      */
@@ -38,6 +39,7 @@ public class AdminDaoImpl implements AdminDao {
 
     /**
      * 根据tokenId校验登录有效性 改用redis缓存实现
+     *
      * @param tokenId
      * @return
      */

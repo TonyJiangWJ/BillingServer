@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class DemoController extends BaseController {
 
     @RequestMapping("/fragment")
-    public String fragmentDemo(Model model){
+    public String fragmentDemo(Model model) {
         return "/thymeleaf/demo/fragment_demo";
     }
 }
