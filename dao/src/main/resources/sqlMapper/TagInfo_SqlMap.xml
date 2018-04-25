@@ -110,7 +110,8 @@
         )
     </select>
 
-    <insert id="insertTagCostRef" useGeneratedKeys="true" keyProperty="id" parameterType="com.tony.billing.entity.TagCostRef">
+    <insert id="insertTagCostRef" useGeneratedKeys="true" keyProperty="id"
+            parameterType="com.tony.billing.entity.TagCostRef">
         INSERT INTO t_cost_tag (
         <trim suffixOverrides=",">
             <if test=" id!=null ">

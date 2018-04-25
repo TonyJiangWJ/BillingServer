@@ -12,6 +12,7 @@ import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+
 @Order(0)
 @WebFilter(filterName = "CORSFilter", urlPatterns = "/*")
 public class CORSFilter extends OncePerRequestFilter {

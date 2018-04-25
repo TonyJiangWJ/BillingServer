@@ -14,6 +14,7 @@ public class CookieUtil {
         cookie.setMaxAge(60480);
         response.addCookie(cookie);
     }
+
     public static Cookie getCookie(String cookieName, HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {

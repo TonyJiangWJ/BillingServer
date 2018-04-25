@@ -1,6 +1,5 @@
 package com.tony.billing.dao.impl;
 
-import com.google.common.base.Preconditions;
 import com.tony.billing.entity.AssetType;
 import com.tony.billing.dao.AssetTypeDao;
 import com.tony.billing.dao.mapper.AssetTypeMapper;

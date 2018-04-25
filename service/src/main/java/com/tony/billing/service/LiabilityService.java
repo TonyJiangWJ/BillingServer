@@ -1,6 +1,5 @@
 package com.tony.billing.service;
 
-import com.tony.billing.constants.enums.EnumLiabilityType;
 import com.tony.billing.dto.LiabilityDTO;
 import com.tony.billing.dto.LiabilityTypeDTO;
 import com.tony.billing.entity.Liability;
@@ -16,6 +15,7 @@ public interface LiabilityService {
 
     /**
      * 获取总负债信息
+     *
      * @param userId
      * @return
      */
@@ -23,6 +23,7 @@ public interface LiabilityService {
 
     /**
      * 获取每月分期还款信息
+     *
      * @param userId
      * @return
      */
@@ -30,6 +31,7 @@ public interface LiabilityService {
 
     /**
      * 查看负债详情
+     *
      * @param id
      * @return
      */
@@ -37,6 +39,7 @@ public interface LiabilityService {
 
     /**
      * 修改负债信息
+     *
      * @param liability
      * @return
      */
@@ -44,6 +47,7 @@ public interface LiabilityService {
 
     /**
      * 创建负债信息
+     *
      * @param liability
      * @return
      */

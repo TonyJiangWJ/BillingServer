@@ -13,6 +13,7 @@ import java.util.*;
  */
 public class BeanCopyUtil {
     private static final Logger logger = LoggerFactory.getLogger(BeanCopyUtil.class);
+
     @SuppressWarnings("unchecked")
     public static <S, T> T copy(S s, Class<T> t) {
         if ((s == null) || (t == null)) {
@@ -36,6 +37,7 @@ public class BeanCopyUtil {
         }
         return null;
     }
+
     public static <S, T> List<T> copy(List<S> s, Class<T> t) {
         List<T> lnt = new ArrayList<T>();
         for (Object ss : s) {
@@ -43,6 +45,7 @@ public class BeanCopyUtil {
         }
         return lnt;
     }
+
     public static <S, T> List<T> copy(Collection<S> s, Class<T> t) {
         List<T> lnt = new ArrayList<T>();
         for (Object ss : s) {
@@ -50,6 +53,7 @@ public class BeanCopyUtil {
         }
         return lnt;
     }
+
     public static <S, T, N> Map<S, List<N>> copy(Map<S, List<T>> s, Class<N> t) {
         Map<S, List<N>> map = new HashMap<S, List<N>>();
         Set<Map.Entry<S, List<T>>> set = s.entrySet();
@@ -58,6 +62,7 @@ public class BeanCopyUtil {
         }
         return map;
     }
+
     public static <S, T> Map<S, T> copyMap(Map<S, T> map, Class<T> t) {
         Map<S, T> m = new HashMap<S, T>();
         Set<Map.Entry<S, T>> set = map.entrySet();
@@ -66,6 +71,7 @@ public class BeanCopyUtil {
         }
         return m;
     }
+
     public static <T> void copySameObject(T dest, T src) {
         try {
             PropertyUtils.copyProperties(dest, src);

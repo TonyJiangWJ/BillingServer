@@ -20,7 +20,7 @@ public class ResponseUtil {
     private static final String MSG_ERROR = "失败";
     private static final String MSG_LOGIN_VERIFY = "not login";
 
-    public static BaseResponse sysError(){
+    public static BaseResponse sysError() {
         return sysError(new BaseResponse());
     }
 

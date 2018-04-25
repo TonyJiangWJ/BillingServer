@@ -20,11 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class LiabilityServiceImpl implements LiabilityService {
@@ -152,7 +148,7 @@ public class LiabilityServiceImpl implements LiabilityService {
                 newRecord.setType(liability.getType());
                 newRecord.setUserId(liability.getUserId());
                 newLiabilities.add(newRecord);
-                if(liabilityDao.insert(newRecord)<=0) {
+                if (liabilityDao.insert(newRecord) <= 0) {
                     throw new SQLException("error insert");
                 }
                 calendar.add(Calendar.MONTH, 1);
