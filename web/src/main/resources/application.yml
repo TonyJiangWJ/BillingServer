@@ -26,7 +26,7 @@ spring:
       database: 0
       host: 112.74.175.214
       port: 6379
-      password: 
+      password: 7n6IT5
       pool:
         max-active: 8
         max-wait: -1
@@ -48,4 +48,4 @@ rsa:
     key:
         path: D:/
     public:
-        key: MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDEo9qWXCI89ldwzLvTFNdbXAlIWHJmypkk+hxCZaKvtbIGvJTzDYjaRjrjGXYkpWd/AHZ9CPqFJxcNGq/rbCUDcptHLZsyjooYQ0m7TvRjRyMQHmBJWPZp7CrKqhsPwu4CU2fbbBTc99S7Uqdt5kOGl/KmeGT5tAUFzl1QQCionQIDAQAB
+        key: MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCnre9siV2I0fLjcNhnOtkDOlbgJ3FgOs83+DHt9KfhG4tmoTna2k9KLeVs5A+le9ilkDIkhEuutP448rtuyLrxfXcKIDD2fzq6MEEeHurJy0U/ePTx4uPLJaIshMmNeLNs6ngkSFtI2SuNdDO8s/FcsZ2l3gb20qRCSzDZubM8iQIDAQAB

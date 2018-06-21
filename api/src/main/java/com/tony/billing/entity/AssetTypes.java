@@ -3,32 +3,22 @@ package com.tony.billing.entity;
 import java.util.Date;
 
 /**
- * @author jiangwj20966 2018/04/24
+ * @author TonyJiang 2018/6/21
  */
-public class AssetType {
-
+public class AssetTypes {
     private Integer id;
-    /**
-     * 类型code
-     */
-    private String typeCode;
-    /**
-     * 父类型
-     */
+    private Long userId;
     private String parentCode;
-    /**
-     * 说明
-     */
+    private String typeIdentify;
+    private String typeCode;
     private String typeDesc;
-    /**
-     * 创建时间
-     */
     private Date createTime;
-    /**
-     * 修改时间
-     */
     private Date modifyTime;
+    private Integer isDeleted;
 
+    public boolean isParentType() {
+        return this.parentCode == null;
+    }
 
     public Integer getId() {
         return id;
@@ -38,20 +28,28 @@ public class AssetType {
         this.id = id;
     }
 
-    public String getTypeCode() {
-        return typeCode;
-    }
-
-    public void setTypeCode(String typeCode) {
-        this.typeCode = typeCode;
-    }
-
     public String getParentCode() {
         return parentCode;
     }
 
     public void setParentCode(String parentCode) {
         this.parentCode = parentCode;
+    }
+
+    public String getTypeIdentify() {
+        return typeIdentify;
+    }
+
+    public void setTypeIdentify(String typeIdentify) {
+        this.typeIdentify = typeIdentify;
+    }
+
+    public String getTypeCode() {
+        return typeCode;
+    }
+
+    public void setTypeCode(String typeCode) {
+        this.typeCode = typeCode;
     }
 
     public String getTypeDesc() {
@@ -78,4 +76,19 @@ public class AssetType {
         this.modifyTime = modifyTime;
     }
 
+    public Integer getIsDeleted() {
+        return isDeleted;
+    }
+
+    public void setIsDeleted(Integer isDeleted) {
+        this.isDeleted = isDeleted;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
 }

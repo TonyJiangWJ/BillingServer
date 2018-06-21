@@ -8,6 +8,7 @@ import java.util.Map;
 /**
  * Author by Tony- on 2018/1/27
  */
+@Deprecated
 public enum EnumAssetParentType {
     CRASH("1", "现金"),
     ALIPAY("2", "支付宝"),

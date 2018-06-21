@@ -52,9 +52,4 @@ public class LiabilityServiceImplTest extends BaseServiceTest {
 
         debug(liabilityService.getMonthLiabilityModelsByUserId(1L));
     }
-
-    @Test
-    public void listLiabilityByParent() throws Exception {
-        debug(liabilityService.getLiabilityTypesByParent("1"));
-    }
 }

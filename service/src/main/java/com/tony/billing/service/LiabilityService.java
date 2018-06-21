@@ -1,7 +1,6 @@
 package com.tony.billing.service;
 
 import com.tony.billing.dto.LiabilityDTO;
-import com.tony.billing.dto.LiabilityTypeDTO;
 import com.tony.billing.entity.Liability;
 import com.tony.billing.model.LiabilityModel;
 import com.tony.billing.model.MonthLiabilityModel;
@@ -53,5 +52,4 @@ public interface LiabilityService {
      */
     boolean createLiabilityInfo(Liability liability) throws SQLException;
 
-    List<LiabilityTypeDTO> getLiabilityTypesByParent(String parentType);
 }
