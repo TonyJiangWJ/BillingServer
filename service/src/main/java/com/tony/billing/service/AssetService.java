@@ -1,7 +1,6 @@
 package com.tony.billing.service;
 
 import com.tony.billing.dto.AssetDTO;
-import com.tony.billing.dto.AssetTypeDTO;
 import com.tony.billing.entity.Asset;
 import com.tony.billing.model.AssetModel;
 
@@ -37,11 +36,4 @@ public interface AssetService {
      */
     Long addAsset(Asset asset);
 
-    /**
-     * 根据父类型获取子类型列表
-     *
-     * @param parentType 父类型
-     * @return
-     */
-    List<AssetTypeDTO> getAssetTypesByParent(String parentType);
 }

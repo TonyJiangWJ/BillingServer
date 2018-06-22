@@ -8,6 +8,7 @@ import java.util.Map;
 /**
  * @author TonyJiang on 2018/2/12
  */
+@Deprecated
 public enum EnumLiabilityParentType {
     ALIPAY("1", "支付宝"),
     CREDIT("2", "信用卡"),
