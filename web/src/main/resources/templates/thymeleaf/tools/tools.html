@@ -84,7 +84,7 @@
                 /*<![CDATA[ */
                 for (var i = 0; i < paramsList.length; i++) {
                     var param = paramsList[i];
-                    sql = sql.replace(/\?/, '\'' + param + '\'').replace(/limit.*(\d+).*(\d+).*/, 'limit $1, $2');
+                    sql = sql.replace(/\?/, '\'' + param + '\'').replace(/limit.*'(\d+)',.*'(\d+)'/, 'limit $1, $2').replace(/>$/, '');
                 }
                 /* ]]>*/
                 console.log(sql);

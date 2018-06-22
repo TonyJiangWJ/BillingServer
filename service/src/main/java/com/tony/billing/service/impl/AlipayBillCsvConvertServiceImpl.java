@@ -5,6 +5,7 @@ import com.tony.billing.entity.CostRecord;
 import com.tony.billing.service.AlipayBillCsvConvertService;
 import com.tony.billing.util.CsvParser;
 import com.tony.billing.util.MoneyUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -16,7 +17,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -32,6 +32,7 @@ public class AlipayBillCsvConvertServiceImpl implements AlipayBillCsvConvertServ
     @Resource
     private CostRecordDao costRecordDao;
 
+    @Override
     public boolean convertToPOJO(MultipartFile multipartFile, Long userId) {
         if (multipartFile != null) {
             try {
@@ -44,14 +45,14 @@ public class AlipayBillCsvConvertServiceImpl implements AlipayBillCsvConvertServ
                     if (csvParser.getRowNum() <= 7) {
                         throw new RuntimeException("Illegal file");
                     }
-                    List<String> fixedList = csvParser.getListCustom(5, csvParser.getRowNum() - 7);// alipay format
+                    // alipay format
+                    List<String> fixedList = csvParser.getListCustom(5, csvParser.getRowNum() - 7);
                     try {
                         RecordRefUtil recordRefUtil = new RecordRefUtil();
                         List<Record> records = new ArrayList<Record>();
                         for (String csvLine : fixedList) {
-                            records.add(recordRefUtil.convertCsv2Record(csvLine));
+                            records.add((Record) recordRefUtil.convertCsv2POJO(csvLine, Record.class));
                         }
-//                        System.out.println(JSON.toJSONString(records));
                         if (!CollectionUtils.isEmpty(records)) {
                             for (Record entity : records) {
                                 convertToDBJOAndInsert(entity, userId);
@@ -106,16 +107,15 @@ public class AlipayBillCsvConvertServiceImpl implements AlipayBillCsvConvertServ
                         RecordRefUtil recordRefUtil = new RecordRefUtil();
                         List<CostRecord> records = new ArrayList<>();
                         for (String csvLine : fixedList) {
-                            records.add(recordRefUtil.convertCsv2CostRecord(csvLine));
+                            records.add((CostRecord) recordRefUtil.convertCsv2POJO(csvLine, CostRecord.class));
                         }
-//                        System.out.println(JSON.toJSONString(records));
                         if (!CollectionUtils.isEmpty(records)) {
                             for (CostRecord entity : records) {
                                 convertToDBJOAndInsertCostRecord(entity, userId);
                             }
                         }
                         return true;
-                    } catch (IllegalAccessException | InvocationTargetException e) {
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
@@ -188,63 +188,29 @@ public class AlipayBillCsvConvertServiceImpl implements AlipayBillCsvConvertServ
     static class RecordRefUtil<T> {
         private T convertCsv2POJO(String csvLine, T t) throws IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
             String[] strings = csvLine.split(",");
-            Class clazz = t.getClass();
-            Object record = clazz.newInstance();
+            Object record = ((Class) t).newInstance();
+            Class clazz = record.getClass();
             Field[] fields = clazz.getDeclaredFields();
             if (strings.length != fields.length) {
                 System.out.println("Error Line");
                 return null;
             } else {
-                Method[] methods = clazz.getMethods();// set方法有参数 无法直接通过clz.getMethod获取 避免成员变量不全是String时失效
-                Map<String, Method> methodMap = new HashMap<String, Method>();
-                for (Method method : methods) {
-                    methodMap.put(method.getName(), method);
-                }
-                Method method = null;
                 for (int i = 0; i < fields.length; i++) {
-                    String fieldName = fields[i].getName();
-                    String methodName = "set" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
-                    method = methodMap.get(methodName);
-                    method.invoke(record, strings[i].trim());
+                    fields[i].setAccessible(true);
+                    fields[i].set(record, StringUtils.trim(strings[i]));
                 }
                 return (T) record;
             }
         }
 
-        private Record convertCsv2Record(String csvLine) throws IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
-            String[] strings = csvLine.split(",");
-            Class clazz = Record.class;
-            Record record = new Record();
-            Field[] fields = clazz.getDeclaredFields();
-            if (strings.length != fields.length) {
-                System.out.println("Error Line");
-                return null;
-            } else {
-                Method[] methods = clazz.getMethods();// set方法有参数 无法直接通过clz.getMethod获取 避免成员变量不全是String时失效
-                Map<String, Method> methodMap = new HashMap<String, Method>();
-                for (Method method : methods) {
-                    methodMap.put(method.getName(), method);
-                }
-                Method method = null;
-                for (int i = 0; i < fields.length; i++) {
-                    String fieldName = fields[i].getName();
-                    String methodName = "set" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
-                    method = methodMap.get(methodName);
-                    method.invoke(record, strings[i].trim());
-                }
-                return record;
-            }
-        }
 
         private String convertPOJO2String(CostRecord costRecord) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
             Class clz = CostRecord.class;
             StringBuilder sb = new StringBuilder();
             Field[] fields = clz.getDeclaredFields();
             for (Field field : fields) {
-                String fieldName = field.getName();
-                String methodName = "get" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
-                Method method = clz.getMethod(methodName);
-                Object result = method.invoke(costRecord);
+                field.setAccessible(true);
+                Object result = field.get(costRecord);
                 if (result == null) {
                     sb.append(' ');
                 } else if (result instanceof String) {
@@ -257,39 +223,6 @@ public class AlipayBillCsvConvertServiceImpl implements AlipayBillCsvConvertServ
             return sb.deleteCharAt(sb.length() - 1).toString();
         }
 
-        private CostRecord convertCsv2CostRecord(String csvLine) throws InvocationTargetException, IllegalAccessException {
-            String[] strings = csvLine.split(",");
-            Class clazz = CostRecord.class;
-            CostRecord record = new CostRecord();
-            Field[] fields = clazz.getDeclaredFields();
-            if (strings.length != fields.length) {
-                System.out.println("Error Line");
-                return null;
-            } else {
-                Method[] methods = clazz.getMethods();// set方法有参数 无法直接通过clz.getMethod获取 避免成员变量不全是String时失效
-                Map<String, Method> methodMap = new HashMap<String, Method>();
-                for (Method method : methods) {
-                    methodMap.put(method.getName(), method);
-                }
-                Method method = null;
-                for (int i = 0; i < fields.length; i++) {
-                    String fieldName = fields[i].getName();
-                    String methodName = "set" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
-                    method = methodMap.get(methodName);
-                    String typeClass = method.getParameterTypes()[0].getSimpleName();
-//                    System.out.println(typeClass);
-                    if (typeClass.equals("Long")) {
-                        method.invoke(record, Long.valueOf(strings[i].trim()));
-                    } else if (typeClass.equals("Integer")) {
-                        method.invoke(record, Integer.valueOf(strings[i].trim()));
-                    } else {
-                        method.invoke(record, strings[i].trim());
-                    }
-
-                }
-                return record;
-            }
-        }
     }
 
     static class Record {
