@@ -1,13 +1,10 @@
 package com.tony.billing.controller;
 
-import com.tony.billing.constants.enums.EnumTypeIdentify;
 import com.tony.billing.dto.AssetDTO;
 import com.tony.billing.dto.AssetManageDTO;
 import com.tony.billing.entity.Asset;
-import com.tony.billing.entity.AssetTypes;
 import com.tony.billing.entity.Liability;
 import com.tony.billing.model.AssetModel;
-import com.tony.billing.model.AssetTypeModel;
 import com.tony.billing.model.LiabilityModel;
 import com.tony.billing.model.MonthLiabilityModel;
 import com.tony.billing.request.BaseRequest;
@@ -17,7 +14,6 @@ import com.tony.billing.request.liability.LiabilityAddRequest;
 import com.tony.billing.response.BaseResponse;
 import com.tony.billing.response.asset.AssetDetailResponse;
 import com.tony.billing.response.asset.AssetManageResponse;
-import com.tony.billing.response.asset.AssetTypeResponse;
 import com.tony.billing.service.AssetService;
 import com.tony.billing.service.AssetTypesService;
 import com.tony.billing.service.LiabilityService;
@@ -26,11 +22,13 @@ import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -41,8 +39,6 @@ public class AssetManageController extends BaseController {
 
     @Resource
     private AssetService assetService;
-    @Resource
-    private AssetTypesService assetTypesService;
     @Resource
     private LiabilityService liabilityService;
 
@@ -65,17 +61,7 @@ public class AssetManageController extends BaseController {
         assetManageDTO = calAssetAfterMonth(assetManageDTO);
         AssetManageResponse response = (AssetManageResponse) ResponseUtil.success(new AssetManageResponse());
         response.setAssetManage(assetManageDTO);
-        response.setAssetParentTypeList(transferToModel(assetTypesService.selectAssetTypeList(request.getUserId())));
-        response.setLiabilityParentTypeList(transferToModel(assetTypesService.selectLiabilityTypeList(request.getUserId())));
         return response;
-    }
-
-    private List<AssetTypeModel> transferToModel(List<AssetTypes> assetTypes) {
-        List<AssetTypeModel> assetTypeModels = new ArrayList<>();
-        for (AssetTypes assetType : assetTypes) {
-            assetTypeModels.add(new AssetTypeModel(assetType));
-        }
-        return assetTypeModels;
     }
 
     @RequestMapping("/asset/detail/get")
@@ -100,19 +86,6 @@ public class AssetManageController extends BaseController {
         } else {
             return ResponseUtil.error();
         }
-    }
-
-    @RequestMapping("/list/asset/type/by/{identify}/{parentType}")
-    public AssetTypeResponse listLiabilityTypeByParent(@PathVariable("parentType") String parentType,
-                                                       @PathVariable("identify") String identify,
-                                                       @ModelAttribute("request") BaseRequest request) {
-        AssetTypeResponse response = (AssetTypeResponse) ResponseUtil.success(new AssetTypeResponse());
-        if(EnumTypeIdentify.LIABILITY.getIdentify().equalsIgnoreCase(identify)) {
-            response.setAssetTypes(transferToModel(assetTypesService.selectAssetTypeListByParent(parentType, request.getUserId())));
-        } else {
-            response.setAssetTypes(transferToModel(assetTypesService.selectLiabilityTypeListByParent(parentType, request.getUserId())));
-        }
-        return response;
     }
 
 

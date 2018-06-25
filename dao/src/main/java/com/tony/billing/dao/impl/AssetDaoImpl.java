@@ -41,6 +41,7 @@ public class AssetDaoImpl implements AssetDao {
 
     @Override
     public Asset getAssetById(Long id) {
+        assert id != null;
         return assetMapper.getById(id);
     }
 }

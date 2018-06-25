@@ -29,6 +29,7 @@ public class AssetServiceImpl implements AssetService {
 
     @Override
     public List<AssetModel> getAssetModelsByUserId(Long userId) {
+        assert userId != null;
         Asset query = new Asset();
         query.setUserId(userId);
         List<Asset> assetList = assetDao.list(query);
