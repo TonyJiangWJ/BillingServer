@@ -44,6 +44,7 @@ public class LiabilityServiceImpl implements LiabilityService {
      */
     @Override
     public List<LiabilityModel> getLiabilityModelsByUserId(Long userId) {
+        assert userId != null;
         Liability query = new Liability();
         query.setUserId(userId);
         query.setStatus(0);

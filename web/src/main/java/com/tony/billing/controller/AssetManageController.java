@@ -35,6 +35,7 @@ import java.util.List;
  * @author TonyJiang on 2018/2/12
  */
 @RestController
+@RequestMapping("/bootDemo")
 public class AssetManageController extends BaseController {
 
     @Resource

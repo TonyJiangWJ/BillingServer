@@ -117,4 +117,10 @@ public class AdminController extends BaseController {
             return ResponseUtil.error(response);
         }
     }
+
+    @RequestMapping(value = "/login/status", method = RequestMethod.POST)
+    public BaseResponse checkLoginStatus(@ModelAttribute("request") BaseRequest baseRequest) {
+        return ResponseUtil.success();
+    }
+
 }

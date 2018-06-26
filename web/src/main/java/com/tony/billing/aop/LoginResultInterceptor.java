@@ -35,7 +35,11 @@ public class LoginResultInterceptor {
 
         LoginLog loginLog = new LoginLog();
         loginLog.setLoginIp(httpServletRequest.getHeader("X-Real-IP"));
-        loginLog.setUserName(loginRequest.getUserName());
+        if (loginRequest.getUserName() != null) {
+            loginLog.setUserName(loginRequest.getUserName());
+        } else {
+            loginLog.setUserName("未知");
+        }
         loginLog.setLoginResult(JSON.toJSONString(response));
         loginLog.setCode(response.getCode());
         loginLog.setMsg(response.getMsg());
