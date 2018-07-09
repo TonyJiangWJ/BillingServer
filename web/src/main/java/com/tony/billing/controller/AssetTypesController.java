@@ -3,7 +3,9 @@ package com.tony.billing.controller;
 import com.tony.billing.constants.enums.EnumTypeIdentify;
 import com.tony.billing.entity.AssetTypes;
 import com.tony.billing.model.AssetTypeModel;
+import com.tony.billing.request.assettypes.AssetTypeAddRequest;
 import com.tony.billing.request.BaseRequest;
+import com.tony.billing.response.BaseResponse;
 import com.tony.billing.response.asset.AssetTypeResponse;
 import com.tony.billing.service.AssetTypesService;
 import com.tony.billing.util.ResponseUtil;
@@ -26,10 +28,18 @@ public class AssetTypesController extends BaseController {
     private AssetTypesService assetTypesService;
 
 
+    /**
+     * 根据父类型获取子类别列表
+     *
+     * @param parentType 父类型
+     * @param identify   资产或负债
+     * @param request    请求体
+     * @return 返回子类别列表
+     */
     @RequestMapping("/list/asset/type/by/{identify}/{parentType}")
     public AssetTypeResponse listAssetTypesByParent(@PathVariable("parentType") String parentType,
-                                                       @PathVariable("identify") String identify,
-                                                       @ModelAttribute("request") BaseRequest request) {
+                                                    @PathVariable("identify") String identify,
+                                                    @ModelAttribute("request") BaseRequest request) {
         AssetTypeResponse response = (AssetTypeResponse) ResponseUtil.success(new AssetTypeResponse());
         if (EnumTypeIdentify.LIABILITY.getIdentify().equalsIgnoreCase(identify)) {
             response.setAssetTypes(transferToModel(assetTypesService.selectAssetTypeListByParent(parentType, request.getUserId())));
@@ -39,6 +49,13 @@ public class AssetTypesController extends BaseController {
         return response;
     }
 
+    /**
+     * 获取父类别列表
+     *
+     * @param identify 资产或负债
+     * @param request  request
+     * @return 父类别列表
+     */
     @RequestMapping("/list/asset/parent/types/{identify}")
     public AssetTypeResponse listAssetParentTypes(@PathVariable("identify") String identify, @ModelAttribute("request") BaseRequest request) {
         AssetTypeResponse response = (AssetTypeResponse) ResponseUtil.success(new AssetTypeResponse());
@@ -48,6 +65,21 @@ public class AssetTypesController extends BaseController {
             response.setAssetTypes(transferToModel(assetTypesService.selectLiabilityTypeList(request.getUserId())));
         }
         return response;
+    }
+
+    @RequestMapping("/asset/types/put")
+    public BaseResponse putAssetParentType(@ModelAttribute("request") AssetTypeAddRequest request) {
+        AssetTypes assetTypes = new AssetTypes();
+        assetTypes.setUserId(request.getUserId());
+        assetTypes.setParentCode(request.getParentCode());
+        assetTypes.setTypeIdentify(request.getTypeIdentify());
+        assetTypes.setTypeCode(request.getTypeCode());
+        assetTypes.setTypeDesc(request.getTypeDesc());
+        if (assetTypesService.insert(assetTypes) > 0) {
+            return ResponseUtil.success();
+        } else {
+            return ResponseUtil.error();
+        }
     }
 
     private List<AssetTypeModel> transferToModel(List<AssetTypes> assetTypes) {

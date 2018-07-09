@@ -44,7 +44,6 @@ public class AdminServiceImpl implements AdminService {
             logger.error("password error");
             return null;
         }
-        logger.debug("salt:{}", pwdSalt);
         Admin checkUser = adminDao.preLogin(admin);
         if (checkUser != null) {
             RedisUtils.del(checkUser.getTokenId());

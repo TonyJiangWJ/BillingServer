@@ -6,6 +6,7 @@ import java.util.Map;
 /**
  * Author by Tony- on 2018/1/27
  */
+@Deprecated
 public enum EnumLiabilityType {
     JD_WHITE("1", "3", "京东白条"),
     ALIPAY_HUABEI("2", "1", "花呗"),

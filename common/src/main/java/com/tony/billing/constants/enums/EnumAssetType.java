@@ -3,6 +3,7 @@ package com.tony.billing.constants.enums;
 import java.util.HashMap;
 import java.util.Map;
 
+@Deprecated
 public enum EnumAssetType {
     CRASH("1", "现金"),
     ALIPAY_YUE("2", "余额宝"),

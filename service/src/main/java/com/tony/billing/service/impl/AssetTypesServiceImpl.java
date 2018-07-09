@@ -1,5 +1,6 @@
 package com.tony.billing.service.impl;
 
+import com.google.common.base.Preconditions;
 import com.tony.billing.constants.enums.EnumTypeIdentify;
 import com.tony.billing.dao.AssetTypesDao;
 import com.tony.billing.entity.AssetTypes;
@@ -40,6 +41,9 @@ public class AssetTypesServiceImpl implements AssetTypesService {
 
     @Override
     public Integer insert(AssetTypes assetTypes) {
+        Preconditions.checkNotNull(assetTypes.getUserId(), "userId不能为空");
+        Preconditions.checkNotNull(assetTypes.getTypeCode());
+        Preconditions.checkNotNull(assetTypes.getTypeDesc());
         return assetTypesDao.insert(assetTypes);
     }
 
