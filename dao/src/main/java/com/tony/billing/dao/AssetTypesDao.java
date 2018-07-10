@@ -27,4 +27,6 @@ public interface AssetTypesDao {
     boolean update(AssetTypes assetTypes);
 
     boolean deleteById(Integer id, Long userId);
+
+    List<AssetTypes> listByCondition(AssetTypes assetTypes);
 }

@@ -17,6 +17,8 @@ public interface AssetTypesService {
 
     List<AssetTypes> selectLiabilityTypeListByParent(String parentCode, Long userId);
 
+    List<AssetTypes> getAssetTypeByCondition(AssetTypes condition);
+
     Integer insert(AssetTypes assetTypes);
 
     boolean update(AssetTypes assetTypes);

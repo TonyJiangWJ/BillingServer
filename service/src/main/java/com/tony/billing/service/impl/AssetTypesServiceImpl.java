@@ -40,6 +40,11 @@ public class AssetTypesServiceImpl implements AssetTypesService {
     }
 
     @Override
+    public List<AssetTypes> getAssetTypeByCondition(AssetTypes condition) {
+        return assetTypesDao.listByCondition(condition);
+    }
+
+    @Override
     public Integer insert(AssetTypes assetTypes) {
         Preconditions.checkNotNull(assetTypes.getUserId(), "userId不能为空");
         Preconditions.checkNotNull(assetTypes.getTypeCode());

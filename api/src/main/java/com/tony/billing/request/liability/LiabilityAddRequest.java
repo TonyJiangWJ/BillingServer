@@ -5,9 +5,6 @@ import com.tony.billing.request.BaseRequest;
 import java.sql.Date;
 
 /**
- * <p>
- * </p>
- * <li></li>
  *
  * @author jiangwj20966 2018/3/5
  */

@@ -15,7 +15,6 @@ import com.tony.billing.response.BaseResponse;
 import com.tony.billing.response.asset.AssetDetailResponse;
 import com.tony.billing.response.asset.AssetManageResponse;
 import com.tony.billing.service.AssetService;
-import com.tony.billing.service.AssetTypesService;
 import com.tony.billing.service.LiabilityService;
 import com.tony.billing.util.ResponseUtil;
 import org.apache.commons.collections.CollectionUtils;
@@ -68,9 +67,9 @@ public class AssetManageController extends BaseController {
     @RequestMapping("/asset/detail/get")
     public AssetDetailResponse getAssetDetail(@ModelAttribute("request") AssetDetailRequest request, Model model) {
         AssetDetailResponse response = (AssetDetailResponse) ResponseUtil.success(new AssetDetailResponse());
-        AssetDTO assetDTO = assetService.getAssetInfoById(request.getId());
-        if (assetDTO != null) {
-            response.setAssetInfo(assetDTO);
+        Asset asset = assetService.getAssetInfoById(request.getId());
+        if (asset != null && asset.getUserId().equals(request.getUserId())) {
+            response.setAssetInfo(new AssetDTO(asset));
         } else {
             response = (AssetDetailResponse) ResponseUtil.dataNotExisting(new AssetDetailResponse());
         }
@@ -80,8 +79,12 @@ public class AssetManageController extends BaseController {
     @RequestMapping("/asset/update")
     public BaseResponse updateAsset(@ModelAttribute("request") AssetUpdateRequest request) {
         Asset update = new Asset();
+        if (request.getAmount() == null || request.getId() == null) {
+            return ResponseUtil.paramError();
+        }
         update.setId(request.getId());
         update.setAmount(request.getAmount());
+        update.setUserId(request.getUserId());
         if (assetService.modifyAssetInfoById(update)) {
             return ResponseUtil.success();
         } else {

@@ -19,7 +19,11 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
 
 @Service
 public class LiabilityServiceImpl implements LiabilityService {
@@ -99,9 +103,8 @@ public class LiabilityServiceImpl implements LiabilityService {
     }
 
     @Override
-    public LiabilityDTO getLiabilityInfoById(Long id) {
-        Liability liability = liabilityDao.getLiabilityById(id);
-        return new LiabilityDTO(liability);
+    public Liability getLiabilityInfoById(Long id) {
+        return liabilityDao.getLiabilityById(id);
     }
 
     @Override
@@ -113,7 +116,7 @@ public class LiabilityServiceImpl implements LiabilityService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public boolean createLiabilityInfo(Liability liability) throws SQLException {
         Date repaymentDay = liability.getRepaymentDay();
         int installment = liability.getInstallment();

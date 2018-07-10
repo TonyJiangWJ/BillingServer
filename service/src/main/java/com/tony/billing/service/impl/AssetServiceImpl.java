@@ -41,9 +41,8 @@ public class AssetServiceImpl implements AssetService {
     }
 
     @Override
-    public AssetDTO getAssetInfoById(Long id) {
-        Asset asset = assetDao.getAssetById(id);
-        return new AssetDTO(asset);
+    public Asset getAssetInfoById(Long id) {
+        return assetDao.getAssetById(id);
     }
 
     @Override

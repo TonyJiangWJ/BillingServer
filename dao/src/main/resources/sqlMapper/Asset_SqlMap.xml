@@ -78,9 +78,6 @@
     <update id="update" parameterType="com.tony.billing.entity.Asset">
         UPDATE t_asset
         <trim prefix="SET" suffixOverrides=",">
-            <if test=" userId!=null ">
-                user_id=#{userId,jdbcType=BIGINT},
-            </if>
             <if test=" name!=null and name!='' ">
                 name=#{name,jdbcType=VARCHAR},
             </if>
@@ -103,7 +100,7 @@
                 modify_time=#{modifyTime,jdbcType=TIMESTAMP},
             </if>
         </trim>
-        WHERE id=#{id, jdbcType=BIGINT}
+        WHERE id=#{id, jdbcType=BIGINT} AND user_id=#{userId,jdbcType=BIGINT}
     </update>
     <select id="page" parameterType="java.util.Map" resultType="com.tony.billing.entity.Asset">
         SELECT

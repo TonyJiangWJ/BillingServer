@@ -80,4 +80,9 @@ public class AssetTypesDaoImpl implements AssetTypesDao {
         param.put("userId", userId);
         return assetTypesMapper.deleteById(param) > 0;
     }
+
+    @Override
+    public List<AssetTypes> listByCondition(AssetTypes assetTypes) {
+        return assetTypesMapper.listByCondition(assetTypes);
+    }
 }
