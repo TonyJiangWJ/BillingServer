@@ -4,9 +4,11 @@ import com.tony.billing.dao.AssetTypesDao;
 import com.tony.billing.dao.mapper.AssetTypesMapper;
 import com.tony.billing.entity.AssetTypes;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -35,7 +37,16 @@ public class AssetTypesDaoImpl implements AssetTypesDao {
         AssetTypes query = new AssetTypes();
         query.setTypeIdentify(typeIdentify);
         query.setUserId(userId);
-        return assetTypesMapper.listByCondition(query);
+        List<AssetTypes> store = assetTypesMapper.listByCondition(query);
+        List<AssetTypes> result = new ArrayList<>();
+        if (CollectionUtils.isNotEmpty(store)) {
+            for (AssetTypes assetTypes : store) {
+                if (StringUtils.isEmpty(assetTypes.getParentCode())) {
+                    result.add(assetTypes);
+                }
+            }
+        }
+        return result;
     }
 
     @Override
@@ -84,5 +95,10 @@ public class AssetTypesDaoImpl implements AssetTypesDao {
     @Override
     public List<AssetTypes> listByCondition(AssetTypes assetTypes) {
         return assetTypesMapper.listByCondition(assetTypes);
+    }
+
+    @Override
+    public AssetTypes selectById(Integer id) {
+        return assetTypesMapper.getById(id);
     }
 }

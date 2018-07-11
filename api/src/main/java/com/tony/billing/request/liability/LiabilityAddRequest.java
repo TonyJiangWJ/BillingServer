@@ -10,26 +10,17 @@ import java.sql.Date;
  */
 public class LiabilityAddRequest extends BaseRequest {
 
-    private String type;
-    private String parentType;
+    private Integer type;
     private Date repaymentDay;
     private Long amount;
     private Integer installment;
 
-    public String getType() {
+    public Integer getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(Integer type) {
         this.type = type;
-    }
-
-    public String getParentType() {
-        return parentType;
-    }
-
-    public void setParentType(String parentType) {
-        this.parentType = parentType;
     }
 
     public Date getRepaymentDay() {

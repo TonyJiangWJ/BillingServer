@@ -10,8 +10,7 @@ public class Asset {
     private Long userId;
     private String name;
     private String extName;
-    private String type;
-    private String parentType;
+    private Integer type;
     private Long amount;
     private Date createTime;
     private Date modifyTime;
@@ -48,11 +47,11 @@ public class Asset {
         this.name = name;
     }
 
-    public String getType() {
+    public Integer getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(Integer type) {
         this.type = type;
     }
 
@@ -80,11 +79,4 @@ public class Asset {
         this.modifyTime = modifyTime;
     }
 
-    public String getParentType() {
-        return parentType;
-    }
-
-    public void setParentType(String parentType) {
-        this.parentType = parentType;
-    }
 }

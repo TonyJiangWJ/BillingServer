@@ -96,8 +96,13 @@ public class AssetManageController extends BaseController {
     @RequestMapping(value = "/liability/put", method = RequestMethod.POST)
     public BaseResponse addLiability(@ModelAttribute("request") LiabilityAddRequest request) {
         Liability liability = new Liability();
+        if (request.getRepaymentDay() == null
+                || request.getType() == null
+                || request.getInstallment() == null
+                || request.getAmount() == null) {
+            return ResponseUtil.paramError();
+        }
         liability.setRepaymentDay(request.getRepaymentDay());
-        liability.setParentType(request.getParentType());
         liability.setType(request.getType());
         liability.setAmount(request.getAmount());
         liability.setInstallment(request.getInstallment());

@@ -49,7 +49,7 @@
                 #{userId,jdbcType=BIGINT},
             </if>
             <if test=" typeIdentify!=null and typeCode!=''">
-                #{typeIdentify,jdbcType=VARCHAR}
+                #{typeIdentify,jdbcType=VARCHAR},
             </if>
             <if test=" typeCode!=null and typeCode!=''">
                 #{typeCode,jdbcType=VARCHAR},
@@ -105,19 +105,19 @@
                 AND type_identify = #{typeIdentify,jdbcType=VARCHAR}
             </if>
             <if test=" typeCode!=null and typeCode!=''">
-                AND type_code = #{typeCode,jdbcType=VARCHAR},
+                AND type_code = #{typeCode,jdbcType=VARCHAR}
             </if>
             <if test=" parentCode!=null and parentCode!=''">
-                AND parent_code = #{parentCode,jdbcType=VARCHAR},
+                AND parent_code = #{parentCode,jdbcType=VARCHAR}
             </if>
             <if test=" typeDesc!=null and typeDesc!=''">
-                AND type_desc = #{typeDesc,jdbcType=VARCHAR},
+                AND type_desc = #{typeDesc,jdbcType=VARCHAR}
             </if>
             <if test=" createTime!=null">
-                AND create_time = #{createTime,jdbcType=TIMESTAMP},
+                AND create_time = #{createTime,jdbcType=TIMESTAMP}
             </if>
             <if test=" modifyTime!=null">
-                AND modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+                AND modify_time = #{modifyTime,jdbcType=TIMESTAMP}
             </if>
             <if test=" userId!=null">
                 AND (user_id = #{userId,jdbcType=BIGINT} or user_id= '-1')

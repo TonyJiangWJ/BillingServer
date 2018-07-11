@@ -7,7 +7,6 @@
         name name,
         ext_name extName,
         `type` type,
-        parent_type parentType,
         amount amount,
         create_time createTime,
         modify_time modifyTime
@@ -27,11 +26,8 @@
             <if test=" extName!=null and extName!='' ">
                 ext_name,
             </if>
-            <if test=" type!=null and type!='' ">
+            <if test=" type!=null ">
                 `type`,
-            </if>
-            <if test=" parentType!=null and parentType!='' ">
-                parent_type,
             </if>
             <if test=" amount!=null ">
                 amount,
@@ -57,11 +53,8 @@
             <if test=" extName!=null and extName!='' ">
                 #{extName,jdbcType=VARCHAR},
             </if>
-            <if test=" type!=null and type!='' ">
-                #{type,jdbcType=VARCHAR},
-            </if>
-            <if test=" parentType!=null and parentType!='' ">
-                #{parentType,jdbcType=VARCHAR},
+            <if test=" type!=null ">
+                #{type,jdbcType=INTEGER},
             </if>
             <if test=" amount!=null ">
                 #{amount,jdbcType=BIGINT},
@@ -84,11 +77,8 @@
             <if test=" extName!=null and extName!='' ">
                 ext_name=#{extName,jdbcType=VARCHAR},
             </if>
-            <if test=" type!=null and type!='' ">
-                `type`=#{type,jdbcType=VARCHAR},
-            </if>
-            <if test=" parentType!=null and parentType!='' ">
-                parent_type=#{parentType,jdbcType=VARCHAR},
+            <if test=" type!=null ">
+                `type`=#{type,jdbcType=INTEGER},
             </if>
             <if test=" amount!=null ">
                 amount=#{amount,jdbcType=BIGINT},
@@ -119,11 +109,8 @@
             <if test=" extName!=null and extName!='' ">
                 and ext_name=#{extName,jdbcType=VARCHAR}
             </if>
-            <if test=" type!=null and type!='' ">
-                and `type`=#{type,jdbcType=VARCHAR}
-            </if>
-            <if test=" parentType!=null and parentType!='' ">
-                and parent_type=#{parentType,jdbcType=VARCHAR}
+            <if test=" type!=null ">
+                and `type`=#{type,jdbcType=INTEGER}
             </if>
             <if test=" amount!=null ">
                 and amount=#{amount,jdbcType=BIGINT}
@@ -162,11 +149,8 @@
             <if test=" extName!=null and extName!='' ">
                 and ext_ame=#{extName,jdbcType=VARCHAR}
             </if>
-            <if test=" type!=null and type!='' ">
-                and `type`=#{type,jdbcType=VARCHAR}
-            </if>
-            <if test=" parentType!=null and parentType!='' ">
-                and parent_type=#{parentType,jdbcType=VARCHAR}
+            <if test=" type!=null ">
+                and `type`=#{type,jdbcType=INTEGER}
             </if>
             <if test=" amount!=null ">
                 and amount=#{amount,jdbcType=BIGINT}

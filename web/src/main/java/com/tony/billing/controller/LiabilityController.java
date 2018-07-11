@@ -1,6 +1,5 @@
 package com.tony.billing.controller;
 
-import com.tony.billing.constants.enums.EnumTypeIdentify;
 import com.tony.billing.dto.LiabilityDTO;
 import com.tony.billing.entity.AssetTypes;
 import com.tony.billing.entity.Liability;
@@ -49,18 +48,18 @@ public class LiabilityController extends BaseController {
         return (LiabilityDetailResponse) ResponseUtil.dataNotExisting(new LiabilityDetailResponse());
     }
 
+    /**
+     * 设置type
+     * @param liability
+     * @return
+     */
     private LiabilityDTO fillDTOWithType(Liability liability) {
 
         LiabilityDTO liabilityDTO = new LiabilityDTO(liability);
-        AssetTypes condition = new AssetTypes();
-        condition.setTypeIdentify(EnumTypeIdentify.LIABILITY.getIdentify());
-        condition.setUserId(liability.getUserId());
-        condition.setTypeCode(liability.getType());
-        List<AssetTypes> result = assetTypesService.getAssetTypeByCondition(condition);
-        if (CollectionUtils.isNotEmpty(result)) {
-            liabilityDTO.setType(result.get(0).getTypeDesc());
+        AssetTypes assetTypes = assetTypesService.selectById(liability.getType(), liability.getUserId());
+        if(assetTypes!=null) {
+            liabilityDTO.setType(assetTypes.getTypeDesc());
         }
-
         return liabilityDTO;
     }
 

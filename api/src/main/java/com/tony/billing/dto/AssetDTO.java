@@ -8,7 +8,6 @@ import com.tony.billing.entity.Asset;
 public class AssetDTO {
     private String name;
     private String type;
-    private String parentType;
     private Long id;
     private Long amount;
 
@@ -21,8 +20,15 @@ public class AssetDTO {
             this.amount = asset.getAmount();
             this.id = asset.getId();
             this.name = asset.getName();
-            this.type = asset.getType();
-            this.parentType = asset.getParentType();
+        }
+    }
+
+    public AssetDTO(Asset asset, String typeDesc) {
+        if (asset != null) {
+            this.amount = asset.getAmount();
+            this.id = asset.getId();
+            this.name = asset.getName();
+            this.type = typeDesc;
         }
     }
 
@@ -40,14 +46,6 @@ public class AssetDTO {
 
     public void setType(String type) {
         this.type = type;
-    }
-
-    public String getParentType() {
-        return parentType;
-    }
-
-    public void setParentType(String parentType) {
-        this.parentType = parentType;
     }
 
     public Long getId() {

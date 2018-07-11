@@ -9,7 +9,6 @@
         repayment_day repaymentDay,
         name name,
         `type` type,
-        parent_type parentType,
         amount amount,
         installment installment,
         `index` 'index',
@@ -37,11 +36,8 @@
             <if test=" name!=null and name!='' ">
                 name,
             </if>
-            <if test=" type!=null and type!='' ">
+            <if test=" type!=null ">
                 `type`,
-            </if>
-            <if test=" parentType!=null and parentType!='' ">
-                parent_type,
             </if>
             <if test=" amount!=null ">
                 amount,
@@ -79,11 +75,8 @@
             <if test=" name!=null and name!='' ">
                 #{name,jdbcType=VARCHAR},
             </if>
-            <if test=" type!=null and type!='' ">
-                #{type,jdbcType=VARCHAR},
-            </if>
-            <if test=" parentType!=null and parentType!='' ">
-                #{parentType,jdbcType=VARCHAR},
+            <if test=" type!=null ">
+                #{type,jdbcType=INTEGER},
             </if>
             <if test=" amount!=null ">
                 #{amount,jdbcType=BIGINT},
@@ -118,11 +111,8 @@
             <if test=" name!=null and name!='' ">
                 name=#{name,jdbcType=VARCHAR},
             </if>
-            <if test=" type!=null and type!='' ">
-                `type`=#{type,jdbcType=VARCHAR},
-            </if>
-            <if test=" parentType!=null and parentType!='' ">
-                parent_type=#{parentType,jdbcType=VARCHAR},
+            <if test=" type!=null ">
+                `type`=#{type,jdbcType=INTEGER},
             </if>
             <if test=" amount!=null ">
                 amount=#{amount,jdbcType=BIGINT},
@@ -165,11 +155,8 @@
             <if test=" name!=null and name!='' ">
                 and name=#{name,jdbcType=VARCHAR}
             </if>
-            <if test=" type!=null and type!='' ">
-                and `type`=#{type,jdbcType=VARCHAR}
-            </if>
-            <if test=" parentType!=null and parentType!='' ">
-                and parent_type=#{parentType,jdbcType=VARCHAR}
+            <if test=" type!=null and ">
+                and `type`=#{type,jdbcType=INTEGER}
             </if>
             <if test=" amount!=null ">
                 and amount=#{amount,jdbcType=BIGINT}
@@ -220,11 +207,8 @@
             <if test=" name!=null and name!='' ">
                 and name=#{name,jdbcType=VARCHAR}
             </if>
-            <if test=" type!=null and type!='' ">
-                and `type`=#{type,jdbcType=VARCHAR}
-            </if>
-            <if test=" parentType!=null and parentType!='' ">
-                and parent_type=#{parentType,jdbcType=VARCHAR}
+            <if test=" type!=null ">
+                and `type`=#{type,jdbcType=INTEGER}
             </if>
             <if test=" amount!=null ">
                 and amount=#{amount,jdbcType=BIGINT}

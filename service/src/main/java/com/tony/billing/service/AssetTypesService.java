@@ -24,4 +24,6 @@ public interface AssetTypesService {
     boolean update(AssetTypes assetTypes);
 
     boolean deleteById(Integer id, Long userId);
+
+    AssetTypes selectById(Integer id, Long userId);
 }

@@ -9,7 +9,6 @@ import java.util.List;
  * @author TonyJiang on 2018/2/12
  */
 public class LiabilityModel {
-    private String name;
     private String type;
     private Long total;
     private List<LiabilityDTO> liabilityList;
@@ -19,13 +18,12 @@ public class LiabilityModel {
         liabilityList = new ArrayList<>();
     }
 
-    public String getName() {
-        return name;
+    public LiabilityModel(String type) {
+        this.type = type;
+        total = 0L;
+        liabilityList = new ArrayList<>();
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
 
     public String getType() {
         return type;

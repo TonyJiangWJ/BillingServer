@@ -9,6 +9,7 @@ import com.tony.billing.response.BaseResponse;
 import com.tony.billing.response.asset.AssetTypeResponse;
 import com.tony.billing.service.AssetTypesService;
 import com.tony.billing.util.ResponseUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -44,11 +45,20 @@ public class AssetTypesController extends BaseController {
                                                     @ModelAttribute("request") BaseRequest request) {
         AssetTypeResponse response = (AssetTypeResponse) ResponseUtil.success(new AssetTypeResponse());
         if (EnumTypeIdentify.LIABILITY.getIdentify().equalsIgnoreCase(identify)) {
-            response.setAssetTypes(transferToModel(assetTypesService.selectAssetTypeListByParent(parentType, request.getUserId())));
-        } else {
             response.setAssetTypes(transferToModel(assetTypesService.selectLiabilityTypeListByParent(parentType, request.getUserId())));
+        } else {
+            response.setAssetTypes(transferToModel(assetTypesService.selectAssetTypeListByParent(parentType, request.getUserId())));
         }
         return response;
+    }
+
+    @RequestMapping("/list/asset/type/by/parent/id")
+    public AssetTypeResponse listAssetTypesByParentId(@RequestParam("id") Integer id, @ModelAttribute("request") BaseRequest request) {
+        AssetTypes assetTypes = assetTypesService.selectById(id, request.getUserId());
+        if (assetTypes != null && StringUtils.isEmpty(assetTypes.getParentCode())) {
+            return listAssetTypesByParent(assetTypes.getTypeCode(), assetTypes.getTypeIdentify(), request);
+        }
+        return (AssetTypeResponse) ResponseUtil.dataNotExisting(new AssetTypeResponse());
     }
 
     /**
@@ -62,9 +72,9 @@ public class AssetTypesController extends BaseController {
     public AssetTypeResponse listAssetParentTypes(@PathVariable("identify") String identify, @ModelAttribute("request") BaseRequest request) {
         AssetTypeResponse response = (AssetTypeResponse) ResponseUtil.success(new AssetTypeResponse());
         if (EnumTypeIdentify.LIABILITY.getIdentify().equalsIgnoreCase(identify)) {
-            response.setAssetTypes(transferToModel(assetTypesService.selectAssetTypeList(request.getUserId())));
-        } else {
             response.setAssetTypes(transferToModel(assetTypesService.selectLiabilityTypeList(request.getUserId())));
+        } else {
+            response.setAssetTypes(transferToModel(assetTypesService.selectAssetTypeList(request.getUserId())));
         }
         return response;
     }

@@ -13,8 +13,7 @@ public class Liability implements Comparable<Liability> {
     private Date repaymentDay;
     private Date modifyTime;
     private String name;
-    private String type;
-    private String parentType;
+    private Integer type;
     private Long amount;
     private Integer status;
     private Integer installment;
@@ -61,20 +60,12 @@ public class Liability implements Comparable<Liability> {
         this.name = name;
     }
 
-    public String getType() {
+    public Integer getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(Integer type) {
         this.type = type;
-    }
-
-    public String getParentType() {
-        return parentType;
-    }
-
-    public void setParentType(String parentType) {
-        this.parentType = parentType;
     }
 
     public Long getAmount() {
@@ -130,10 +121,9 @@ public class Liability implements Comparable<Liability> {
         if (o == null) {
             return 1;
         }
-        Liability target = (Liability) o;
-        if (this.repaymentDay.getTime() > target.getRepaymentDay().getTime()) {
+        if (this.repaymentDay.getTime() > o.getRepaymentDay().getTime()) {
             return 1;
-        } else if (this.repaymentDay.getTime() == target.getRepaymentDay().getTime()) {
+        } else if (this.repaymentDay.getTime() == o.getRepaymentDay().getTime()) {
             return 0;
         }
         return -1;

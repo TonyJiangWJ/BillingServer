@@ -61,4 +61,13 @@ public class AssetTypesServiceImpl implements AssetTypesService {
     public boolean deleteById(Integer id, Long userId) {
         return assetTypesDao.deleteById(id, userId);
     }
+
+    @Override
+    public AssetTypes selectById(Integer id, Long userId) {
+        AssetTypes assetTypes = assetTypesDao.selectById(id);
+        if (assetTypes != null && (assetTypes.getUserId().equals(-1L) || assetTypes.getUserId().equals(userId))) {
+            return assetTypes;
+        }
+        return null;
+    }
 }

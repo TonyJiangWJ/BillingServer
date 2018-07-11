@@ -25,7 +25,23 @@ public class LiabilityDTO {
             this.name = liability.getName();
             this.repaymentDay = simpleDateFormat.format(liability.getRepaymentDay());
             this.status = liability.getStatus();
-            this.type = liability.getType();
+        }
+    }
+
+    public LiabilityDTO(Liability liability, String typeDesc) {
+        if (liability != null) {
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+            this.id = liability.getId();
+            this.amount = liability.getAmount();
+            this.paid = liability.getPaid();
+            this.index = liability.getIndex();
+            this.installment = liability.getInstallment();
+            this.name = liability.getName();
+            this.repaymentDay = simpleDateFormat.format(liability.getRepaymentDay());
+            this.status = liability.getStatus();
+
+            this.type = typeDesc;
         }
     }
 

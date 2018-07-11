@@ -20,6 +20,13 @@ public class MonthLiabilityModel {
 
     public MonthLiabilityModel() {
         liabilityModels = new ArrayList<>();
+        total = 0L;
+    }
+
+    public MonthLiabilityModel(String month) {
+        this.month = month;
+        total = 0L;
+        liabilityModels = new ArrayList<>();
     }
 
     public String getMonth() {

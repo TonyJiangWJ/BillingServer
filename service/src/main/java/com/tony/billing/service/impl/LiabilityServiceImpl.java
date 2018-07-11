@@ -1,11 +1,12 @@
 package com.tony.billing.service.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.tony.billing.constants.enums.EnumLiabilityParentType;
 import com.tony.billing.constants.enums.EnumLiabilityStatus;
-import com.tony.billing.constants.enums.EnumLiabilityType;
+import com.tony.billing.constants.enums.EnumTypeIdentify;
+import com.tony.billing.dao.AssetTypesDao;
 import com.tony.billing.dao.LiabilityDao;
 import com.tony.billing.dto.LiabilityDTO;
+import com.tony.billing.entity.AssetTypes;
 import com.tony.billing.entity.Liability;
 import com.tony.billing.model.LiabilityModel;
 import com.tony.billing.model.MonthLiabilityModel;
@@ -13,6 +14,7 @@ import com.tony.billing.service.LiabilityService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,13 +25,17 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class LiabilityServiceImpl implements LiabilityService {
 
     @Resource
     private LiabilityDao liabilityDao;
+    @Resource
+    private AssetTypesDao assetTypesDao;
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -53,10 +59,59 @@ public class LiabilityServiceImpl implements LiabilityService {
         query.setUserId(userId);
         query.setStatus(0);
         List<Liability> liabilities = liabilityDao.list(query);
-        List<LiabilityModel> liabilityModels = new ArrayList<>();
-        for (Liability liability : liabilities) {
-            insertIntoModels(liabilityModels, liability);
+        Map<String, AssetTypes> parentTypeMap = new HashMap<>();
+        Map<Integer, AssetTypes> assetTypesMap = new HashMap<>();
+        fillAssetTypeMap(liabilities, parentTypeMap, assetTypesMap, userId);
+        List<LiabilityModel> allModels = fillLiabilityModels(liabilities, parentTypeMap, assetTypesMap);
+        return mergeLiabilityByType(allModels);
+    }
+
+    private List<LiabilityModel> mergeLiabilityByType(List<LiabilityModel> allModels) {
+        for(LiabilityModel model:allModels) {
+            Map<String, LiabilityDTO> liabilityDTOMap = new HashMap<>();
+            for(LiabilityDTO liabilityDTO:model.getLiabilityList()){
+                LiabilityDTO mergedDto = null;
+                if((mergedDto=liabilityDTOMap.get(liabilityDTO.getType()))!=null) {
+                    mergedDto.setAmount(liabilityDTO.getAmount()-liabilityDTO.getPaid()+mergedDto.getAmount());
+                } else {
+                    mergedDto = new LiabilityDTO();
+                    BeanUtils.copyProperties(liabilityDTO, mergedDto);
+                    mergedDto.setAmount(liabilityDTO.getAmount()-liabilityDTO.getPaid());
+                    liabilityDTOMap.put(liabilityDTO.getType(), mergedDto);
+                }
+            }
+            List<LiabilityDTO> mergedList = new ArrayList<>();
+            for(Map.Entry<String, LiabilityDTO> entry:liabilityDTOMap.entrySet()) {
+                mergedList.add(entry.getValue());
+            }
+            model.setLiabilityList(mergedList);
         }
+        return allModels;
+    }
+
+    private List<LiabilityModel> fillLiabilityModels(List<Liability> liabilities, Map<String, AssetTypes> parentTypeMap, Map<Integer, AssetTypes> assetTypesMap) {
+        Map<String, LiabilityModel> modelMap = new HashMap<>();
+        for (Map.Entry<String, AssetTypes> entry : parentTypeMap.entrySet()) {
+            modelMap.put(entry.getKey(), new LiabilityModel(entry.getValue().getTypeDesc()));
+        }
+        List<LiabilityModel> liabilityModels = new ArrayList<>();
+        LiabilityModel model;
+        for (Liability liability : liabilities) {
+            AssetTypes type = assetTypesMap.get(liability.getType());
+
+            if (StringUtils.isNotEmpty(type.getParentCode())) {
+                model = modelMap.get(type.getParentCode());
+            } else {
+                model = modelMap.get(type.getTypeCode());
+            }
+            model.setTotal(liability.getAmount() + model.getTotal() - liability.getPaid());
+            model.getLiabilityList().add(new LiabilityDTO(liability, type.getTypeDesc()));
+        }
+
+        for (Map.Entry<String, LiabilityModel> modelEntry : modelMap.entrySet()) {
+            liabilityModels.add(modelEntry.getValue());
+        }
+
         return liabilityModels;
     }
 
@@ -69,37 +124,52 @@ public class LiabilityServiceImpl implements LiabilityService {
         Collections.sort(liabilities);
         SimpleDateFormat monthFormat = new SimpleDateFormat("yyyy-MM");
         String month = null;
-        boolean firstInsert = true;
         List<MonthLiabilityModel> monthLiabilityModels = new ArrayList<>();
         MonthLiabilityModel monthLiabilityModel = null;
+
+        Map<String, List<Liability>> monthMap = new HashMap<>();
         for (Liability liability : liabilities) {
-            if (firstInsert) {
-                month = monthFormat.format(liability.getRepaymentDay());
-                monthLiabilityModel = new MonthLiabilityModel();
-                monthLiabilityModel.setMonth(month);
-                insertIntoModelsNoMerge(monthLiabilityModel.getLiabilityModels(), liability);
-                monthLiabilityModels.add(monthLiabilityModel);
-                firstInsert = false;
-            } else {
-                if (month.equals(monthFormat.format(liability.getRepaymentDay()))) {
-                    // insert
-                    insertIntoModelsNoMerge(monthLiabilityModel.getLiabilityModels(), liability);
-                } else {
-                    // 计算总金额
-                    countDownMonthAmount(monthLiabilityModel);
-                    month = monthFormat.format(liability.getRepaymentDay());
-                    monthLiabilityModel = new MonthLiabilityModel();
-                    monthLiabilityModel.setMonth(month);
-                    insertIntoModelsNoMerge(monthLiabilityModel.getLiabilityModels(), liability);
-                    monthLiabilityModels.add(monthLiabilityModel);
+            month = monthFormat.format(liability.getRepaymentDay());
+            if (monthMap.get(month) == null) {
+                monthMap.put(month, new ArrayList<Liability>());
+            }
+            monthMap.get(month).add(liability);
+        }
+
+        for (Map.Entry<String, List<Liability>> entry : monthMap.entrySet()) {
+            month = entry.getKey();
+            monthLiabilityModel = new MonthLiabilityModel(month);
+
+            Map<String, AssetTypes> parentTypeMap = new HashMap<>();
+            Map<Integer, AssetTypes> assetTypesMap = new HashMap<>();
+            fillAssetTypeMap(entry.getValue(), parentTypeMap, assetTypesMap, userId);
+            monthLiabilityModel.setLiabilityModels(fillLiabilityModels(entry.getValue(), parentTypeMap, assetTypesMap));
+            countDownMonthAmount(monthLiabilityModel);
+            monthLiabilityModels.add(monthLiabilityModel);
+        }
+
+        return monthLiabilityModels;
+    }
+
+    public void fillAssetTypeMap(List<Liability> liabilities, Map<String, AssetTypes> parentTypeMap, Map<Integer, AssetTypes> assetTypesMap, Long userId) {
+        for (Liability liability : liabilities) {
+            if (assetTypesMap.get(liability.getType()) == null) {
+                AssetTypes assetTypes = assetTypesDao.selectById(liability.getType());
+                if (assetTypes != null) {
+                    assetTypesMap.put(liability.getType(), assetTypes);
+                    if (StringUtils.isNotEmpty(assetTypes.getParentCode())) {
+                        if (parentTypeMap.get(assetTypes.getParentCode()) == null) {
+                            assetTypes = assetTypesDao.getByTypeCode(assetTypes.getParentCode(), EnumTypeIdentify.LIABILITY.getIdentify(), userId);
+                            if (assetTypes != null) {
+                                parentTypeMap.put(assetTypes.getTypeCode(), assetTypes);
+                            }
+                        } else {
+                            parentTypeMap.put(assetTypes.getTypeCode(), assetTypes);
+                        }
+                    }
                 }
             }
         }
-        if (monthLiabilityModel != null) {
-            // 计算总金额
-            countDownMonthAmount(monthLiabilityModel);
-        }
-        return monthLiabilityModels;
     }
 
     @Override
@@ -120,7 +190,15 @@ public class LiabilityServiceImpl implements LiabilityService {
     public boolean createLiabilityInfo(Liability liability) throws SQLException {
         Date repaymentDay = liability.getRepaymentDay();
         int installment = liability.getInstallment();
-        liability.setName(EnumLiabilityType.getEnumByType(liability.getType()).getDesc());
+
+        AssetTypes assetTypes = assetTypesDao.selectById(liability.getType());
+        if (assetTypes != null && (assetTypes.getUserId().equals(liability.getUserId()) || assetTypes.getUserId().equals(-1L))) {
+            liability.setName(assetTypes.getTypeDesc());
+        } else {
+            logger.error("assetTypes不存在或者权限不足 id:{} userId:{}", liability.getType(), liability.getUserId());
+            return false;
+        }
+
         if (installment == 1) {
             liability.setIndex(1);
             return liabilityDao.insert(liability) > 0;
@@ -146,7 +224,6 @@ public class LiabilityServiceImpl implements LiabilityService {
                 newRecord.setIndex(i);
                 newRecord.setInstallment(installment);
                 newRecord.setName(liability.getName());
-                newRecord.setParentType(liability.getParentType());
                 newRecord.setRepaymentDay(calendar.getTime());
                 newRecord.setType(liability.getType());
                 newRecord.setUserId(liability.getUserId());
@@ -161,65 +238,6 @@ public class LiabilityServiceImpl implements LiabilityService {
         return true;
     }
 
-    private void insertIntoModels(List<LiabilityModel> liabilityModels, Liability liability) {
-        boolean inserted = false;
-        for (LiabilityModel model : liabilityModels) {
-            if (StringUtils.equals(model.getType(), liability.getParentType())) {
-                insertIntoDTOList(model.getLiabilityList(), liability);
-                model.setTotal(model.getTotal() + liability.getAmount() - liability.getPaid());
-                inserted = true;
-                break;
-            }
-        }
-        if (!inserted) {
-            LiabilityModel liabilityModel = new LiabilityModel();
-            insertIntoDTOList(liabilityModel.getLiabilityList(), liability);
-            liabilityModel.setTotal(liabilityModel.getTotal() + liability.getAmount() - liability.getPaid());
-            liabilityModel.setType(liability.getParentType());
-            liabilityModel.setName(EnumLiabilityParentType.getEnumByType(liability.getParentType()).getDesc());
-            liabilityModels.add(liabilityModel);
-        }
-    }
-
-    private void insertIntoModelsNoMerge(List<LiabilityModel> liabilityModels, Liability liability) {
-        boolean inserted = false;
-        for (LiabilityModel model : liabilityModels) {
-            if (StringUtils.equals(model.getType(), liability.getParentType())) {
-                model.getLiabilityList().add(new LiabilityDTO(liability));
-                model.setTotal(model.getTotal() + liability.getAmount() - liability.getPaid());
-                inserted = true;
-                break;
-            }
-        }
-        if (!inserted) {
-            LiabilityModel liabilityModel = new LiabilityModel();
-            liabilityModel.getLiabilityList().add(new LiabilityDTO(liability));
-            liabilityModel.setTotal(liabilityModel.getTotal() + liability.getAmount() - liability.getPaid());
-            liabilityModel.setType(liability.getParentType());
-            liabilityModel.setName(EnumLiabilityParentType.getEnumByType(liability.getParentType()).getDesc());
-            liabilityModels.add(liabilityModel);
-        }
-    }
-
-    /**
-     * 合并插入
-     *
-     * @param dtoList
-     * @param liability
-     */
-    private void insertIntoDTOList(List<LiabilityDTO> dtoList, Liability liability) {
-        boolean inserted = false;
-        for (LiabilityDTO dto : dtoList) {
-            if (StringUtils.equals(dto.getType(), liability.getType())) {
-                dto.setAmount(dto.getAmount() + liability.getAmount() - liability.getPaid());
-                inserted = true;
-                break;
-            }
-        }
-        if (!inserted) {
-            dtoList.add(new LiabilityDTO(liability));
-        }
-    }
 
     private void countDownMonthAmount(MonthLiabilityModel model) {
         long sum = 0;

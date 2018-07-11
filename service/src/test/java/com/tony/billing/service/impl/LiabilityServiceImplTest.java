@@ -45,8 +45,7 @@ public class LiabilityServiceImplTest extends BaseServiceTest {
         liability.setInstallment(12);
         liability.setRepaymentDay(new Date());
         liability.setUserId(1L);
-        liability.setType(EnumLiabilityType.ALIPAY_HUABEI.getType());
-        liability.setParentType(EnumLiabilityParentType.ALIPAY.getType());
+
 
         liabilityService.createLiabilityInfo(liability);
 
