@@ -8,6 +8,7 @@ import com.tony.billing.model.AssetModel;
 import com.tony.billing.model.LiabilityModel;
 import com.tony.billing.model.MonthLiabilityModel;
 import com.tony.billing.request.BaseRequest;
+import com.tony.billing.request.asset.AssetAddRequest;
 import com.tony.billing.request.asset.AssetDetailRequest;
 import com.tony.billing.request.asset.AssetUpdateRequest;
 import com.tony.billing.request.liability.LiabilityAddRequest;
@@ -18,6 +19,7 @@ import com.tony.billing.service.AssetService;
 import com.tony.billing.service.LiabilityService;
 import com.tony.billing.util.ResponseUtil;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ui.Model;
@@ -92,16 +94,40 @@ public class AssetManageController extends BaseController {
         }
     }
 
+    @RequestMapping("/asset/put")
+    public BaseResponse addAsset(@ModelAttribute("request") AssetAddRequest request) {
+
+        if (request.getAmount() == null
+                || request.getType() == null) {
+            return ResponseUtil.paramError();
+        }
+        Asset asset = new Asset();
+        asset.setAmount(request.getAmount());
+        asset.setType(request.getType());
+        asset.setUserId(request.getUserId());
+
+        if (StringUtils.isNotEmpty(request.getName())) {
+            asset.setExtName(request.getName());
+        }
+        if (assetService.addAsset(asset) > 0) {
+            return ResponseUtil.success();
+        } else {
+            return ResponseUtil.error();
+        }
+    }
+
 
     @RequestMapping(value = "/liability/put", method = RequestMethod.POST)
     public BaseResponse addLiability(@ModelAttribute("request") LiabilityAddRequest request) {
-        Liability liability = new Liability();
+
         if (request.getRepaymentDay() == null
                 || request.getType() == null
                 || request.getInstallment() == null
                 || request.getAmount() == null) {
             return ResponseUtil.paramError();
         }
+
+        Liability liability = new Liability();
         liability.setRepaymentDay(request.getRepaymentDay());
         liability.setType(request.getType());
         liability.setAmount(request.getAmount());

@@ -1,7 +1,5 @@
 package com.tony.billing.service.impl;
 
-import com.tony.billing.constants.enums.EnumAssetParentType;
-import com.tony.billing.constants.enums.EnumAssetType;
 import com.tony.billing.constants.enums.EnumTypeIdentify;
 import com.tony.billing.dao.AssetDao;
 import com.tony.billing.dao.AssetTypesDao;
@@ -101,7 +99,18 @@ public class AssetServiceImpl implements AssetService {
 
     @Override
     public Long addAsset(Asset asset) {
-        return assetDao.insert(asset);
+        AssetTypes assetTypes = assetTypesDao.selectById(asset.getType());
+        boolean isAssetTypeValid = assetTypes != null && (assetTypes.getUserId().equals(-1L) || assetTypes.getUserId().equals(asset.getUserId()));
+        if (isAssetTypeValid) {
+            if (StringUtils.isNotEmpty(asset.getExtName())) {
+                asset.setName(asset.getExtName());
+            } else {
+                asset.setName(assetTypes.getTypeDesc());
+            }
+            return assetDao.insert(asset);
+        } else {
+            return -1L;
+        }
     }
 
 }
