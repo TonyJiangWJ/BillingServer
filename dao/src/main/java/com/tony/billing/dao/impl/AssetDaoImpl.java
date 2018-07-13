@@ -1,5 +1,6 @@
 package com.tony.billing.dao.impl;
 
+import com.google.common.base.Preconditions;
 import com.tony.billing.dao.AssetDao;
 import com.tony.billing.dao.mapper.AssetMapper;
 import com.tony.billing.entity.Asset;
@@ -25,6 +26,7 @@ public class AssetDaoImpl implements AssetDao {
 
     @Override
     public Long update(Asset asset) {
+        Preconditions.checkNotNull(asset.getUserId());
         asset.setModifyTime(new Date());
         return assetMapper.update(asset);
     }
@@ -41,6 +43,7 @@ public class AssetDaoImpl implements AssetDao {
 
     @Override
     public Asset getAssetById(Long id) {
+        assert id != null;
         return assetMapper.getById(id);
     }
 }

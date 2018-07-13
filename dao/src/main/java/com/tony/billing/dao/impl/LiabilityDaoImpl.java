@@ -1,5 +1,6 @@
 package com.tony.billing.dao.impl;
 
+import com.google.common.base.Preconditions;
 import com.tony.billing.constants.enums.EnumLiabilityStatus;
 import com.tony.billing.dao.LiabilityDao;
 import com.tony.billing.dao.mapper.LiabilityMapper;
@@ -27,6 +28,7 @@ public class LiabilityDaoImpl implements LiabilityDao {
 
     @Override
     public Long update(Liability liability) {
+        Preconditions.checkNotNull(liability.getUserId());
         liability.setModifyTime(new Date());
         return liabilityMapper.update(liability);
     }

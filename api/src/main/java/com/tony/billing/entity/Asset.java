@@ -9,8 +9,8 @@ public class Asset {
     private Long id;
     private Long userId;
     private String name;
-    private String type;
-    private String parentType;
+    private String extName;
+    private Integer type;
     private Long amount;
     private Date createTime;
     private Date modifyTime;
@@ -31,6 +31,14 @@ public class Asset {
         this.userId = userId;
     }
 
+    public String getExtName() {
+        return extName;
+    }
+
+    public void setExtName(String extName) {
+        this.extName = extName;
+    }
+
     public String getName() {
         return name;
     }
@@ -39,11 +47,11 @@ public class Asset {
         this.name = name;
     }
 
-    public String getType() {
+    public Integer getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(Integer type) {
         this.type = type;
     }
 
@@ -71,11 +79,4 @@ public class Asset {
         this.modifyTime = modifyTime;
     }
 
-    public String getParentType() {
-        return parentType;
-    }
-
-    public void setParentType(String parentType) {
-        this.parentType = parentType;
-    }
 }

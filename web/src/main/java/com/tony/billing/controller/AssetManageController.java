@@ -1,7 +1,5 @@
-package com.tony.billing.controller.thymeleaf;
+package com.tony.billing.controller;
 
-import com.tony.billing.constants.enums.EnumLiabilityParentType;
-import com.tony.billing.controller.BaseController;
 import com.tony.billing.dto.AssetDTO;
 import com.tony.billing.dto.AssetManageDTO;
 import com.tony.billing.entity.Asset;
@@ -10,25 +8,25 @@ import com.tony.billing.model.AssetModel;
 import com.tony.billing.model.LiabilityModel;
 import com.tony.billing.model.MonthLiabilityModel;
 import com.tony.billing.request.BaseRequest;
+import com.tony.billing.request.asset.AssetAddRequest;
 import com.tony.billing.request.asset.AssetDetailRequest;
 import com.tony.billing.request.asset.AssetUpdateRequest;
 import com.tony.billing.request.liability.LiabilityAddRequest;
 import com.tony.billing.response.BaseResponse;
 import com.tony.billing.response.asset.AssetDetailResponse;
-import com.tony.billing.response.liability.LiabilityTypeResponse;
+import com.tony.billing.response.asset.AssetManageResponse;
 import com.tony.billing.service.AssetService;
 import com.tony.billing.service.LiabilityService;
 import com.tony.billing.util.ResponseUtil;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import java.sql.SQLException;
@@ -37,20 +35,19 @@ import java.util.List;
 /**
  * @author TonyJiang on 2018/2/12
  */
-@Controller
-@RequestMapping("/thymeleaf")
+@RestController
+@RequestMapping("/bootDemo")
 public class AssetManageController extends BaseController {
 
     @Resource
     private AssetService assetService;
-
     @Resource
     private LiabilityService liabilityService;
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @RequestMapping("/asset/manage")
-    public String assetManage(@ModelAttribute("request") BaseRequest request, Model model) {
+    public AssetManageResponse assetManage(@ModelAttribute("request") BaseRequest request) {
         AssetManageDTO assetManageDTO = new AssetManageDTO();
         // 计算总资产
         assetManageDTO.setAssetModels(assetService.getAssetModelsByUserId(request.getUserId()));
@@ -64,30 +61,32 @@ public class AssetManageController extends BaseController {
         assetManageDTO.setMonthLiabilityModels(liabilityService.getMonthLiabilityModelsByUserId(request.getUserId()));
         // 计算每月还款后剩余
         assetManageDTO = calAssetAfterMonth(assetManageDTO);
-        model.addAttribute("assetManageDTO", assetManageDTO);
-        model.addAttribute("liabilityParentList", EnumLiabilityParentType.toList());
-        return "/thymeleaf/asset/manage";
+        AssetManageResponse response = (AssetManageResponse) ResponseUtil.success(new AssetManageResponse());
+        response.setAssetManage(assetManageDTO);
+        return response;
     }
 
-    @ResponseBody
     @RequestMapping("/asset/detail/get")
     public AssetDetailResponse getAssetDetail(@ModelAttribute("request") AssetDetailRequest request, Model model) {
         AssetDetailResponse response = (AssetDetailResponse) ResponseUtil.success(new AssetDetailResponse());
-        AssetDTO assetDTO = assetService.getAssetInfoById(request.getId());
-        if (assetDTO != null) {
-            response.setAssetInfo(assetDTO);
+        Asset asset = assetService.getAssetInfoById(request.getId());
+        if (asset != null && asset.getUserId().equals(request.getUserId())) {
+            response.setAssetInfo(new AssetDTO(asset));
         } else {
             response = (AssetDetailResponse) ResponseUtil.dataNotExisting(new AssetDetailResponse());
         }
         return response;
     }
 
-    @ResponseBody
     @RequestMapping("/asset/update")
     public BaseResponse updateAsset(@ModelAttribute("request") AssetUpdateRequest request) {
         Asset update = new Asset();
+        if (request.getAmount() == null || request.getId() == null) {
+            return ResponseUtil.paramError();
+        }
         update.setId(request.getId());
         update.setAmount(request.getAmount());
+        update.setUserId(request.getUserId());
         if (assetService.modifyAssetInfoById(update)) {
             return ResponseUtil.success();
         } else {
@@ -95,20 +94,41 @@ public class AssetManageController extends BaseController {
         }
     }
 
-    @ResponseBody
-    @RequestMapping("/list/liability/type/by/parent/{parentType}")
-    public LiabilityTypeResponse listLiabilityTypeByParent(@PathVariable("parentType") String parentType) {
-        LiabilityTypeResponse response = (LiabilityTypeResponse) ResponseUtil.success(new LiabilityTypeResponse());
-        response.setLiabilityTypes(liabilityService.getLiabilityTypesByParent(parentType));
-        return response;
+    @RequestMapping("/asset/put")
+    public BaseResponse addAsset(@ModelAttribute("request") AssetAddRequest request) {
+
+        if (request.getAmount() == null
+                || request.getType() == null) {
+            return ResponseUtil.paramError();
+        }
+        Asset asset = new Asset();
+        asset.setAmount(request.getAmount());
+        asset.setType(request.getType());
+        asset.setUserId(request.getUserId());
+
+        if (StringUtils.isNotEmpty(request.getName())) {
+            asset.setExtName(request.getName());
+        }
+        if (assetService.addAsset(asset) > 0) {
+            return ResponseUtil.success();
+        } else {
+            return ResponseUtil.error();
+        }
     }
 
-    @ResponseBody
+
     @RequestMapping(value = "/liability/put", method = RequestMethod.POST)
     public BaseResponse addLiability(@ModelAttribute("request") LiabilityAddRequest request) {
+
+        if (request.getRepaymentDay() == null
+                || request.getType() == null
+                || request.getInstallment() == null
+                || request.getAmount() == null) {
+            return ResponseUtil.paramError();
+        }
+
         Liability liability = new Liability();
         liability.setRepaymentDay(request.getRepaymentDay());
-        liability.setParentType(request.getParentType());
         liability.setType(request.getType());
         liability.setAmount(request.getAmount());
         liability.setInstallment(request.getInstallment());

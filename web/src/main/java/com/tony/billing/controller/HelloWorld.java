@@ -46,10 +46,11 @@ public class HelloWorld {
     private RSAUtil rsaUtil;
 
     @RequestMapping("/hello/world")
-    public String hello() {
+    public String hello(@RequestParam("dd") String dd) {
 //        System.out.println(JSON.toJSONString(adminService.listAdmin()));
+        logger.info("dd:{}", dd);
         logger.info("enter :{}", rsaUtil.encrypt("123456"));
-        return "HelloWorld";
+        return "HelloWorld" + dd;
     }
 
     @RequestMapping("/hello/all")
@@ -121,6 +122,12 @@ public class HelloWorld {
     public String testRsa(@RequestParam("content") String content) {
         logger.info("enter ");
         return rsaUtil.encrypt(content);
+    }
+
+    @RequestMapping("/hello/app/index")
+    public String testData(@RequestParam(value = "data", required = false) String data) {
+        logger.info("data:{} key:{} sign:{}", data);
+        return "hello";
     }
 
 }

@@ -25,6 +25,7 @@ public class Application {
     private String rsaKeyPath;
     @Value("${jwt.secret.key:springboot}")
     private String jwtSecretKey;
+
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
     }

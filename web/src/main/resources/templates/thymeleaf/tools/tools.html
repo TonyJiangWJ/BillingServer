@@ -1,0 +1,443 @@
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.thymeleaf.org" layout:decorator="/layout/default">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>私有工具</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/layui/css/layui.css}"
+          href="../../../static/layui/css/layui.css"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/global.css}" href="../../../static/css/global.css"/>
+    <script type="text/javascript" th:src="@{/layui/layui.js}" src="../../../static/layui/layui.js"></script>
+    <script type="text/javascript" th:src="@{/scripts/jquery-3.1.1.min.js}"
+            src="../../../static/scripts/jquery-3.1.1.min.js"></script>
+    <script type="text/javascript" src="../../../static/scripts/jsencrypt.js" th:src="@{/scripts/jsencrypt.js}"></script>
+    <script type="text/javascript" src="../../../static/scripts/tools/t2ChannelTestLayui.js" th:src="@{/scripts/tools/t2ChannelTestLayui.js}"></script>
+    <script type="text/javascript" src="../../../static/scripts/tools/commonUtil.js" th:src="@{/scripts/tools/commonUtil.js}"></script>
+    <script type="text/javascript" src="../../../static/scripts/dateUtil.js" th:src="@{/scripts/dateUtil.js}"></script>
+    <script type="text/javascript" src="../../../static/scripts/md5.js" th:src="@{/scripts/md5.js}"></script>
+    <script type="text/javascript" src="../../../static/scripts/base64.js" th:src="@{/scripts/base64.js}"></script>
+
+    <script th:inline="javascript">
+        var $;
+        layui.use(['form', 'layer', 'element', 'jquery', 'laydate'], function () {
+            $ = layui.$; //重点处
+
+            var laydate = layui.laydate;
+
+            //执行一个laydate实例
+            laydate.render({
+                elem: '#startDate'//指定元素
+            });
+
+            laydate.render({
+                elem: '#endDate'
+            });
+        });
+
+        function showT2Test() {
+            $('#t2_test').show();
+            $('#common_tools').hide();
+            $('#jsonFormat').hide();
+            $('#sqlLogConvert').hide();
+        }
+
+        function showCommonTools() {
+            $('#t2_test').hide();
+            $('#common_tools').show();
+            $('#jsonFormat').hide();
+            $('#sqlLogConvert').hide();
+        }
+
+        function showJsonFormat() {
+            $('#t2_test').hide();
+            $('#common_tools').hide();
+            $('#jsonFormat').show();
+            $('#sqlLogConvert').hide();
+        }
+
+        function showSqlLogConvert() {
+            $('#t2_test').hide();
+            $('#common_tools').hide();
+            $('#jsonFormat').hide();
+            $('#sqlLogConvert').show();
+        }
+
+        function checkJson() {
+            console.log("clicked json");
+            var sourceStr = $('#sourceStr').val();
+            var json = JSON.object;
+            var jsonStr = "";
+            try {
+                json = JSON.parse(sourceStr);
+                jsonStr = JSON.stringify(json, null, 4);
+            } catch (e) {
+                jsonStr = "非法JSON字符串";
+            }
+            $('#targetStr').val(jsonStr);
+        }
+
+        function convertSql() {
+            var source = document.getElementById('sqlSourceStr').value;
+            try {
+                var sql = /.*Preparing.*:(.*)>?/.exec(source)[1].trim().replace(/\s+/g, ' ');
+                var params = /Parameters:\s*\[(.*)]/.exec(source)[1];
+                var paramsList = params.split(/,[\s]*/);
+                /*<![CDATA[ */
+                for (var i = 0; i < paramsList.length; i++) {
+                    var param = paramsList[i];
+                    sql = sql.replace(/\?/, '\'' + param + '\'').replace(/limit.*'(\d+)',.*'(\d+)'/, 'limit $1, $2').replace(/>$/, '');
+                }
+                /* ]]>*/
+                console.log(sql);
+                document.getElementById('sqlResultStr').value = sql;
+            } catch (e) {
+                console.log(e);
+                document.getElementById('sqlResultStr').value = "请确认复制的内容包含完整的Preparing和Parameters信息";
+            }
+        }
+    </script>
+</head>
+
+<div layout:fragment="layout_header">
+    <div th:replace="/fragments/header::header('tool')">
+        <div>this is child file</div>
+    </div>
+</div>
+<section layout:fragment="content">
+    <div class="layui-main center">
+    <span class="layui-breadcrumb" lay-separator="|">
+      <a href="javascript:void(0);" onclick="showT2Test();">T2测试接口</a>
+      <a href="javascript:void(0);" onclick="showCommonTools();">通用工具</a>
+      <a href="javascript:void(0);" onclick="showJsonFormat();">JSON格式化工具</a>
+      <a href="javascript:void(0);" onclick="showSqlLogConvert();">iBatis/MyBatis日志转换</a>
+    </span>
+    </div>
+    <div id="t2_test">
+        <table class="t-table">
+            <thead>
+            <tr>
+                <td>
+                    服务地址
+                </td>
+                <td>
+                    <table>
+                        <tbody>
+                        <tr>
+                            <td>
+                                <label for="host"></label><input class="layui-input" placeholder="host" id="host"
+                                                                 name="host"
+                                                                 type="text"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label for="port"></label><input class="layui-input" placeholder="port" id="port"
+                                                                 name="port"
+                                                                 type="text"/>
+                                <input type="hidden" id="serverName"/>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </td>
+                <td>
+                    <input class="layui-btn layui-btn-normal" id="getAllConnect" name="getAllConnect" type="button"
+                           value="查看所有连接"/>
+                </td>
+                <td>
+                    <input class="layui-btn layui-btn-normal" id="getAllService" name="getAllService" type="button"
+                           value="查看所有服务"/>
+                </td>
+                <td>
+                    <input class="layui-btn layui-btn-normal" id="checkAll" name="checkAll" type="button"
+                           value="测试服务列表"/>
+                </td>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>
+                    接口
+                </td>
+                <td>
+                    <input title="functionId" class="layui-input" id="functionId" name="functionId" type="text"/>
+                </td>
+                <td>
+                    <input class="layui-btn layui-btn-normal" id="checkFunc" name="checkFunc" type="button"
+                           value="测试接口"/>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    <table>
+                        <tr>
+                            <td>
+                                <input class="layui-btn layui-btn-normal" id="server" type="button" value="server"/>
+                            </td>
+                            <td>
+                                <input class="layui-btn layui-btn-normal" id="order" type="button" value="order"/>
+                            </td>
+                            <td>
+                                <input class="layui-btn layui-btn-normal" id="settle" type="button" value="settle"/>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+                <td>
+                    <input class="layui-btn layui-btn-normal" id="refresh" name="refresh" type="button" value="刷新"/>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <iframe src="" id="myFrame" width="100%" height="800px"></iframe>
+    </div>
+
+    <div id="common_tools" class="layui-row layui-col-space5" style="display: none;">
+        <div class="layui-col-md2"></div>
+        <div class="layui-col-md8">
+            <table class="t-table">
+                <thead>
+                <tr>
+                    <td><h3>工具名称</h3></td>
+                    <td>
+                        <table>
+                            <tbody>
+                            <tr>
+                                <td><h4>当前时间:</h4></td>
+                            </tr>
+                            <tr>
+                                <td><span id="nowDateTime">20XX-XX-XX XX:XX:XX</span></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td><span>时间转换</span></td>
+                    <td>Timestamp13:</td>
+                    <td><input class="layui-input" type="number" name="Timestamp13" id="Timestamp13" value=''/></td>
+                    <td>
+                        <button class="layui-btn" id="ttString">转换字符串</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>TimeString:</td>
+                    <td><input class="layui-input" type="text" name="TimeString" id="TimeString"/></td>
+                    <td>
+                        <button class="layui-btn" id="ttStamp">转换时间戳</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td><span>urlEncode转换</span></td>
+                    <td>普通字符串</td>
+                    <td><input class="layui-input" type="text" name="simpleStr" id="simpleStr" value='' title=""/></td>
+                    <td>
+                        <button class="layui-btn" id="doEncode">转换字符串</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>URL编码字符串</td>
+                    <td><input class="layui-input" type="text" name="encodeStr" id="encodeStr"/></td>
+                    <td>
+                        <button class="layui-btn" id="doDecode">解码字符串</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td><span>Unicode转换</span></td>
+                    <td><textarea class="layui-textarea" placeholder="unicode" id="unicodeStr"
+                                  style="height: 100px;"></textarea></td>
+                    <td><textarea class="layui-textarea" placeholder="converted" id="convertedStr"
+                                  style="height: 100px;"></textarea></td>
+                    <td>
+                        <table>
+                            <tr>
+                                <td>
+                                    <button class="layui-btn" id="convert">解码</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <button class="layui-btn" id="backUnicode">编码</button>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td><span id="displayDays"></span></td>
+                    <td>
+                        <div>
+                            <input class="layui-input" placeholder="开始时间" id="startDate" type="text"/>
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <input class="layui-input" placeholder="结束时间" id="endDate" type="text"/>
+                        </div>
+                    </td>
+                    <td>
+                        <button class="layui-btn" id="calDayBtw">计算时间间隔</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td><input class="layui-input" type="number" id="daysBtw" placeholder="间隔时间"/></td>
+                    <td>
+                        <button class="layui-btn" id="calTargetDate">计算目标日期</button>
+                    </td>
+                </tr>
+
+                <!--<tr>-->
+                <!--<td>JSON格式化</td>-->
+                <!--<td><textarea placeholder="source str" id="sourceStr"></textarea></td>-->
+                <!--<td><textarea placeholder="json str" id="jsonStr"></textarea></td>-->
+                <!--<td><button id="jsonParse">格式化校验</button></td>-->
+                <!--</tr>-->
+                <tr>
+                    <td><span>MD5加密</span></td>
+                    <td><input class="layui-input" type="text" id="md5source" placeholder="明文"/></td>
+                    <td><input class="layui-input" type="text" id="md5_32" placeholder="md5 32位"
+                               ondblclick="toggleMd32Case()"/>
+                    </td>
+                    <td>
+                        <button class="layui-btn" id="encodeMd5">加密</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td><input class="layui-input" type="text" id="md5_16" placeholder="md5 16位"
+                               ondblclick="toggleMd16Case()"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td><span>Base64加解密</span></td>
+                    <td><input class="layui-input" type="text" id="base64Source" placeholder="明文"/></td>
+                    <td><input class="layui-input" type="text" id="encoded64" placeholder="密文"/></td>
+                    <td>
+                        <button class="layui-btn" id="encodeBase64">加密</button>
+                        <button class="layui-btn" id="decodeBase64">解密</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td><span>RSA加密</span></td>
+                    <td colspan="2"><textarea style="height: 200px;" placeholder="publicKey" class="layui-input"
+                                              type="text"
+                                              id="publicKey"></textarea></td>
+                    <td>
+                        <button class="layui-btn" id="generateRsaKeys">生成密钥</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td colspan="2"><textarea style="height: 300px;" placeholder="privateKey" class="layui-input"
+                                              type="text" id="privateKey"></textarea></td>
+                    <!--<td><button class="layui-btn" id="setRsaKeys">设置密钥</button></td>-->
+                </tr>
+                <tr>
+                    <td></td>
+                    <td><textarea class="layui-textarea" style="height: 100px;" placeholder="明文"
+                                  id="rsaDecryptContent"></textarea></td>
+                    <td><textarea class="layui-textarea" style="height: 100px;" placeholder="密文"
+                                  id="rsaEncryptContent"></textarea></td>
+                    <td>
+                        <button class="layui-btn" id="pubEncryptRsa">公钥加密</button>
+                        <button class="layui-btn" id="priDecryptRsa">私钥解密</button>
+                        <button class="layui-btn layui-btn-disabled" id="priEncryptRsa">私钥加密</button>
+                        <button class="layui-btn layui-btn-disabled" id="pubDecryptRsa">公钥解密</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td><span>论文复制</span></td>
+                    <td><textarea class="layui-textarea" style="height: 100px;" placeholder="原文" id="srcStr"></textarea>
+                    </td>
+                    <td><textarea class="layui-textarea" style="height: 100px;" placeholder="处理后"
+                                  id="destStr"></textarea>
+                    </td>
+                    <td>
+                        <button class="layui-btn" id="escapeForCN">中文去空格</button>
+                        <button class="layui-btn" id="escapeForEN">英文去回车</button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="layui-col-md2"></div>
+    </div>
+
+    <div id="jsonFormat" style="display: none;" class="layui-row layui-col-space5">
+        <div class="layui-col-md2"></div>
+        <div class="layui-col-md8">
+            <table class="t-table">
+                <thead>
+                <tr>
+                    <td>
+                        <h2>JSON格式化校验工具</h2>
+                    </td>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>
+                        <textarea class="t-textarea t-textarea-source" placeholder="source" id="sourceStr"></textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <textarea class="t-textarea t-textarea-target" placeholder="target" id="targetStr"></textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <button class="layui-btn" onclick="checkJson();">格式化校验</button>
+                    </td>
+                </tr>
+                </tbody>
+
+            </table>
+        </div>
+        <div class="layui-col-md2"></div>
+    </div>
+
+    <div id="sqlLogConvert" style="display: none;" class="layui-row layui-col-space5">
+        <div class="layui-col-md2"></div>
+        <div class="layui-col-md8">
+            <table class="t-table">
+                <thead>
+                <tr>
+                    <td>
+                        <h2>iBatis/MyBatis日志分析工具（一次分析一条完整数据）</h2>
+                    </td>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>
+                        <textarea class="t-textarea t-textarea-source" placeholder="source"
+                                  id="sqlSourceStr"></textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <textarea class="t-textarea t-textarea-target" placeholder="target"
+                                  id="sqlResultStr"></textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <button class="layui-btn" onclick="convertSql();">转换日志</button>
+                    </td>
+                </tr>
+                </tbody>
+
+            </table>
+        </div>
+        <div class="layui-col-md2"></div>
+    </div>
+</section>
+
+</html>

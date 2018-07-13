@@ -5,7 +5,7 @@ import java.util.List;
 
 /**
  * <p>
- *     每月分期还款总额
+ * 每月分期还款总额
  * </p>
  * <li></li>
  *
@@ -19,6 +19,13 @@ public class MonthLiabilityModel {
     private List<LiabilityModel> liabilityModels;
 
     public MonthLiabilityModel() {
+        liabilityModels = new ArrayList<>();
+        total = 0L;
+    }
+
+    public MonthLiabilityModel(String month) {
+        this.month = month;
+        total = 0L;
         liabilityModels = new ArrayList<>();
     }
 

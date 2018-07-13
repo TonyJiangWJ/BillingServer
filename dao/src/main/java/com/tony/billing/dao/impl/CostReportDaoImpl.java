@@ -1,8 +1,8 @@
 package com.tony.billing.dao.impl;
 
 import com.tony.billing.dao.CostReportDao;
-import com.tony.billing.entity.query.ReportEntityQuery;
 import com.tony.billing.dao.mapper.CostReportMapper;
+import com.tony.billing.entity.query.ReportEntityQuery;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;

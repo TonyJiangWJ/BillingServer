@@ -9,7 +9,6 @@ import java.util.List;
  * @author TonyJiang on 2018/2/12
  */
 public class AssetModel {
-    private String name;
     private String type;
     private Long total;
     private List<AssetDTO> assetList;
@@ -19,12 +18,10 @@ public class AssetModel {
         total = 0L;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+    public AssetModel(String type) {
+        assetList = new ArrayList<>();
+        total = 0L;
+        this.type = type;
     }
 
     public String getType() {

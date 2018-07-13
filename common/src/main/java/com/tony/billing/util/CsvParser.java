@@ -1,14 +1,26 @@
 package com.tony.billing.util;
 
-import com.alibaba.fastjson.JSON;
 import org.apache.commons.lang3.StringUtils;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Author jiangwj20966 on 2017/6/1.
@@ -19,7 +31,6 @@ public class CsvParser {
 
     {
         init();
-
     }
 
     public CsvParser(String filePath) {
@@ -162,10 +173,11 @@ public class CsvParser {
         String dateToday = dataFormat.format(today);
         File file = new File(path + "resource/expert/" + dateToday
                 + "importerrorinfo.csv");
-        if (!file.exists())
+        if (!file.exists()) {
             file.createNewFile();
-        else
+        } else {
             file.delete();
+        }
         String str[];
         StringBuilder sb = new StringBuilder("");
         sb.append(biao);
@@ -174,11 +186,7 @@ public class CsvParser {
                 writerStream, "UTF-8"));
         for (Object aTt : tt) {
             String fileStr = aTt.toString();
-            // str = fileStr.split(",");
-            // for (int i = 0; i <= str.length - 1; i++) { // 拆分成数组 用于插入数据库中
-            // System.out.print("str[" + i + "]=" + str[i] + " ");
-            // }
-            // System.out.println("");
+
             sb.append(fileStr).append("\r\n");
         }
         output.write(sb.toString());
@@ -186,33 +194,6 @@ public class CsvParser {
         output.close();
     }
 
-    static class RecordRefUtil {
-        public Record convertCsv2Record(String csvLine) throws IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
-            String[] strings = csvLine.split(",");
-            Class clazz = Record.class;
-            Record record = new Record();
-            Field[] fields = clazz.getDeclaredFields();
-            if (strings.length != fields.length) {
-                System.out.println("Error Line");
-                return null;
-            } else {
-                Method[] methods = clazz.getMethods();
-                Map<String, Method> methodMap = new HashMap<String, Method>();
-                for (Method method : methods) {
-                    methodMap.put(method.getName(), method);
-                }
-                Method method = null;
-                for (int i = 0; i < fields.length; i++) {
-                    String fieldName = fields[i].getName();
-                    String methodName = "set" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
-                    method = methodMap.get(methodName);
-                    method.invoke(record, strings[i].trim());
-                }
-                return record;
-            }
-        }
-
-    }
 
     static class Record {
         private String tradeNo;
@@ -361,10 +342,6 @@ public class CsvParser {
         }
     }
 
-    public static void main(String[] args) {
-        readFromCsv();
-    }
-
     private static void generatorCreateSQL() {
         StringBuilder sb = new StringBuilder();
         sb.append("CREATE TABLE t_cost_info (\n");
@@ -431,36 +408,6 @@ public class CsvParser {
         System.out.println(sb.toString());
     }
 
-    private static void readFromCsv() {
-        CsvParser csvParser = new CsvParser("C:\\Users\\jiangwj20966\\Desktop\\alipay_record_20170601_1900_1.csv");
-        try {
-            csvParser.readInformation();
-            System.out.println(csvParser.getRowNum());
-            List<String> fixedList = csvParser.getListCustom(5, csvParser.getRowNum() - 7);
-            try {
-                RecordRefUtil recordRefUtil = new RecordRefUtil();
-                List<Record> records = new ArrayList<Record>();
-                for (String csvLine : fixedList) {
-                    records.add(recordRefUtil.convertCsv2Record(csvLine));
-                }
-                System.out.println(JSON.toJSONString(records));
-                for (Record record : records) {
-                    generatorInsertSQL(record);
-                }
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            } catch (InstantiationException e) {
-                e.printStackTrace();
-            } catch (NoSuchMethodException e) {
-                e.printStackTrace();
-            } catch (InvocationTargetException e) {
-                e.printStackTrace();
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
     public static String fen2Yuan(Long money) {
         if (money == null) {

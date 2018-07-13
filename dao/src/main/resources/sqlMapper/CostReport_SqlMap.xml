@@ -6,7 +6,7 @@
         SELECT sum(money) AS amount
         FROM t_cost_info
         WHERE inOutType = #{inOutType,jdbcType=VARCHAR} AND userId=#{userId,jdbcType=BIGINT}
-            AND createTime LIKE CONCAT(#{month,jdbcType=VARCHAR}, '%')
+        AND createTime LIKE CONCAT(#{month,jdbcType=VARCHAR}, '%')
         <if test="isHidden!=null">
             AND isHidden = #{isHidden,jdbcType=INTEGER}
         </if>

@@ -5,8 +5,8 @@
         id id,
         user_id userId,
         name name,
+        ext_name extName,
         `type` type,
-        parent_type parentType,
         amount amount,
         create_time createTime,
         modify_time modifyTime
@@ -23,11 +23,11 @@
             <if test=" name!=null and name!='' ">
                 name,
             </if>
-            <if test=" type!=null and type!='' ">
-                `type`,
+            <if test=" extName!=null and extName!='' ">
+                ext_name,
             </if>
-            <if test=" parentType!=null and parentType!='' ">
-                parent_type,
+            <if test=" type!=null ">
+                `type`,
             </if>
             <if test=" amount!=null ">
                 amount,
@@ -50,11 +50,11 @@
             <if test=" name!=null and name!='' ">
                 #{name,jdbcType=VARCHAR},
             </if>
-            <if test=" type!=null and type!='' ">
-                #{type,jdbcType=VARCHAR},
+            <if test=" extName!=null and extName!='' ">
+                #{extName,jdbcType=VARCHAR},
             </if>
-            <if test=" parentType!=null and parentType!='' ">
-                #{parentType,jdbcType=VARCHAR},
+            <if test=" type!=null ">
+                #{type,jdbcType=INTEGER},
             </if>
             <if test=" amount!=null ">
                 #{amount,jdbcType=BIGINT},
@@ -71,17 +71,14 @@
     <update id="update" parameterType="com.tony.billing.entity.Asset">
         UPDATE t_asset
         <trim prefix="SET" suffixOverrides=",">
-            <if test=" userId!=null ">
-                user_id=#{userId,jdbcType=BIGINT},
-            </if>
             <if test=" name!=null and name!='' ">
                 name=#{name,jdbcType=VARCHAR},
             </if>
-            <if test=" type!=null and type!='' ">
-                `type`=#{type,jdbcType=VARCHAR},
+            <if test=" extName!=null and extName!='' ">
+                ext_name=#{extName,jdbcType=VARCHAR},
             </if>
-            <if test=" parentType!=null and parentType!='' ">
-                parent_type=#{parentType,jdbcType=VARCHAR},
+            <if test=" type!=null ">
+                `type`=#{type,jdbcType=INTEGER},
             </if>
             <if test=" amount!=null ">
                 amount=#{amount,jdbcType=BIGINT},
@@ -93,7 +90,7 @@
                 modify_time=#{modifyTime,jdbcType=TIMESTAMP},
             </if>
         </trim>
-        WHERE id=#{id, jdbcType=BIGINT}
+        WHERE id=#{id, jdbcType=BIGINT} AND user_id=#{userId,jdbcType=BIGINT}
     </update>
     <select id="page" parameterType="java.util.Map" resultType="com.tony.billing.entity.Asset">
         SELECT
@@ -109,11 +106,11 @@
             <if test=" name!=null and name!='' ">
                 and name=#{name,jdbcType=VARCHAR}
             </if>
-            <if test=" type!=null and type!='' ">
-                and `type`=#{type,jdbcType=VARCHAR}
+            <if test=" extName!=null and extName!='' ">
+                and ext_name=#{extName,jdbcType=VARCHAR}
             </if>
-            <if test=" parentType!=null and parentType!='' ">
-                and parent_type=#{parentType,jdbcType=VARCHAR}
+            <if test=" type!=null ">
+                and `type`=#{type,jdbcType=INTEGER}
             </if>
             <if test=" amount!=null ">
                 and amount=#{amount,jdbcType=BIGINT}
@@ -149,11 +146,11 @@
             <if test=" name!=null and name!='' ">
                 and name=#{name,jdbcType=VARCHAR}
             </if>
-            <if test=" type!=null and type!='' ">
-                and `type`=#{type,jdbcType=VARCHAR}
+            <if test=" extName!=null and extName!='' ">
+                and ext_ame=#{extName,jdbcType=VARCHAR}
             </if>
-            <if test=" parentType!=null and parentType!='' ">
-                and parent_type=#{parentType,jdbcType=VARCHAR}
+            <if test=" type!=null ">
+                and `type`=#{type,jdbcType=INTEGER}
             </if>
             <if test=" amount!=null ">
                 and amount=#{amount,jdbcType=BIGINT}

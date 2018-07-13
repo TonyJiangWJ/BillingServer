@@ -1,7 +1,6 @@
 package com.tony.billing.filters.wapper;
 
 import org.apache.catalina.util.ParameterMap;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.util.HtmlUtils;
 
@@ -21,6 +20,9 @@ public class TokenServletRequestWrapper extends HttpServletRequestWrapper {
     public TokenServletRequestWrapper(HttpServletRequest request) {
         super(request);
         params = new ParameterMap<>();
+        if (super.getParameterMap() != null && super.getParameterMap().size() != 0) {
+            params.putAll(super.getParameterMap());
+        }
     }
 
     @Override

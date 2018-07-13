@@ -26,6 +26,7 @@ import java.util.Map;
  *
  * @author jiangwj20966 2018/2/27
  */
+@Deprecated
 @Controller
 @RequestMapping("/thymeleaf")
 public class LoginController extends BaseController {

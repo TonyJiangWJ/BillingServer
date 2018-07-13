@@ -291,7 +291,8 @@
               AND isHidden = #{nowStatus,jdbcType=INTEGER}
     </update>
 
-    <select id="find" parameterType="com.tony.billing.entity.CostRecord" resultType="com.tony.billing.entity.CostRecord">
+    <select id="find" parameterType="com.tony.billing.entity.CostRecord"
+            resultType="com.tony.billing.entity.CostRecord">
         SELECT
         <include refid="all"/>
         FROM t_cost_info WHERE userId=#{userId,jdbcType=BIGINT}
@@ -425,7 +426,9 @@
             CONCAT('%',#{content,jdbcType=VARCHAR},'%') or memo like CONCAT('%',#{content,jdbcType=VARCHAR},'%'))
 
             union
-            select <include refid="all"/> from t_cost_info tci where id in(
+            select
+            <include refid="all"/>
+            from t_cost_info tci where id in(
             select distinct ct.costId id from t_cost_tag ct join t_tag_info t on ct.tagId=t.id
             where t.tagName like CONCAT('%',#{content,jdbcType=VARCHAR},'%') and t.isDelete='0' and ct.isDelete='0'
             and t.userId=#{userId,jdbcType=BIGINT}
@@ -454,7 +457,9 @@
 
     <select id="count" parameterType="java.util.Map" resultType="Integer">
         SELECT COUNT(1) FROM (
-        SELECT <include refid="all"/> FROM t_cost_info
+        SELECT
+        <include refid="all"/>
+        FROM t_cost_info
         <include refid="pageWhere"/>
         )tcount
 

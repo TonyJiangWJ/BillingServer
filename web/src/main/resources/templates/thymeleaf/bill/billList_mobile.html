@@ -170,6 +170,27 @@
                 doSubmit();
             });
 
+            $('i.layui-table-sort-desc').on('click', function (event) {
+                var self = event.target;
+                var sortType = $(self).parents('th').data('order-type');
+                console.log("根据"+sortType+"降序排列");
+                $(self).parents('span').attr('lay-sort','desc');
+                var siblingTh = $(self).parents('th').siblings();
+                siblingTh.each(function (idx, elem) {
+                    $(elem).find('span:nth-child(2)').attr('lay-sort','');
+                })
+            });
+
+            $('i.layui-table-sort-asc').on('click', function (event) {
+                var self = event.target;
+                var sortType = $(self).parents('th').data('order-type');
+                console.log("根据"+sortType+"升序排列");
+                $(self).parents('span').attr('lay-sort','asc');
+                var siblingTh = $(self).parents('th').siblings();
+                siblingTh.each(function (idx, elem) {
+                    $(elem).find('span:nth-child(2)').attr('lay-sort','');
+                })
+            });
         });
         /* ]]> */
     </script>
@@ -185,16 +206,16 @@
         <table class="layui-table" id="table">
             <thead>
             <tr>
-                <!--<th>创建时间</th>-->
-                <!--<th>商品名称</th>-->
-                <!--<th>金额</th>-->
-                <!--<th>收入/支出</th>-->
+                <th data-order-type="createTime"><span>创建时间</span><span class="layui-table-sort layui-inline"><i class="layui-edge layui-table-sort-asc"></i><i class="layui-edge layui-table-sort-desc"></i></span></th>
+                <th data-order-type="goodsName"><span>商品名称</span><span class="layui-table-sort layui-inline"><i class="layui-edge layui-table-sort-asc"></i><i class="layui-edge layui-table-sort-desc"></i></span></th>
+                <th data-order-type="money"><span>金额</span><span class="layui-table-sort layui-inline"><i class="layui-edge layui-table-sort-asc"></i><i class="layui-edge layui-table-sort-desc"></i></span></th>
+                <th data-order-type="inOutType"><span>收入/支出</span><span class="layui-table-sort layui-inline"><i class="layui-edge layui-table-sort-asc"></i><i class="layui-edge layui-table-sort-desc"></i></span></th>
             </tr>
             </thead>
             <tbody>
             <th:block th:each="record:${response.costRecordList}">
                 <tr onclick="toggleDetail(this)">
-                    <td>
+                    <td colspan="4">
                         <div>
                             <div>
                                 <div style="display:inline-block;width: 260px;overflow: hidden;-ms-text-overflow: ellipsis;text-overflow: ellipsis; white-space: nowrap;">
@@ -214,7 +235,7 @@
                     </td>
                 </tr>
                 <tr style="background: #f0f0f0;display: none;">
-                    <td>
+                    <td colspan="4">
                         <div th:text="${record.tradeNo}">2018030421001004540571850687</div>
                         <div><label>地点：</label><span th:text="${record.location}">外婆家(湖滨银泰C区店)</span></div>
                         <div><label>商品名称：</label><span th:text="${record.goodsName}">支付宝条码支付</span></div>
@@ -228,7 +249,7 @@
             </th:block>
             <!--/*-->
             <tr onclick="toggleDetail(this)">
-                <td>
+                <td colspan="4">
                     <div>
                         <div>
                             <div style="display:inline-block;width: 250px;overflow: hidden;-ms-text-overflow: ellipsis;text-overflow: ellipsis; white-space: nowrap;">
@@ -246,7 +267,7 @@
                 </td>
             </tr>
             <tr style="background: #eae8e4;display: none;">
-                <td>
+                <td colspan="4">
                     <div>2018030421001004540571850687</div>
                     <div><label>地点：</label> 外婆家(湖滨银泰C区店)</div>
                     <div><label>商品名称：</label>支付宝条码支付</div>
@@ -258,7 +279,7 @@
                 </td>
             </tr>
             <tr onclick="toggleDetail(this)">
-                <td>
+                <td colspan="4">
                     <div>
                         <div>
                             <div style="display:inline-block;width: 250px;overflow: hidden;-ms-text-overflow: ellipsis;text-overflow: ellipsis; white-space: nowrap;">
@@ -276,7 +297,7 @@
                 </td>
             </tr>
             <tr style="background: #eae8e4;display: none;">
-                <td>
+                <td colspan="4">
                     <div>2018030421001004540571850687</div>
                     <div><label>地点：</label> 外婆家(湖滨银泰C区店)</div>
                     <div><label>商品名称：</label>支付宝条码支付</div>
@@ -288,7 +309,7 @@
                 </td>
             </tr>
             <tr onclick="toggleDetail(this)">
-                <td>
+                <td colspan="4">
                     <div>
                         <div>
                             <span>支付宝条码支付</span>
@@ -304,7 +325,7 @@
                 </td>
             </tr>
             <tr style="background: #eae8e4;display: none;">
-                <td>
+                <td colspan="4">
                     <div>2018030421001004540571850687</div>
                     <div><label>地点：</label> 外婆家(湖滨银泰C区店)</div>
                     <div><label>商品名称：</label>支付宝条码支付</div>

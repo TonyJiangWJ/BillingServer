@@ -36,13 +36,8 @@ public class AuthorityInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o) throws Exception {
 
         if (!isUserLogin(httpServletRequest)) {
-            logger.info("user not login:{}", JSON.toJSONString(CookieUtil.getCookie("token", httpServletRequest)));
-            if (httpServletRequest.getServletPath().contains("thymeleaf")) {
-                httpServletResponse.sendRedirect("/thymeleaf/login.html");
-            } else {
-                httpServletResponse.setContentType("application/json;charset=UTF-8");
-                httpServletResponse.getWriter().write(JSON.toJSONString(ResponseUtil.loginError()));
-            }
+            httpServletResponse.setContentType("application/json;charset=UTF-8");
+            httpServletResponse.getWriter().write(JSON.toJSONString(ResponseUtil.loginError()));
             return false;
         }
         return true;
@@ -72,6 +67,7 @@ public class AuthorityInterceptor implements HandlerInterceptor {
                     ((TokenServletRequestWrapper) ((StandardMultipartHttpServletRequest) request).getRequest()).addParameter("tokenId", tokenId);
                     ((TokenServletRequestWrapper) ((StandardMultipartHttpServletRequest) request).getRequest()).addParameter("userId", String.valueOf(admin.getId()));
                 }
+                RedisUtils.set(tokenId, admin, 3600 * 24);
                 return true;
             }
         }

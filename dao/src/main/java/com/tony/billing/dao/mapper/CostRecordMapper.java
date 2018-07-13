@@ -28,5 +28,5 @@ public interface CostRecordMapper {
 
     Integer updateByTradeNo(CostRecord record);
 
-    List<CostRecord> findByTagId(Map<String,Object> params);
+    List<CostRecord> findByTagId(Map<String, Object> params);
 }
