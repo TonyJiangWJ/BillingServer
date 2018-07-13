@@ -1,7 +1,5 @@
 package com.tony.billing.service.impl;
 
-import com.tony.billing.constants.enums.EnumLiabilityParentType;
-import com.tony.billing.constants.enums.EnumLiabilityType;
 import com.tony.billing.entity.Liability;
 import com.tony.billing.service.LiabilityService;
 import com.tony.billing.test.BaseServiceTest;

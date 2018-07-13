@@ -18,8 +18,10 @@ spring:
           max-request-size: 40Mb
 
     profiles:
-        active: '@activatedProperties@'
-
+      active: '@activatedProperties@'
+    thymeleaf:
+      cache: false
+      prefix: classpath:/templates/
 # MyBatis
 mybatis:
     typeAliasesPackage: com.tony.billing.entity
