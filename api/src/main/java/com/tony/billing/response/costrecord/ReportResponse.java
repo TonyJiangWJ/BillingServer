@@ -6,7 +6,7 @@ import com.tony.billing.response.BaseResponse;
 import java.util.List;
 
 /**
- * Author by TonyJiang on 2017/6/10.
+ * @author by TonyJiang on 2017/6/10.
  */
 public class ReportResponse extends BaseResponse {
     private List<ReportDTO> reportList;

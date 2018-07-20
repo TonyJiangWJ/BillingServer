@@ -16,7 +16,7 @@ import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 
 /**
- * Author jiangwj20966 on 2017/11/24.
+ * @author jiangwj20966 on 2017/11/24.
  */
 public class RSAEncrypt {
     /**
@@ -38,7 +38,6 @@ public class RSAEncrypt {
         try {
             keyPairGen = KeyPairGenerator.getInstance("RSA");
         } catch (NoSuchAlgorithmException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         if (keyPairGen != null) {

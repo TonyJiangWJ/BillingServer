@@ -19,7 +19,7 @@ import javax.annotation.Resource;
 import java.util.Date;
 
 /**
- * Author by TonyJiang on 2017/5/18.
+ * @author by TonyJiang on 2017/5/18.
  */
 @Service
 public class AdminServiceImpl implements AdminService {
@@ -28,6 +28,9 @@ public class AdminServiceImpl implements AdminService {
 
     @Resource
     private AdminDao adminDao;
+
+    @Resource
+    private RedisUtils redisUtils;
 
     private final Long VERIFY_TIME = 3600 * 24 * 1000L;
 
@@ -46,12 +49,12 @@ public class AdminServiceImpl implements AdminService {
         }
         Admin checkUser = adminDao.preLogin(admin);
         if (checkUser != null) {
-            RedisUtils.del(checkUser.getTokenId());
+            redisUtils.del(checkUser.getTokenId());
             checkUser.setTokenId(TokenUtil.getToken(checkUser.getCode(), checkUser.getUserName(), checkUser.getPassword()));
             checkUser.setTokenVerify(VERIFY_TIME);
             checkUser.setLastLogin(new Date());
             if (adminDao.doLogin(checkUser) > 0) {
-                RedisUtils.set(checkUser.getTokenId(), deleteSecret(checkUser), VERIFY_TIME / 1000);
+                redisUtils.set(checkUser.getTokenId(), deleteSecret(checkUser), VERIFY_TIME / 1000);
                 return checkUser;
             }
         }
@@ -82,7 +85,7 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public boolean logout(String tokenId) {
-        return RedisUtils.del(tokenId);
+        return redisUtils.del(tokenId);
     }
 
     @Override

@@ -4,7 +4,7 @@ import com.tony.billing.annotation.Table;
 import com.tony.billing.entity.CostRecord;
 
 /**
- * Author by TonyJiang on 2017/6/9.
+ * @author by TonyJiang on 2017/6/9.
  */
 @Table("t_sjf_sb")
 public class CostRecordQuery extends CostRecord {

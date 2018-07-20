@@ -6,7 +6,7 @@ import com.tony.billing.response.BaseResponse;
 import java.util.List;
 
 /**
- * Author jiangwj20966 on 2017/7/13.
+ * @author jiangwj20966 on 2017/7/13.
  */
 public class BudgetCostQueryResponse extends BaseResponse {
     private List<BudgetCostDTO> budgetCostList;

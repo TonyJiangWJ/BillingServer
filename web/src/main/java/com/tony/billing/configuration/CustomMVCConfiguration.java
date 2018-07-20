@@ -15,7 +15,7 @@ import java.nio.charset.Charset;
 import java.util.List;
 
 /**
- * Author by TonyJiang on 2017/6/3.
+ * @author by TonyJiang on 2017/6/3.
  */
 @Configuration
 public class CustomMVCConfiguration extends WebMvcConfigurerAdapter {

@@ -3,7 +3,7 @@ package com.tony.billing.request.costreport;
 import com.tony.billing.request.BaseRequest;
 
 /**
- * Author jiangwj20966 on 2017/11/15.
+ * @author jiangwj20966 on 2017/11/15.
  */
 public class CostReportRequest extends BaseRequest {
     private String startMonth;

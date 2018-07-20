@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Author by TonyJiang on 2017/6/3.
+ * @author by TonyJiang on 2017/6/3.
  */
 @Service
 public class AlipayBillCsvConvertServiceImpl implements AlipayBillCsvConvertService {
@@ -32,26 +32,32 @@ public class AlipayBillCsvConvertServiceImpl implements AlipayBillCsvConvertServ
     @Resource
     private CostRecordDao costRecordDao;
 
+    private final String ALIPAY_RECORD_FLAG = "支付宝交易记录明细查询";
+
+    private final String BACKUP_FLAG = "交易号,订单号,创建时间,支付时间,修改时间,地点,订单类型,交易对方,商品名称,金额,支出/收入,订单状态,服务费,退款,备注,交易状态,是否删除,id,是否隐藏";
+
+    private final int ALIPAY_RECORD_LINES = 7;
+
     @Override
     public boolean convertToPOJO(MultipartFile multipartFile, Long userId) {
         if (multipartFile != null) {
             try {
                 InputStream inputStream = multipartFile.getInputStream();
                 CsvParser csvParser = new CsvParser(inputStream);
-                if (!csvParser.getRow(0).equals("支付宝交易记录明细查询")) {
+                if (!ALIPAY_RECORD_FLAG.equals(csvParser.getRow(0))) {
                     throw new RuntimeException("Illegal file");
                 }
                 if (!CollectionUtils.isEmpty(csvParser.getList())) {
-                    if (csvParser.getRowNum() <= 7) {
+                    if (csvParser.getRowNum() <= ALIPAY_RECORD_LINES) {
                         throw new RuntimeException("Illegal file");
                     }
                     // alipay format
                     List<String> fixedList = csvParser.getListCustom(5, csvParser.getRowNum() - 7);
                     try {
-                        RecordRefUtil recordRefUtil = new RecordRefUtil();
-                        List<Record> records = new ArrayList<Record>();
+                        RecordRefUtil<Record> recordRefUtil = new RecordRefUtil<>();
+                        List<Record> records = new ArrayList<>();
                         for (String csvLine : fixedList) {
-                            records.add((Record) recordRefUtil.convertCsv2POJO(csvLine, Record.class));
+                            records.add(recordRefUtil.convertCsv2POJO(csvLine, Record.class));
                         }
                         if (!CollectionUtils.isEmpty(records)) {
                             for (Record entity : records) {
@@ -59,7 +65,7 @@ public class AlipayBillCsvConvertServiceImpl implements AlipayBillCsvConvertServ
                             }
                         }
                         return true;
-                    } catch (IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchMethodException e) {
+                    } catch (IllegalAccessException | InstantiationException e) {
                         e.printStackTrace();
                     }
                 }
@@ -75,8 +81,7 @@ public class AlipayBillCsvConvertServiceImpl implements AlipayBillCsvConvertServ
     public List<String> convertPOJO2String(List<CostRecord> recordList) {
         List<String> result = new ArrayList<>();
         RecordRefUtil utl = new RecordRefUtil();
-        result.add("交易号,订单号,创建时间,支付时间,修改时间,地点,订单类型,交易对方" +
-                ",商品名称,金额,支出/收入,订单状态,服务费,退款,备注,交易状态,是否删除,id,是否隐藏");
+        result.add(BACKUP_FLAG);
         try {
             for (CostRecord costRecord : recordList) {
                 result.add(utl.convertPOJO2String(costRecord));
@@ -94,8 +99,7 @@ public class AlipayBillCsvConvertServiceImpl implements AlipayBillCsvConvertServ
             try {
                 InputStream inputStream = multipartFile.getInputStream();
                 CsvParser csvParser = new CsvParser(inputStream);
-                if (!csvParser.getRow(0).equals("交易号,订单号,创建时间,支付时间,修改时间,地点,订单类型,交易对方" +
-                        ",商品名称,金额,支出/收入,订单状态,服务费,退款,备注,交易状态,是否删除,id,是否隐藏")) {
+                if (!BACKUP_FLAG.equals(csvParser.getRow(0))) {
                     throw new RuntimeException("Illegal file");
                 }
                 if (!CollectionUtils.isEmpty(csvParser.getList())) {
@@ -185,10 +189,10 @@ public class AlipayBillCsvConvertServiceImpl implements AlipayBillCsvConvertServ
 
     }
 
-    static class RecordRefUtil<T> {
-        private T convertCsv2POJO(String csvLine, T t) throws IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
+    private static class RecordRefUtil<T> {
+        private T convertCsv2POJO(String csvLine, Class t) throws IllegalAccessException, InstantiationException {
             String[] strings = csvLine.split(",");
-            Object record = ((Class) t).newInstance();
+            Object record = t.newInstance();
             Class clazz = record.getClass();
             Field[] fields = clazz.getDeclaredFields();
             if (strings.length != fields.length) {
@@ -199,6 +203,7 @@ public class AlipayBillCsvConvertServiceImpl implements AlipayBillCsvConvertServ
                     fields[i].setAccessible(true);
                     fields[i].set(record, StringUtils.trim(strings[i]));
                 }
+
                 return (T) record;
             }
         }

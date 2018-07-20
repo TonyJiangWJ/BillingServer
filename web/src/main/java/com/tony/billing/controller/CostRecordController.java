@@ -39,7 +39,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
- * Author jiangwj20966 on 2017/6/2.
+ * @author jiangwj20966 on 2017/6/2.
  */
 @RestController
 @RequestMapping(value = "/bootDemo")

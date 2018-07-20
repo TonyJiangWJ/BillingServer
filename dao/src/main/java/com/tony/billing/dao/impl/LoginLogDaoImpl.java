@@ -10,7 +10,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Author: jiangwj20966 on 2018/1/25
+ * @author: jiangwj20966 on 2018/1/25
  */
 @Repository
 public class LoginLogDaoImpl implements LoginLogDao {

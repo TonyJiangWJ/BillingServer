@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * Author: jiangwj20966 on 2018/1/25
+ * @author: jiangwj20966 on 2018/1/25
  */
 @Component
 public class ExceptionResolver implements HandlerExceptionResolver {

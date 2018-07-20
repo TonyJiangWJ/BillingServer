@@ -4,7 +4,7 @@ import com.tony.billing.dto.CostRecordDetailDTO;
 import com.tony.billing.response.BaseResponse;
 
 /**
- * Author by TonyJiang on 2017/6/2.
+ * @author by TonyJiang on 2017/6/2.
  */
 public class CostRecordDetailResponse extends BaseResponse {
     private CostRecordDetailDTO recordDetail;

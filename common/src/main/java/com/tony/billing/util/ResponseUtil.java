@@ -3,7 +3,7 @@ package com.tony.billing.util;
 import com.tony.billing.response.BaseResponse;
 
 /**
- * Author jiangwj20966 on 2017/6/2.
+ * @author jiangwj20966 on 2017/6/2.
  */
 public class ResponseUtil {
     private static final String CODE_SUCCESS = "0001";

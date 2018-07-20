@@ -3,7 +3,7 @@ package com.tony.billing.model;
 import com.tony.billing.entity.Budget;
 
 /**
- * Author by TonyJiang on 2017/7/12.
+ * @author by TonyJiang on 2017/7/12.
  */
 public class BudgetCostModel extends Budget {
     private String tagName;

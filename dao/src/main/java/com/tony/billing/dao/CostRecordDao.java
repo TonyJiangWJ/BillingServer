@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Author jiangwj20966 on 2017/6/2.
+ * @author jiangwj20966 on 2017/6/2.
  */
 public interface CostRecordDao {
     List<CostRecord> find(CostRecord record);

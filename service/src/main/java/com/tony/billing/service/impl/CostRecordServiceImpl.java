@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Author jiangwj20966 on 2017/6/2.
+ * @author jiangwj20966 on 2017/6/2.
  */
 @Service
 public class CostRecordServiceImpl implements CostRecordService {
@@ -23,22 +23,27 @@ public class CostRecordServiceImpl implements CostRecordService {
     @Resource
     private CostRecordDao costRecordDao;
 
+    @Override
     public List<CostRecord> find(CostRecord record) {
         return costRecordDao.find(record);
     }
 
+    @Override
     public PagerGrid<CostRecordQuery> page(PagerGrid<CostRecordQuery> pagerGrid) {
         Map<String, Object> params;
-        if (pagerGrid.getT() == null)
+        if (pagerGrid.getT() == null) {
             params = new HashMap<String, Object>();
-        else
+        } else {
             params = JSON.parseObject(JSON.toJSONString(pagerGrid.getT()));
+        }
         params.put("index", pagerGrid.getIndex());
         params.put("offset", pagerGrid.getOffset());
-        if (StringUtils.isNotBlank(pagerGrid.getOrderBy()))
+        if (StringUtils.isNotBlank(pagerGrid.getOrderBy())) {
             params.put("orderBy", pagerGrid.getOrderBy());
-        if (StringUtils.isNoneBlank(pagerGrid.getSort()))
+        }
+        if (StringUtils.isNoneBlank(pagerGrid.getSort())) {
             params.put("sort", pagerGrid.getSort());
+        }
 
         List<CostRecordQuery> list = costRecordDao.page(params);
         Integer count = costRecordDao.count(params);
@@ -48,6 +53,7 @@ public class CostRecordServiceImpl implements CostRecordService {
     }
 
 
+    @Override
     public CostRecord findByTradeNo(String tradeNo, Long userId) {
         Map<String, Object> params = new HashMap<>();
         params.put("tradeNo", tradeNo);
@@ -55,6 +61,7 @@ public class CostRecordServiceImpl implements CostRecordService {
         return costRecordDao.findByTradeNo(params);
     }
 
+    @Override
     public Integer toggleDeleteStatus(Map<String, Object> params) {
         return costRecordDao.toggleDeleteStatus(params);
     }
@@ -64,6 +71,7 @@ public class CostRecordServiceImpl implements CostRecordService {
         return costRecordDao.toggleHideStatus(params);
     }
 
+    @Override
     public Long orderPut(CostRecord record) {
         Map<String, Object> params = new HashMap<>();
         params.put("tradeNo", record.getTradeNo());

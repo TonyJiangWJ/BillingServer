@@ -34,7 +34,8 @@ public class LoginResultInterceptor {
         BaseResponse response = (BaseResponse) returnValue;
 
         LoginLog loginLog = new LoginLog();
-        loginLog.setLoginIp(httpServletRequest.getHeader("X-Real-IP"));
+
+        loginLog.setLoginIp(getLoginIp(httpServletRequest));
         if (loginRequest.getUserName() != null) {
             loginLog.setUserName(loginRequest.getUserName());
         } else {
@@ -54,33 +55,11 @@ public class LoginResultInterceptor {
         }
     }
 
-    @AfterReturning(returning = "returnValue", pointcut = "execution(* com.tony.billing.controller.thymeleaf.LoginController.doLogin(..))")
-    public void getThymeleafResult(JoinPoint point, Object returnValue) {
-        Object[] args = point.getArgs();
-        AdminLoginRequest loginRequest = (AdminLoginRequest) args[1];
-        HttpServletRequest httpServletRequest = (HttpServletRequest) args[2];
-        String responseView = (String) returnValue;
-
-        LoginLog loginLog = new LoginLog();
-        loginLog.setLoginIp(httpServletRequest.getHeader("X-Real-IP"));
-        loginLog.setUserName(loginRequest.getUserName());
-        loginLog.setLoginResult(responseView);
-        BaseResponse response = null;
-        if (StringUtils.equals(responseView, "/thymeleaf/login/success")) {
-            response = ResponseUtil.success();
-        } else {
-            response = ResponseUtil.error();
+    private String getLoginIp(HttpServletRequest httpServletRequest) {
+        String ip = httpServletRequest.getHeader("X-Real-IP");
+        if (StringUtils.isEmpty(ip)) {
+           ip = httpServletRequest.getRemoteAddr();
         }
-        loginLog.setCode(response.getCode());
-        loginLog.setMsg(response.getMsg());
-        loginLogService.addLog(loginLog);
-        logger.info("{} 请求登录, 结果：{}", loginLog.getUserName(), loginLog.getLoginResult());
-        logger.info("ip地址：{}", loginLog.getLoginIp());
-        Long id;
-        if ((id = loginLog.getId()) != null) {
-            logger.info("日志保存成功，id:{}", id);
-        } else {
-            logger.error("日志保存失败");
-        }
+        return ip;
     }
 }

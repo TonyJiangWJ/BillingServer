@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 /**
- * Author: jiangwj20966 on 2018/1/25
+ * @author: jiangwj20966 on 2018/1/25
  */
 @Repository
 public interface LoginLogMapper {

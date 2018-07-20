@@ -3,7 +3,7 @@ package com.tony.billing.util;
 import org.springframework.util.StringUtils;
 
 /**
- * Author jiangwj20966 on 2017/6/2.
+ * @author jiangwj20966 on 2017/6/2.
  */
 public class MoneyUtil {
 

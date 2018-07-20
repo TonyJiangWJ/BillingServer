@@ -3,7 +3,7 @@ package com.tony.billing.entity;
 import com.tony.billing.annotation.Table;
 
 /**
- * Author jiangwj20966 on 2017/6/2.
+ * @author jiangwj20966 on 2017/6/2.
  */
 @Table("t_cost_info")
 public class CostRecord {

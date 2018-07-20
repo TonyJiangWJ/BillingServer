@@ -86,6 +86,7 @@ public class AssetManageController extends BaseController {
         }
         update.setId(request.getId());
         update.setAmount(request.getAmount());
+        update.setExtName(request.getName());
         update.setUserId(request.getUserId());
         if (assetService.modifyAssetInfoById(update)) {
             return ResponseUtil.success();

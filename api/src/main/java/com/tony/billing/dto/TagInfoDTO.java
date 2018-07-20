@@ -1,7 +1,7 @@
 package com.tony.billing.dto;
 
 /**
- * Author by TonyJiang on 2017/6/15.
+ * @author by TonyJiang on 2017/6/15.
  */
 public class TagInfoDTO {
     private String tagName;

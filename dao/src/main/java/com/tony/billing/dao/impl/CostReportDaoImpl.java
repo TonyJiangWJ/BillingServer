@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 
 /**
- * Author by TonyJiang on 2017/7/12.
+ * @author by TonyJiang on 2017/7/12.
  */
 @Service("costReportDao")
 public class CostReportDaoImpl implements CostReportDao {

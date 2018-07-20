@@ -36,10 +36,10 @@ public class ShaEncrypt {
 
                 byte byteBuffer[] = messageDigest.digest();
 
-                StringBuffer strHexString = new StringBuffer();
+                StringBuilder strHexString = new StringBuilder();
 
-                for (int i = 0; i < byteBuffer.length; i++) {
-                    String hex = Integer.toHexString(0xff & byteBuffer[i]);
+                for (byte b : byteBuffer) {
+                    String hex = Integer.toHexString(0xff & b);
                     if (hex.length() == 1) {
                         strHexString.append('0');
                     }
@@ -47,9 +47,7 @@ public class ShaEncrypt {
                 }
                 // 得到返回結果
                 strResult = strHexString.toString();
-            } catch (NoSuchAlgorithmException e) {
-                e.printStackTrace();
-            } catch (UnsupportedEncodingException e) {
+            } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
         }

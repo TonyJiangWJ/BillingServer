@@ -10,7 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * Author jiangwj20966 on 2017/11/27.
+ * @author jiangwj20966 on 2017/11/27.
  */
 public class RSAUtil {
 

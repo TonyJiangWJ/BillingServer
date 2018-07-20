@@ -3,7 +3,7 @@ package com.tony.billing.request.budget;
 import com.tony.billing.request.BaseRequest;
 
 /**
- * Author jiangwj20966 on 2017/7/13.
+ * @author jiangwj20966 on 2017/7/13.
  */
 public class BudgetListRequest extends BaseRequest {
     private String year;

@@ -1,7 +1,7 @@
 package com.tony.billing.entity.query;
 
 /**
- * Author by TonyJiang on 2017/6/11.
+ * @author by TonyJiang on 2017/6/11.
  */
 public class ReportEntityQuery {
     private String month;

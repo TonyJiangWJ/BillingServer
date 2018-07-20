@@ -13,6 +13,7 @@ import com.tony.billing.service.CostRecordService;
 import com.tony.billing.util.MoneyUtil;
 import com.tony.billing.util.ResponseUtil;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.CollectionUtils;
@@ -35,11 +36,13 @@ import java.util.List;
 public class BillController extends BaseController {
 
 
-    @Resource
-    private CostRecordService costRecordService;
-    @Resource
-    private AlipayBillCsvConvertService alipayBillCsvConvertService;
 
+    private CostRecordService costRecordService;
+
+    @Autowired
+    public BillController(CostRecordService costRecordService) {
+        this.costRecordService = costRecordService;
+    }
 
     /**
      * 获取分页数据

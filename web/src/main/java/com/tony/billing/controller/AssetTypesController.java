@@ -45,16 +45,16 @@ public class AssetTypesController extends BaseController {
                                                     @ModelAttribute("request") BaseRequest request) {
         AssetTypeResponse response = (AssetTypeResponse) ResponseUtil.success(new AssetTypeResponse());
         if (EnumTypeIdentify.LIABILITY.getIdentify().equalsIgnoreCase(identify)) {
-            response.setAssetTypes(transferToModel(assetTypesService.selectLiabilityTypeListByParent(parentType, request.getUserId())));
+            response.setAssetTypes(transferToModel(assetTypesService.selectLiabilityTypeListByParent(parentType)));
         } else {
-            response.setAssetTypes(transferToModel(assetTypesService.selectAssetTypeListByParent(parentType, request.getUserId())));
+            response.setAssetTypes(transferToModel(assetTypesService.selectAssetTypeListByParent(parentType)));
         }
         return response;
     }
 
     @RequestMapping("/list/asset/type/by/parent/id")
     public AssetTypeResponse listAssetTypesByParentId(@RequestParam("id") Integer id, @ModelAttribute("request") BaseRequest request) {
-        AssetTypes assetTypes = assetTypesService.selectById(id, request.getUserId());
+        AssetTypes assetTypes = assetTypesService.selectById(id);
         if (assetTypes != null && StringUtils.isEmpty(assetTypes.getParentCode())) {
             return listAssetTypesByParent(assetTypes.getTypeCode(), assetTypes.getTypeIdentify(), request);
         }
@@ -72,9 +72,9 @@ public class AssetTypesController extends BaseController {
     public AssetTypeResponse listAssetParentTypes(@PathVariable("identify") String identify, @ModelAttribute("request") BaseRequest request) {
         AssetTypeResponse response = (AssetTypeResponse) ResponseUtil.success(new AssetTypeResponse());
         if (EnumTypeIdentify.LIABILITY.getIdentify().equalsIgnoreCase(identify)) {
-            response.setAssetTypes(transferToModel(assetTypesService.selectLiabilityTypeList(request.getUserId())));
+            response.setAssetTypes(transferToModel(assetTypesService.selectLiabilityTypeList()));
         } else {
-            response.setAssetTypes(transferToModel(assetTypesService.selectAssetTypeList(request.getUserId())));
+            response.setAssetTypes(transferToModel(assetTypesService.selectAssetTypeList()));
         }
         return response;
     }

@@ -10,14 +10,13 @@ import com.tony.billing.response.liability.LiabilityDetailResponse;
 import com.tony.billing.service.AssetTypesService;
 import com.tony.billing.service.LiabilityService;
 import com.tony.billing.util.ResponseUtil;
-import org.apache.commons.collections.CollectionUtils;
+import com.tony.billing.util.UserIdContainer;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
-import java.util.List;
 
 /**
  * @author jiangwj20966 2018/2/22
@@ -54,9 +53,8 @@ public class LiabilityController extends BaseController {
      * @return
      */
     private LiabilityDTO fillDTOWithType(Liability liability) {
-
         LiabilityDTO liabilityDTO = new LiabilityDTO(liability);
-        AssetTypes assetTypes = assetTypesService.selectById(liability.getType(), liability.getUserId());
+        AssetTypes assetTypes = assetTypesService.selectById(liability.getType());
         if(assetTypes!=null) {
             liabilityDTO.setType(assetTypes.getTypeDesc());
         }

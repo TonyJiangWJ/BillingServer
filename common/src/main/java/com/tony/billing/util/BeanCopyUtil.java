@@ -9,7 +9,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 /**
- * Author by TonyJiang on 2017/6/11.
+ * @author by TonyJiang on 2017/6/11.
  */
 public class BeanCopyUtil {
     private static final Logger logger = LoggerFactory.getLogger(BeanCopyUtil.class);

@@ -10,24 +10,28 @@ import java.util.concurrent.atomic.AtomicInteger;
  * 生成唯一的编码用的工具类
  */
 public class CodeGeneratorUtil {
-    private final static AtomicInteger counter = new AtomicInteger();
+    private final static AtomicInteger COUNTER = new AtomicInteger();
 
     private final static String ZEO_SEQ = "0000000000000000000000";
 
-    //  获取指定长度的唯一编码
+    /**
+     * 获取指定长度的唯一编码
+     * @param size 指定长度
+     * @return 唯一编码
+     */
     public static String getCode(int size) {
         if (size < 14) {
-            return mod(counter.addAndGet(1), size);
+            return mod(COUNTER.addAndGet(1), size);
         }
         StringBuilder code = new StringBuilder();
-        if (counter.get() == 999999999) {
-            synchronized (counter) {
-                counter.set(0);
+        if (COUNTER.get() == 999999999) {
+            synchronized (COUNTER) {
+                COUNTER.set(0);
             }
         }
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
         code.append(sdf.format(new Date())).append(
-                mod(counter.addAndGet(1), size - 14));
+                mod(COUNTER.addAndGet(1), size - 14));
         return code.toString();
     }
 

@@ -12,6 +12,7 @@ import com.tony.billing.request.BaseRequest;
 public class AssetUpdateRequest extends BaseRequest {
     private Long id;
     private Long amount;
+    private String name;
 
     public Long getId() {
         return id;
@@ -27,5 +28,13 @@ public class AssetUpdateRequest extends BaseRequest {
 
     public void setAmount(Long amount) {
         this.amount = amount;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

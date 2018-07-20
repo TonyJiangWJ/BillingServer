@@ -29,7 +29,7 @@ import java.io.InputStream;
 import java.util.List;
 
 /**
- * Author by TonyJiang on 2017/5/18.
+ * @author by TonyJiang on 2017/5/18.
  */
 @RestController
 public class HelloWorld {
@@ -44,10 +44,11 @@ public class HelloWorld {
     private AlipayBillCsvConvertService alipayBillCsvConvertService;
     @Resource
     private RSAUtil rsaUtil;
+    @Resource
+    private RedisUtils redisUtils;
 
     @RequestMapping("/hello/world")
     public String hello(@RequestParam("dd") String dd) {
-//        System.out.println(JSON.toJSONString(adminService.listAdmin()));
         logger.info("dd:{}", dd);
         logger.info("enter :{}", rsaUtil.encrypt("123456"));
         return "HelloWorld" + dd;
@@ -67,7 +68,6 @@ public class HelloWorld {
             try {
                 InputStream inputStream = file.getInputStream();
                 CsvParser csvParser = new CsvParser(inputStream);
-//                csvParser.readInformation();
                 if (!CollectionUtils.isEmpty(csvParser.getList())) {
                     return csvParser.getList();
                 }
@@ -91,8 +91,8 @@ public class HelloWorld {
 
     @RequestMapping("/hello/redis/test")
     public BaseResponse redisTest(@ModelAttribute("request") BaseRequest request) {
-        RedisUtils.set("redis-key", "asdfasdf");
-        RedisUtils.del("e15151d40a87894b0ce1eb7310d4d34e1500099584");
+        redisUtils.set("redis-key", "asdfasdf");
+        redisUtils.del("e15151d40a87894b0ce1eb7310d4d34e1500099584");
         return ResponseUtil.success(new BaseResponse());
     }
 
@@ -103,7 +103,7 @@ public class HelloWorld {
         JSONObject result = new JSONObject();
         String headerInfo = null;
         String appCode = "";
-        if ((headerInfo = request.getHeader("Authorization")) != null) {
+        if ((headerInfo = request.getHeader("@authorization")) != null) {
             appCode = headerInfo.split(" ")[1];
         }
         logger.info("requestInfo:{} appCode:{}", JSON.toJSONString(realNameRequest), appCode);

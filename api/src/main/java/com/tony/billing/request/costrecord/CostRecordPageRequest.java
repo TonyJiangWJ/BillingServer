@@ -6,7 +6,7 @@ import com.tony.billing.request.BaseRequest;
 import java.lang.reflect.Field;
 
 /**
- * Author jiangwj20966 on 2017/6/2.
+ * @author jiangwj20966 on 2017/6/2.
  */
 public class CostRecordPageRequest extends BaseRequest {
     private Integer pageNo;

@@ -16,13 +16,13 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * Author by TonyJiang on 2017/7/2.
+ * @author by TonyJiang on 2017/7/2.
  */
 @Order(1)
 @WebFilter(filterName = "filterDemo", urlPatterns = "/*")
 public class FilterDemo extends OncePerRequestFilter {
 
-    private static final String multipartContent = "multipart/form-data";
+    private static final String MULTIPART_CONTENT = "multipart/form-data";
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -31,14 +31,12 @@ public class FilterDemo extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
 
-        if (StringUtils.equals(httpServletRequest.getContentType(), multipartContent)) {
+        if (StringUtils.equals(httpServletRequest.getContentType(), MULTIPART_CONTENT)) {
             multipartResolver.resolveMultipart(httpServletRequest);
         }
 
         TokenServletRequestWrapper request = new TokenServletRequestWrapper(httpServletRequest);
-//        synchronized (this) { // 在并发访问的时候过滤器链处理请求容易导致并发问题
         filterChain.doFilter(request, httpServletResponse);
-//        }
 
     }
 }

@@ -3,7 +3,7 @@ package com.tony.billing.request.taginfo;
 import com.tony.billing.request.BaseRequest;
 
 /**
- * Author by TonyJiang on 2017/6/25.
+ * @author by TonyJiang on 2017/6/25.
  */
 public class CostTagPutRequest extends BaseRequest {
     private String tradeNo;

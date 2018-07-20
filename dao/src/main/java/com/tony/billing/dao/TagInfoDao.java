@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Author by TonyJiang on 2017/6/14.
+ * @author by TonyJiang on 2017/6/14.
  */
 public interface TagInfoDao {
     Long insert(TagInfo tagInfo);

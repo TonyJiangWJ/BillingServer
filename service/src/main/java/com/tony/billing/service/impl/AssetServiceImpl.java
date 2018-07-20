@@ -59,9 +59,7 @@ public class AssetServiceImpl implements AssetService {
                         }
                     } else {
                         // 不存在父级类别时将自己作为父级，例如现金
-                        if (parentTypesMap.get(assetTypes.getTypeCode()) == null) {
-                            parentTypesMap.put(assetTypes.getTypeCode(), assetTypes);
-                        }
+                        parentTypesMap.putIfAbsent(assetTypes.getTypeCode(), assetTypes);
                     }
                 }
             }

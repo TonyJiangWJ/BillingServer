@@ -3,7 +3,7 @@ package com.tony.billing.request.taginfo;
 import com.tony.billing.request.BaseRequest;
 
 /**
- * Author by TonyJiang on 2017/6/28.
+ * @author by TonyJiang on 2017/6/28.
  */
 public class TagInfoDelRequest extends BaseRequest {
     private Long tagId;
