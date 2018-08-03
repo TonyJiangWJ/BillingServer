@@ -22,6 +22,12 @@ spring:
     thymeleaf:
       cache: false
       prefix: classpath:/templates/
+
+    mail:
+      host: smtp.yeah.net
+      username: tony_sama@yeah.net
+      password:
+
 # MyBatis
 mybatis:
     typeAliasesPackage: com.tony.billing.entity
