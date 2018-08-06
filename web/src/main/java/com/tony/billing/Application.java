@@ -21,38 +21,7 @@ import org.springframework.context.annotation.ComponentScan;
 @MapperScan("com.tony.billing.dao.mapper")
 public class Application {
 
-    @Value("${rsa.key.path}")
-    private String rsaKeyPath;
-    @Value("${jwt.secret.key:springboot}")
-    private String jwtSecretKey;
-
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
-    }
-
-
-    @Bean
-    public ObjectMapper jsonMapper() {
-        ObjectMapper objectMapper = new ObjectMapper();
-        // null 不输出
-        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-//        null 输出空字符串
-//        objectMapper.getSerializerProvider().setNullValueSerializer(new JsonSerializer<Object>() {
-//            @Override
-//            public void serialize(Object value, JsonGenerator jgen, SerializerProvider provider) throws IOException {
-//                jgen.writeNullField("");
-//            }
-//        });
-        return objectMapper;
-    }
-
-    @Bean
-    public RSAUtil rsaUtil() throws Exception {
-        return new RSAUtil(rsaKeyPath);
-    }
-
-    @Bean
-    public AuthUtil authUtil() {
-        return new AuthUtil(new AuthUtil.JavaWebToken(jwtSecretKey));
     }
 }
