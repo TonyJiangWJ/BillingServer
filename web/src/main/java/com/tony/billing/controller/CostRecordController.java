@@ -8,6 +8,7 @@ import com.tony.billing.dto.CostRecordDTO;
 import com.tony.billing.dto.CostRecordDetailDTO;
 import com.tony.billing.entity.CostRecord;
 import com.tony.billing.entity.PagerGrid;
+import com.tony.billing.entity.TagInfo;
 import com.tony.billing.entity.query.CostRecordQuery;
 import com.tony.billing.request.BaseRequest;
 import com.tony.billing.request.costrecord.*;
@@ -17,6 +18,7 @@ import com.tony.billing.response.costrecord.CostRecordDetailResponse;
 import com.tony.billing.response.costrecord.CostRecordPageResponse;
 import com.tony.billing.service.AlipayBillCsvConvertService;
 import com.tony.billing.service.CostRecordService;
+import com.tony.billing.service.TagInfoService;
 import com.tony.billing.util.MoneyUtil;
 import com.tony.billing.util.ResponseUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -49,6 +51,8 @@ public class CostRecordController {
     private CostRecordService costRecordService;
     @Resource
     private AlipayBillCsvConvertService alipayBillCsvConvertService;
+    @Resource
+    private TagInfoService tagInfoService;
 
     /**
      * 获取分页数据
@@ -373,6 +377,7 @@ public class CostRecordController {
         if (!CollectionUtils.isEmpty(list)) {
             List<CostRecordDTO> models = new ArrayList<CostRecordDTO>();
             CostRecordDTO model;
+            List<TagInfo> tagInfos;
             for (CostRecord entity : list) {
                 model = new CostRecordDTO();
                 model.setCreateTime(entity.getCreateTime());
@@ -387,6 +392,13 @@ public class CostRecordController {
                 model.setTarget(entity.getTarget());
                 model.setMemo(entity.getMemo());
                 model.setIsHidden(EnumHidden.getHiddenEnum(entity.getIsHidden()).desc());
+                tagInfos = tagInfoService.listTagInfoByTradeNo(entity.getTradeNo());
+                if (!CollectionUtils.isEmpty(tagInfos)) {
+                    model.setTags(new ArrayList<>());
+                    for (TagInfo tagInfo : tagInfos) {
+                        model.getTags().add(tagInfo.getTagName());
+                    }
+                }
                 models.add(model);
             }
             return models;

@@ -16,7 +16,7 @@ public interface TagInfoService {
 
     TagInfo findTagInfoByName(String tagName);
 
-    List<TagInfo> listTagInfoByTradeNo(Map param);
+    List<TagInfo> listTagInfoByTradeNo(String tradeNo);
 
     TagInfo getTagInfoById(Long id);
 

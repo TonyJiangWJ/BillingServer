@@ -54,8 +54,8 @@ public class TagInfoServiceImpl implements TagInfoService {
     }
 
     @Override
-    public List<TagInfo> listTagInfoByTradeNo(Map param) {
-        return tagInfoDao.listTagInfoByTradeNo(param);
+    public List<TagInfo> listTagInfoByTradeNo(String tradeNo) {
+        return tagInfoDao.listTagInfoByTradeNo(tradeNo);
     }
 
     @Override

@@ -22,17 +22,21 @@
 
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!--日志文件输出的文件名-->
-            <FileNamePattern>${LOG_PATH}/appInfo.%d{yyyy-MM-dd}.log</FileNamePattern>
+            <FileNamePattern>${LOG_PATH}/appInfo.%d{yyyy-MM-dd}.%i.log</FileNamePattern>
             <!--日志文件保留天数-->
             <maxHistory>15</maxHistory>
-            <totalSizeCap>30MB</totalSizeCap>
+            <timeBasedFileNamingAndTriggeringPolicy
+                    class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <!-- or whenever the file size reaches 100MB -->
+                <maxFileSize>100MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
         </rollingPolicy>
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
             <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n</pattern>
         </encoder>
         <!--日志文件最大的大小-->
         <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
-            <MaxFileSize>50MB</MaxFileSize>
+            <MaxFileSize>20MB</MaxFileSize>
         </triggeringPolicy>
     </appender>
 
@@ -46,17 +50,21 @@
 
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!--日志文件输出的文件名-->
-            <FileNamePattern>${LOG_PATH}/appDebug.%d{yyyy-MM-dd}.log</FileNamePattern>
+            <FileNamePattern>${LOG_PATH}/appDebug.%d{yyyy-MM-dd}.%i.log</FileNamePattern>
             <!--日志文件保留天数-->
             <maxHistory>15</maxHistory>
-            <totalSizeCap>30MB</totalSizeCap>
+            <timeBasedFileNamingAndTriggeringPolicy
+                    class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <!-- or whenever the file size reaches 100MB -->
+                <maxFileSize>100MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
         </rollingPolicy>
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
             <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n</pattern>
         </encoder>
         <!--日志文件最大的大小-->
         <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
-            <MaxFileSize>50MB</MaxFileSize>
+            <MaxFileSize>20MB</MaxFileSize>
         </triggeringPolicy>
     </appender>
 
@@ -70,17 +78,21 @@
 
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!--日志文件输出的文件名-->
-            <FileNamePattern>${LOG_PATH}/appError.%d{yyyy-MM-dd}.log</FileNamePattern>
+            <FileNamePattern>${LOG_PATH}/appError.%d{yyyy-MM-dd}.%i.log</FileNamePattern>
             <!--日志文件保留天数-->
             <maxHistory>15</maxHistory>
-            <totalSizeCap>30MB</totalSizeCap>
+            <timeBasedFileNamingAndTriggeringPolicy
+                    class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <!-- or whenever the file size reaches 100MB -->
+                <maxFileSize>100MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
         </rollingPolicy>
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
             <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n</pattern>
         </encoder>
         <!--日志文件最大的大小-->
         <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
-            <MaxFileSize>50MB</MaxFileSize>
+            <MaxFileSize>20MB</MaxFileSize>
         </triggeringPolicy>
     </appender>
 
