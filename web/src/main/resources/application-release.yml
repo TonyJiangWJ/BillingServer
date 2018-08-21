@@ -29,3 +29,6 @@ pwd:
 jwt:
     secret:
         key:
+
+logback:
+    path: /home/tonyjiang/log/
