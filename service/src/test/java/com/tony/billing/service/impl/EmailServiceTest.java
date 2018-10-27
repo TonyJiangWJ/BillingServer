@@ -25,7 +25,9 @@ public class EmailServiceTest extends BaseServiceTest {
     @Test
     public void sendHtml() throws MessagingException {
         Map<String, Object> sendInfo = new HashMap<>();
-        sendInfo.put("title", "我是修改后的标题");
-        emailService.sendThymeleafMail("781027548@qq.com", "HTMl neirong", sendInfo);
+        sendInfo.put("title", "您的注册验证码");
+        sendInfo.put("typeDesc", "注册验证码");
+        sendInfo.put("verifyCode", "987644");
+        emailService.sendThymeleafMail("781027548@qq.com", "帐号注册验证码", sendInfo);
     }
 }
