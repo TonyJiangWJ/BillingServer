@@ -2,6 +2,7 @@ package com.tony.billing.dao.impl;
 
 import com.tony.billing.dao.CostReportDao;
 import com.tony.billing.dao.mapper.CostReportMapper;
+import com.tony.billing.entity.RawReportEntity;
 import com.tony.billing.entity.query.ReportEntityQuery;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +18,11 @@ public class CostReportDaoImpl implements CostReportDao {
     private CostReportMapper costReportMapper;
 
     @Override
-    public Long getReportAmountByCondition(ReportEntityQuery query) {
-        return costReportMapper.getReportAmountByCondition(query);
+    public RawReportEntity getReportTypeAmountByCondition(ReportEntityQuery query) {
+        RawReportEntity reportEntity = costReportMapper.getReportTypeAmountByCondition(query);
+        if (reportEntity != null) {
+            reportEntity.calculateAdditional();
+        }
+        return reportEntity;
     }
 }

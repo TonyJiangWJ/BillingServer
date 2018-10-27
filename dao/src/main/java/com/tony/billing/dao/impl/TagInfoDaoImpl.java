@@ -1,12 +1,16 @@
 package com.tony.billing.dao.impl;
 
+import com.google.common.base.Preconditions;
 import com.tony.billing.dao.TagInfoDao;
 import com.tony.billing.dao.mapper.TagInfoMapper;
 import com.tony.billing.entity.TagCostRef;
 import com.tony.billing.entity.TagInfo;
+import com.tony.billing.util.UserIdContainer;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -35,8 +39,13 @@ public class TagInfoDaoImpl implements TagInfoDao {
     }
 
     @Override
-    public List<TagInfo> listTagInfoByTradeNo(Map param) {
-        return tagInfoMapper.listTagInfoByTradeNo(param);
+    public List<TagInfo> listTagInfoByTradeNo(String tradeNo) {
+        Map<String, Object> params = new HashMap<>(2);
+        params.put("tradeNo", tradeNo);
+        params.put("userId", UserIdContainer.getUserId());
+        Preconditions.checkNotNull(params.get("userId"));
+        Preconditions.checkState(StringUtils.isNotEmpty(tradeNo));
+        return tagInfoMapper.listTagInfoByTradeNo(params);
     }
 
     @Override

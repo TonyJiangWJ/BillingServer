@@ -33,7 +33,7 @@ public class BeanCopyUtil {
             logger.error("========= 拷贝时发生调用目标对象异常 {}", e.toString());
             return null;
         } catch (Exception e) {
-            logger.error("======== 对象 {} 和 {} 拷贝是发生错误 {}", new Object[]{s.getClass(), t, e.toString()});
+            logger.error("======== 对象 {} 和 {} 拷贝是发生错误 {}", s.getClass(), t, e.toString());
         }
         return null;
     }

@@ -20,6 +20,39 @@ public class ReportEntity {
     private String totalIncomeDeleted;
     private String totalIncomeDeletedAndHidden;
 
+    public ReportEntity(String datePrefix, RawReportEntity rawReportEntity) {
+        month = datePrefix;
+        totalCost = fen2Yuan(rawReportEntity.getTotalCost());
+        totalCostExceptDeleted = fen2Yuan(rawReportEntity.getTotalCostExceptDeleted());
+        totalCostExceptHidden = fen2Yuan(rawReportEntity.getTotalCostExceptHidden());
+        totalCostExceptDeletedAndHidden = fen2Yuan(rawReportEntity.getTotalCostExceptDeletedAndHidden());
+        totalCostHidden = fen2Yuan(rawReportEntity.getTotalCostHidden());
+        totalCostDeleted = fen2Yuan(rawReportEntity.getTotalCostDeleted());
+        totalCostDeletedAndHidden = fen2Yuan(rawReportEntity.getTotalCostDeletedAndHidden());
+        totalIncome = fen2Yuan(rawReportEntity.getTotalIncome());
+        totalIncomeExceptDeleted = fen2Yuan(rawReportEntity.getTotalIncomeExceptDeleted());
+        totalIncomeExceptHidden = fen2Yuan(rawReportEntity.getTotalIncomeExceptHidden());
+        totalIncomeExceptDeletedAndHidden = fen2Yuan(rawReportEntity.getTotalIncomeExceptDeletedAndHidden());
+        totalIncomeHidden = fen2Yuan(rawReportEntity.getTotalIncomeHidden());
+        totalIncomeDeleted = fen2Yuan(rawReportEntity.getTotalIncomeDeleted());
+        totalIncomeDeletedAndHidden = fen2Yuan(rawReportEntity.getTotalIncomeDeletedAndHidden());
+    }
+
+    private String fen2Yuan(Long money) {
+        if (money == null) {
+            return null;
+        }
+        String s = money + "";
+        if (s.length() < 2) {
+            s = "0.0" + s;
+        } else if (s.length() == 2) {
+            s = "0." + s;
+        } else {
+            s = s.substring(0, s.length() - 2) + "." + s.substring(s.length() - 2);
+        }
+        return s;
+    }
+
     public String getMonth() {
         return month;
     }

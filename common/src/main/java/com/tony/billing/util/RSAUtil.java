@@ -4,6 +4,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.security.interfaces.RSAKey;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.text.SimpleDateFormat;
@@ -50,16 +51,28 @@ public class RSAUtil {
         return null;
     }
 
-    public String encrypt(String content) {
+    private String encrypt(String content, RSAKey key) {
         if (content != null) {
             long timestamp = System.currentTimeMillis();
             content = timestamp + content;
             try {
-                return Base64.encodeBase64String(RSAEncrypt.encrypt(privateKey, content.getBytes()));
+                if (key instanceof RSAPrivateKey) {
+                    return Base64.encodeBase64String(RSAEncrypt.encrypt((RSAPrivateKey) key, content.getBytes()));
+                } else if (key instanceof RSAPublicKey){
+                    return Base64.encodeBase64String(RSAEncrypt.encrypt((RSAPublicKey) key, content.getBytes()));
+                }
             } catch (Exception e) {
                 logger.error("rsa加密失败 ", e);
             }
         }
         return null;
+    }
+
+    public String encryptWithPrivateKey(String content) {
+        return encrypt(content, privateKey);
+    }
+
+    public String encryptWithPubKey(String content) {
+        return encrypt(content, publicKey);
     }
 }

@@ -50,7 +50,7 @@ public class HelloWorld {
     @RequestMapping("/hello/world")
     public String hello(@RequestParam("dd") String dd) {
         logger.info("dd:{}", dd);
-        logger.info("enter :{}", rsaUtil.encrypt("123456"));
+        logger.info("enter :{}", rsaUtil.encryptWithPrivateKey("123456"));
         return "HelloWorld" + dd;
     }
 
@@ -121,7 +121,7 @@ public class HelloWorld {
     @RequestMapping("/hello/testRsa")
     public String testRsa(@RequestParam("content") String content) {
         logger.info("enter ");
-        return rsaUtil.encrypt(content);
+        return rsaUtil.encryptWithPrivateKey(content);
     }
 
     @RequestMapping("/hello/app/index")

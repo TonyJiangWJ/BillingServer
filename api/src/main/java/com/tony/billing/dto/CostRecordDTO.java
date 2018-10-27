@@ -1,5 +1,7 @@
 package com.tony.billing.dto;
 
+import java.util.List;
+
 /**
  * @author jiangwj20966 on 2017/6/2.
  */
@@ -16,6 +18,7 @@ public class CostRecordDTO {
     private Integer isDelete;
     private String isHidden;
     private String target;
+    List<String> tags;
 
     public String getIsHidden() {
         return isHidden;
@@ -111,5 +114,13 @@ public class CostRecordDTO {
 
     public void setMemo(String memo) {
         this.memo = memo;
+    }
+
+    public List<String> getTags() {
+        return tags;
+    }
+
+    public void setTags(List<String> tags) {
+        this.tags = tags;
     }
 }
