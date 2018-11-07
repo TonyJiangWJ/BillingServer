@@ -11,6 +11,7 @@ public class Asset {
     private String name;
     private String extName;
     private Integer type;
+    private String available;
     private Long amount;
     private Date createTime;
     private Date modifyTime;
@@ -53,6 +54,14 @@ public class Asset {
 
     public void setType(Integer type) {
         this.type = type;
+    }
+
+    public String getAvailable() {
+        return available;
+    }
+
+    public void setAvailable(String available) {
+        this.available = available;
     }
 
     public Long getAmount() {

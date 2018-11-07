@@ -124,9 +124,7 @@ public class LiabilityServiceImpl implements LiabilityService {
         Map<String, List<Liability>> monthMap = new HashMap<>();
         for (Liability liability : liabilities) {
             month = monthFormat.format(liability.getRepaymentDay());
-            if (monthMap.get(month) == null) {
-                monthMap.put(month, new ArrayList<Liability>());
-            }
+            monthMap.computeIfAbsent(month, k -> new ArrayList<>());
             monthMap.get(month).add(liability);
         }
 

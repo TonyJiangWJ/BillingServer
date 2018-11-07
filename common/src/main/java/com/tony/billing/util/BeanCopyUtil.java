@@ -20,9 +20,9 @@ public class BeanCopyUtil {
             return null;
         }
         try {
-            Object nt = t.newInstance();
+            T nt = t.newInstance();
             PropertyUtils.copyProperties(nt, s);
-            return (T) nt;
+            return nt;
         } catch (InstantiationException e) {
             logger.error("========= 拷贝时发生实例化对象异常 {}", e.toString());
             return null;
@@ -55,16 +55,16 @@ public class BeanCopyUtil {
     }
 
     public static <S, T, N> Map<S, List<N>> copy(Map<S, List<T>> s, Class<N> t) {
-        Map<S, List<N>> map = new HashMap<S, List<N>>();
+        Map<S, List<N>> map = new HashMap<>();
         Set<Map.Entry<S, List<T>>> set = s.entrySet();
         for (Map.Entry<S, List<T>> e : set) {
-            map.put(e.getKey(), copy((List<T>) e.getValue(), t));
+            map.put(e.getKey(), copy(e.getValue(), t));
         }
         return map;
     }
 
     public static <S, T> Map<S, T> copyMap(Map<S, T> map, Class<T> t) {
-        Map<S, T> m = new HashMap<S, T>();
+        Map<S, T> m = new HashMap<>();
         Set<Map.Entry<S, T>> set = map.entrySet();
         for (Map.Entry<S, T> e : set) {
             m.put(e.getKey(), copy(e.getValue(), t));

@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author by TonyJiang on 2017/7/8.
@@ -45,11 +46,9 @@ public class BudgetServiceImpl implements BudgetService {
     @Override
     public List<BudgetModel> queryBudgetsByCondition(Budget budget) {
         List<Budget> budgets = budgetDao.findByYearMonth(budget);
-        List<BudgetModel> budgetModels = new ArrayList<>();
-        for (Budget budget1 : budgets) {
-            budgetModels.add(BeanCopyUtil.copy(budget1, BudgetModel.class));
-        }
-        return budgetModels;
+        return budgets.stream().map(
+                (budget1) -> BeanCopyUtil.copy(budget1, BudgetModel.class)
+        ).collect(Collectors.toList());
     }
 
     @Override

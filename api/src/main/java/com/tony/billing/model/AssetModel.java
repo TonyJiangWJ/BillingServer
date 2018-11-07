@@ -11,16 +11,17 @@ import java.util.List;
 public class AssetModel {
     private String type;
     private Long total;
+    private Long totalAvailable;
     private List<AssetDTO> assetList;
 
     public AssetModel() {
         assetList = new ArrayList<>();
-        total = 0L;
+        totalAvailable = total = 0L;
     }
 
     public AssetModel(String type) {
         assetList = new ArrayList<>();
-        total = 0L;
+        totalAvailable = total = 0L;
         this.type = type;
     }
 
@@ -38,6 +39,14 @@ public class AssetModel {
 
     public void setTotal(Long total) {
         this.total = total;
+    }
+
+    public Long getTotalAvailable() {
+        return totalAvailable;
+    }
+
+    public void setTotalAvailable(Long totalAvailable) {
+        this.totalAvailable = totalAvailable;
     }
 
     public List<AssetDTO> getAssetList() {

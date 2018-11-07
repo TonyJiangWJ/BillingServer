@@ -51,16 +51,21 @@ public class AssetManageController extends BaseController {
         AssetManageDTO assetManageDTO = new AssetManageDTO();
         // 计算总资产
         assetManageDTO.setAssetModels(assetService.getAssetModelsByUserId(request.getUserId()));
-        assetManageDTO.setTotalAsset(getTotalAsset(assetManageDTO.getAssetModels()));
+        assetManageDTO.setTotalAsset(assetManageDTO.getAssetModels()
+                .stream().mapToLong(AssetModel::getTotal).sum());
         // 计算总负债
         assetManageDTO.setLiabilityModels(liabilityService.getLiabilityModelsByUserId(request.getUserId()));
-        assetManageDTO.setTotalLiability(getTotalLiability(assetManageDTO.getLiabilityModels()));
+        assetManageDTO.setTotalLiability(assetManageDTO.getLiabilityModels()
+                .stream().mapToLong(LiabilityModel::getTotal).sum());
         // 计算净资产
         assetManageDTO.setCleanAsset(assetManageDTO.getTotalAsset() - assetManageDTO.getTotalLiability());
+        // 计算可以直接使用的金额
+        assetManageDTO.setAvailableAsset(assetManageDTO.getAssetModels()
+                .stream().mapToLong(AssetModel::getTotalAvailable).sum());
         // 计算每月还款信息
         assetManageDTO.setMonthLiabilityModels(liabilityService.getMonthLiabilityModelsByUserId(request.getUserId()));
         // 计算每月还款后剩余
-        assetManageDTO = calAssetAfterMonth(assetManageDTO);
+        calAssetAfterMonth(assetManageDTO);
         AssetManageResponse response = (AssetManageResponse) ResponseUtil.success(new AssetManageResponse());
         response.setAssetManage(assetManageDTO);
         return response;
@@ -146,23 +151,7 @@ public class AssetManageController extends BaseController {
         }
     }
 
-    private Long getTotalLiability(List<LiabilityModel> liabilityModels) {
-        Long sum = 0L;
-        for (LiabilityModel liabilityModel : liabilityModels) {
-            sum += liabilityModel.getTotal();
-        }
-        return sum;
-    }
-
-    private Long getTotalAsset(List<AssetModel> assetModels) {
-        Long sum = 0L;
-        for (AssetModel assetModel : assetModels) {
-            sum += assetModel.getTotal();
-        }
-        return sum;
-    }
-
-    private AssetManageDTO calAssetAfterMonth(AssetManageDTO assetManageDTO) {
+    private void calAssetAfterMonth(AssetManageDTO assetManageDTO) {
         Long totalAsset = assetManageDTO.getTotalAsset();
         if (CollectionUtils.isNotEmpty(assetManageDTO.getMonthLiabilityModels())) {
             for (MonthLiabilityModel model : assetManageDTO.getMonthLiabilityModels()) {
@@ -170,7 +159,6 @@ public class AssetManageController extends BaseController {
                 model.setAssetAfterThisMonth(totalAsset);
             }
         }
-        return assetManageDTO;
     }
 
 }

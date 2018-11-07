@@ -8,8 +8,8 @@ import com.tony.billing.service.CostReportService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author by TonyJiang on 2017/6/11.
@@ -22,11 +22,10 @@ public class CostReportServiceImpl implements CostReportService {
 
     @Override
     public List<ReportEntity> getReportByDatePrefix(List<String> datePrefixes, Long userId) {
-        List<ReportEntity> reportList = new ArrayList<>();
-        for (String datePrefix : datePrefixes) {
-            reportList.add(getReportInfo(datePrefix, userId));
-        }
-        return reportList;
+        return datePrefixes.stream().map(
+                (dataPrefix) -> getReportInfo(dataPrefix, userId)
+        ).collect(Collectors.toList());
+
     }
 
     private ReportEntity getReportInfo(String datePrefix, Long userId) {

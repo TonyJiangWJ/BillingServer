@@ -7,6 +7,7 @@
         name name,
         ext_name extName,
         `type` type,
+        available available,
         amount amount,
         create_time createTime,
         modify_time modifyTime
@@ -28,6 +29,9 @@
             </if>
             <if test=" type!=null ">
                 `type`,
+            </if>
+            <if test=" available!=null and available!='' ">
+                available,
             </if>
             <if test=" amount!=null ">
                 amount,
@@ -56,6 +60,9 @@
             <if test=" type!=null ">
                 #{type,jdbcType=INTEGER},
             </if>
+            <if test=" available!=null and available!='' ">
+                #{available,jdbcType=VARCHAR},
+            </if>
             <if test=" amount!=null ">
                 #{amount,jdbcType=BIGINT},
             </if>
@@ -79,6 +86,9 @@
             </if>
             <if test=" type!=null ">
                 `type`=#{type,jdbcType=INTEGER},
+            </if>
+            <if test=" available!=null and available!='' ">
+                available=#{available,jdbcType=VARCHAR},
             </if>
             <if test=" amount!=null ">
                 amount=#{amount,jdbcType=BIGINT},
@@ -111,6 +121,9 @@
             </if>
             <if test=" type!=null ">
                 and `type`=#{type,jdbcType=INTEGER}
+            </if>
+            <if test=" available!=null and available!='' ">
+                and available=#{available,jdbcType=VARCHAR}
             </if>
             <if test=" amount!=null ">
                 and amount=#{amount,jdbcType=BIGINT}
@@ -151,6 +164,9 @@
             </if>
             <if test=" type!=null ">
                 and `type`=#{type,jdbcType=INTEGER}
+            </if>
+            <if test=" available!=null and available!='' ">
+                and available=#{available,jdbcType=VARCHAR}
             </if>
             <if test=" amount!=null ">
                 and amount=#{amount,jdbcType=BIGINT}
