@@ -10,7 +10,6 @@ import com.tony.billing.response.liability.LiabilityDetailResponse;
 import com.tony.billing.service.AssetTypesService;
 import com.tony.billing.service.LiabilityService;
 import com.tony.billing.util.ResponseUtil;
-import com.tony.billing.util.UserIdContainer;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,16 +34,16 @@ public class LiabilityController extends BaseController {
     @RequestMapping("/liability/detail/get")
     public LiabilityDetailResponse getLiabilityInfo(@ModelAttribute("request") LiabilityDetailRequest request) {
         if (request.getId() == null) {
-            return (LiabilityDetailResponse) ResponseUtil.paramError(new LiabilityDetailResponse());
+            return ResponseUtil.paramError(new LiabilityDetailResponse());
         }
         Liability liability = liabilityService.getLiabilityInfoById(request.getId());
         if (liability != null && liability.getUserId().equals(request.getUserId())) {
-            LiabilityDetailResponse response = (LiabilityDetailResponse) ResponseUtil.success(new LiabilityDetailResponse());
+            LiabilityDetailResponse response = ResponseUtil.success(new LiabilityDetailResponse());
 
             response.setLiability(fillDTOWithType(liability));
             return response;
         }
-        return (LiabilityDetailResponse) ResponseUtil.dataNotExisting(new LiabilityDetailResponse());
+        return ResponseUtil.dataNotExisting(new LiabilityDetailResponse());
     }
 
     /**

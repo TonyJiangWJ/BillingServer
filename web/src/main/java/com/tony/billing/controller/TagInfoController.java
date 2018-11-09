@@ -5,7 +5,11 @@ import com.tony.billing.entity.CostRecord;
 import com.tony.billing.entity.TagCostRef;
 import com.tony.billing.entity.TagInfo;
 import com.tony.billing.request.BaseRequest;
-import com.tony.billing.request.taginfo.*;
+import com.tony.billing.request.taginfo.CostTagDelRequest;
+import com.tony.billing.request.taginfo.CostTagListRequest;
+import com.tony.billing.request.taginfo.CostTagPutRequest;
+import com.tony.billing.request.taginfo.TagInfoDelRequest;
+import com.tony.billing.request.taginfo.TagInfoPutRequest;
 import com.tony.billing.response.BaseResponse;
 import com.tony.billing.response.taginfo.CostTagListResponse;
 import com.tony.billing.response.taginfo.TagInfoListResponse;
@@ -108,7 +112,7 @@ public class TagInfoController extends BaseController {
     public CostTagListResponse listCostTag(@ModelAttribute("request") CostTagListRequest request) {
         CostTagListResponse response = new CostTagListResponse();
         if (StringUtils.isEmpty(request.getTradeNo())) {
-            return (CostTagListResponse) ResponseUtil.paramError(response);
+            return ResponseUtil.paramError(response);
         }
         try {
             List<TagInfo> costTagList = tagInfoService.listTagInfoByTradeNo(request.getTradeNo());

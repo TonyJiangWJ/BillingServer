@@ -11,7 +11,12 @@ import com.tony.billing.entity.PagerGrid;
 import com.tony.billing.entity.TagInfo;
 import com.tony.billing.entity.query.CostRecordQuery;
 import com.tony.billing.request.BaseRequest;
-import com.tony.billing.request.costrecord.*;
+import com.tony.billing.request.costrecord.CostRecordDeleteRequest;
+import com.tony.billing.request.costrecord.CostRecordDetailRequest;
+import com.tony.billing.request.costrecord.CostRecordHideRequest;
+import com.tony.billing.request.costrecord.CostRecordPageRequest;
+import com.tony.billing.request.costrecord.CostRecordPutRequest;
+import com.tony.billing.request.costrecord.CostRecordUpdateRequest;
 import com.tony.billing.response.BaseResponse;
 import com.tony.billing.response.costrecord.CostRecordDeleteResponse;
 import com.tony.billing.response.costrecord.CostRecordDetailResponse;
@@ -38,7 +43,11 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author jiangwj20966 on 2017/6/2.
@@ -137,7 +146,7 @@ public class CostRecordController {
     public CostRecordDetailResponse getDetail(@ModelAttribute("request") CostRecordDetailRequest request) {
         CostRecordDetailResponse response = new CostRecordDetailResponse();
         if (StringUtils.isEmpty(request.getTradeNo())) {
-            return (CostRecordDetailResponse) ResponseUtil.paramError(response);
+            return ResponseUtil.paramError(response);
         }
         ResponseUtil.error(response);
         try {
@@ -188,7 +197,7 @@ public class CostRecordController {
         CostRecordDeleteResponse response = new CostRecordDeleteResponse();
         try {
             if (StringUtils.isEmpty(request.getTradeNo()) || request.getNowStatus() == null) {
-                return (CostRecordDeleteResponse) ResponseUtil.paramError(response);
+                return ResponseUtil.paramError(response);
             }
             Map<String, Object> params = new HashMap<String, Object>();
             params.put("tradeNo", request.getTradeNo());

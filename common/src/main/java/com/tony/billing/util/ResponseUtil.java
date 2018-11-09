@@ -24,7 +24,7 @@ public class ResponseUtil {
         return sysError(new BaseResponse());
     }
 
-    public static BaseResponse sysError(BaseResponse response) {
+    public static <T extends BaseResponse> T sysError(T response) {
         response.setCode(CODE_SYS_ERROR);
         response.setMsg(MSG_SYS_ERROR);
         return response;
@@ -34,7 +34,7 @@ public class ResponseUtil {
         return success(new BaseResponse());
     }
 
-    public static BaseResponse success(BaseResponse response) {
+    public static <T extends BaseResponse> T success(T response) {
         response.setCode(CODE_SUCCESS);
         response.setMsg(MSG_SUCCESS);
         return response;
@@ -44,7 +44,7 @@ public class ResponseUtil {
         return paramError(new BaseResponse());
     }
 
-    public static BaseResponse paramError(BaseResponse response) {
+    public static <T extends BaseResponse> T paramError(T response) {
         response.setCode(CODE_PARAM_ERROR);
         response.setMsg(MSG_PARAM_ERROR);
         return response;
@@ -54,7 +54,7 @@ public class ResponseUtil {
         return dataNotExisting(new BaseResponse());
     }
 
-    public static BaseResponse dataNotExisting(BaseResponse response) {
+    public static <T extends BaseResponse> T dataNotExisting(T response) {
         response.setMsg(MSG_DATA_NOT_EXIST);
         response.setCode(CODE_DATA_NOT_EXIST);
         return response;
@@ -64,7 +64,7 @@ public class ResponseUtil {
         return error(new BaseResponse());
     }
 
-    public static BaseResponse error(BaseResponse response) {
+    public static <T extends BaseResponse> T error(T response) {
         response.setMsg(MSG_ERROR);
         response.setCode(CODE_ERROR);
         return response;

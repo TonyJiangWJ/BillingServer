@@ -30,7 +30,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import java.sql.SQLException;
-import java.util.List;
 
 /**
  * @author TonyJiang on 2018/2/12
@@ -52,11 +51,11 @@ public class AssetManageController extends BaseController {
         // 计算总资产
         assetManageDTO.setAssetModels(assetService.getAssetModelsByUserId(request.getUserId()));
         assetManageDTO.setTotalAsset(assetManageDTO.getAssetModels()
-                .stream().mapToLong(AssetModel::getTotal).sum());
+                .stream().map((AssetModel::getTotal)).reduce(0L, (a, b) -> a + b));
         // 计算总负债
         assetManageDTO.setLiabilityModels(liabilityService.getLiabilityModelsByUserId(request.getUserId()));
         assetManageDTO.setTotalLiability(assetManageDTO.getLiabilityModels()
-                .stream().mapToLong(LiabilityModel::getTotal).sum());
+                .stream().mapToLong(LiabilityModel::getTotal).reduce((a, b) -> a + b).orElse(0L));
         // 计算净资产
         assetManageDTO.setCleanAsset(assetManageDTO.getTotalAsset() - assetManageDTO.getTotalLiability());
         // 计算可以直接使用的金额
@@ -66,19 +65,19 @@ public class AssetManageController extends BaseController {
         assetManageDTO.setMonthLiabilityModels(liabilityService.getMonthLiabilityModelsByUserId(request.getUserId()));
         // 计算每月还款后剩余
         calAssetAfterMonth(assetManageDTO);
-        AssetManageResponse response = (AssetManageResponse) ResponseUtil.success(new AssetManageResponse());
+        AssetManageResponse response = ResponseUtil.success(new AssetManageResponse());
         response.setAssetManage(assetManageDTO);
         return response;
     }
 
     @RequestMapping("/asset/detail/get")
     public AssetDetailResponse getAssetDetail(@ModelAttribute("request") AssetDetailRequest request, Model model) {
-        AssetDetailResponse response = (AssetDetailResponse) ResponseUtil.success(new AssetDetailResponse());
+        AssetDetailResponse response = ResponseUtil.success(new AssetDetailResponse());
         Asset asset = assetService.getAssetInfoById(request.getId());
         if (asset != null && asset.getUserId().equals(request.getUserId())) {
             response.setAssetInfo(new AssetDTO(asset));
         } else {
-            response = (AssetDetailResponse) ResponseUtil.dataNotExisting(new AssetDetailResponse());
+            response = ResponseUtil.dataNotExisting(new AssetDetailResponse());
         }
         return response;
     }

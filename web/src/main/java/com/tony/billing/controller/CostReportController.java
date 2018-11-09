@@ -77,7 +77,7 @@ public class CostReportController extends BaseController {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         if (StringUtils.isEmpty(reportRequest.getEndDate())
                 || StringUtils.isEmpty(reportRequest.getStartDate())) {
-            return (ReportResponse) ResponseUtil.paramError(response);
+            return ResponseUtil.paramError(response);
         }
         try {
             Date startDate = simpleDateFormat.parse(reportRequest.getStartDate());
@@ -101,7 +101,7 @@ public class CostReportController extends BaseController {
             return response;
         } catch (Exception e) {
             logger.error("/daily/report/get error", e);
-            return (ReportResponse) ResponseUtil.sysError(response);
+            return ResponseUtil.sysError(response);
         }
     }
 
