@@ -86,7 +86,7 @@ public class AssetTypesDaoImpl implements AssetTypesDao {
 
     @Override
     public boolean deleteById(Integer id, Long userId) {
-        Map<String, Object> param = new HashMap<>(2);
+        Map<String, Object> param = new HashMap<>(4);
         param.put("id", id);
         param.put("userId", userId);
         return assetTypesMapper.deleteById(param) > 0;

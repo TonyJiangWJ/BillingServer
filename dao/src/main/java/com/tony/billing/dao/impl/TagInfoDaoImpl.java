@@ -40,7 +40,7 @@ public class TagInfoDaoImpl implements TagInfoDao {
 
     @Override
     public List<TagInfo> listTagInfoByTradeNo(String tradeNo) {
-        Map<String, Object> params = new HashMap<>(2);
+        Map<String, Object> params = new HashMap<>(4);
         params.put("tradeNo", tradeNo);
         params.put("userId", UserIdContainer.getUserId());
         Preconditions.checkNotNull(params.get("userId"));

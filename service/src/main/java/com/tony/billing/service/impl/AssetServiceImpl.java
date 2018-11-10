@@ -1,6 +1,7 @@
 package com.tony.billing.service.impl;
 
 import com.tony.billing.constants.enums.EnumTypeIdentify;
+import com.tony.billing.constants.enums.EnumYesOrNo;
 import com.tony.billing.dao.AssetDao;
 import com.tony.billing.dao.AssetTypesDao;
 import com.tony.billing.dto.AssetDTO;
@@ -77,6 +78,10 @@ public class AssetServiceImpl implements AssetService {
                 model = typeModel.get(type.getTypeCode());
             }
             model.setTotal(asset.getAmount() + model.getTotal());
+            // 当前可使用的总额
+            if (EnumYesOrNo.YES.getCode().equals(asset.getAvailable())) {
+                model.setTotalAvailable(asset.getAmount() + model.getTotalAvailable());
+            }
             model.getAssetList().add(new AssetDTO(asset, type.getTypeDesc()));
         }
         for (Map.Entry<String, AssetModel> entry : typeModel.entrySet()) {

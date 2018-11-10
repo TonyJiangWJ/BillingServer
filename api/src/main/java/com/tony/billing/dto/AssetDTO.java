@@ -9,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 public class AssetDTO {
     private String name;
     private String type;
+    private String available;
     private Long id;
     private Long amount;
 
@@ -47,6 +48,14 @@ public class AssetDTO {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getAvailable() {
+        return available;
+    }
+
+    public void setAvailable(String available) {
+        this.available = available;
     }
 
     public Long getId() {

@@ -30,7 +30,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import java.sql.SQLException;
-import java.util.List;
 
 /**
  * @author TonyJiang on 2018/2/12
@@ -51,29 +50,34 @@ public class AssetManageController extends BaseController {
         AssetManageDTO assetManageDTO = new AssetManageDTO();
         // 计算总资产
         assetManageDTO.setAssetModels(assetService.getAssetModelsByUserId(request.getUserId()));
-        assetManageDTO.setTotalAsset(getTotalAsset(assetManageDTO.getAssetModels()));
+        assetManageDTO.setTotalAsset(assetManageDTO.getAssetModels()
+                .stream().map((AssetModel::getTotal)).reduce(0L, (a, b) -> a + b));
         // 计算总负债
         assetManageDTO.setLiabilityModels(liabilityService.getLiabilityModelsByUserId(request.getUserId()));
-        assetManageDTO.setTotalLiability(getTotalLiability(assetManageDTO.getLiabilityModels()));
+        assetManageDTO.setTotalLiability(assetManageDTO.getLiabilityModels()
+                .stream().mapToLong(LiabilityModel::getTotal).reduce((a, b) -> a + b).orElse(0L));
         // 计算净资产
         assetManageDTO.setCleanAsset(assetManageDTO.getTotalAsset() - assetManageDTO.getTotalLiability());
+        // 计算可以直接使用的金额
+        assetManageDTO.setAvailableAsset(assetManageDTO.getAssetModels()
+                .stream().mapToLong(AssetModel::getTotalAvailable).sum());
         // 计算每月还款信息
         assetManageDTO.setMonthLiabilityModels(liabilityService.getMonthLiabilityModelsByUserId(request.getUserId()));
         // 计算每月还款后剩余
-        assetManageDTO = calAssetAfterMonth(assetManageDTO);
-        AssetManageResponse response = (AssetManageResponse) ResponseUtil.success(new AssetManageResponse());
+        calAssetAfterMonth(assetManageDTO);
+        AssetManageResponse response = ResponseUtil.success(new AssetManageResponse());
         response.setAssetManage(assetManageDTO);
         return response;
     }
 
     @RequestMapping("/asset/detail/get")
     public AssetDetailResponse getAssetDetail(@ModelAttribute("request") AssetDetailRequest request, Model model) {
-        AssetDetailResponse response = (AssetDetailResponse) ResponseUtil.success(new AssetDetailResponse());
+        AssetDetailResponse response = ResponseUtil.success(new AssetDetailResponse());
         Asset asset = assetService.getAssetInfoById(request.getId());
         if (asset != null && asset.getUserId().equals(request.getUserId())) {
             response.setAssetInfo(new AssetDTO(asset));
         } else {
-            response = (AssetDetailResponse) ResponseUtil.dataNotExisting(new AssetDetailResponse());
+            response = ResponseUtil.dataNotExisting(new AssetDetailResponse());
         }
         return response;
     }
@@ -146,23 +150,7 @@ public class AssetManageController extends BaseController {
         }
     }
 
-    private Long getTotalLiability(List<LiabilityModel> liabilityModels) {
-        Long sum = 0L;
-        for (LiabilityModel liabilityModel : liabilityModels) {
-            sum += liabilityModel.getTotal();
-        }
-        return sum;
-    }
-
-    private Long getTotalAsset(List<AssetModel> assetModels) {
-        Long sum = 0L;
-        for (AssetModel assetModel : assetModels) {
-            sum += assetModel.getTotal();
-        }
-        return sum;
-    }
-
-    private AssetManageDTO calAssetAfterMonth(AssetManageDTO assetManageDTO) {
+    private void calAssetAfterMonth(AssetManageDTO assetManageDTO) {
         Long totalAsset = assetManageDTO.getTotalAsset();
         if (CollectionUtils.isNotEmpty(assetManageDTO.getMonthLiabilityModels())) {
             for (MonthLiabilityModel model : assetManageDTO.getMonthLiabilityModels()) {
@@ -170,7 +158,6 @@ public class AssetManageController extends BaseController {
                 model.setAssetAfterThisMonth(totalAsset);
             }
         }
-        return assetManageDTO;
     }
 
 }
