@@ -3,7 +3,7 @@ package com.tony.billing.request.costrecord;
 import com.tony.billing.request.BaseRequest;
 
 /**
- * Author by TonyJiang on 2017/6/9.
+ * @author by TonyJiang on 2017/6/9.
  */
 public class CostRecordUpdateRequest extends BaseRequest {
     private String tradeNo;

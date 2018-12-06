@@ -35,6 +35,8 @@ public class LoginController extends BaseController {
     private AdminService adminService;
     @Resource
     private AuthUtil authUtil;
+    @Resource
+    private RedisUtils redisUtils;
 
     @RequestMapping(value = "/login")
     public String login(Model model, HttpServletRequest httpServletRequest) {
@@ -42,7 +44,7 @@ public class LoginController extends BaseController {
         try {
             String tokenId;
             if (tokenCookie != null && ((tokenId = authUtil.getUserTokenId(tokenCookie.getValue())) != null)) {
-                Map store = RedisUtils.get(tokenId, Admin.class);
+                Map store = redisUtils.get(tokenId, Admin.class);
                 if (store != null) {
                     return "/thymeleaf/login/success";
                 }

@@ -3,7 +3,7 @@ package com.tony.billing.request.admin;
 import com.tony.billing.request.BaseRequest;
 
 /**
- * Author by TonyJiang on 2017/7/2.
+ * @author by TonyJiang on 2017/7/2.
  */
 public class AdminLoginRequest extends BaseRequest {
     private String userName;

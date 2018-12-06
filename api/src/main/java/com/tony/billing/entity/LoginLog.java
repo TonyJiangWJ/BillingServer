@@ -5,7 +5,7 @@ import com.tony.billing.annotation.Table;
 import java.util.Date;
 
 /**
- * Author: jiangwj20966 on 2018/1/25
+ * @author: jiangwj20966 on 2018/1/25
  */
 @Table("t_login_log")
 public class LoginLog {

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -45,5 +46,13 @@ public class AssetDaoImpl implements AssetDao {
     public Asset getAssetById(Long id) {
         assert id != null;
         return assetMapper.getById(id);
+    }
+
+    @Override
+    public boolean deleteById(Long id, Long userId) {
+        Map<String, Long> params = new HashMap<>(4);
+        params.put("id", id);
+        params.put("userId", userId);
+        return assetMapper.deleteById(params) > 0;
     }
 }

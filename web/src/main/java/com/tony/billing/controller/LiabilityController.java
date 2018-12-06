@@ -3,6 +3,7 @@ package com.tony.billing.controller;
 import com.tony.billing.dto.LiabilityDTO;
 import com.tony.billing.entity.AssetTypes;
 import com.tony.billing.entity.Liability;
+import com.tony.billing.request.liability.LiabilityAddRequest;
 import com.tony.billing.request.liability.LiabilityDetailRequest;
 import com.tony.billing.request.liability.LiabilityUpdateRequest;
 import com.tony.billing.response.BaseResponse;
@@ -10,19 +11,19 @@ import com.tony.billing.response.liability.LiabilityDetailResponse;
 import com.tony.billing.service.AssetTypesService;
 import com.tony.billing.service.LiabilityService;
 import com.tony.billing.util.ResponseUtil;
-import org.apache.commons.collections.CollectionUtils;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
-import java.util.List;
+import java.sql.SQLException;
 
 /**
  * @author jiangwj20966 2018/2/22
  */
-@Controller
+@RestController
 @RequestMapping("/bootDemo")
 public class LiabilityController extends BaseController {
 
@@ -32,20 +33,19 @@ public class LiabilityController extends BaseController {
     @Resource
     private AssetTypesService assetTypesService;
 
-    @ResponseBody
     @RequestMapping("/liability/detail/get")
     public LiabilityDetailResponse getLiabilityInfo(@ModelAttribute("request") LiabilityDetailRequest request) {
         if (request.getId() == null) {
-            return (LiabilityDetailResponse) ResponseUtil.paramError(new LiabilityDetailResponse());
+            return ResponseUtil.paramError(new LiabilityDetailResponse());
         }
         Liability liability = liabilityService.getLiabilityInfoById(request.getId());
         if (liability != null && liability.getUserId().equals(request.getUserId())) {
-            LiabilityDetailResponse response = (LiabilityDetailResponse) ResponseUtil.success(new LiabilityDetailResponse());
+            LiabilityDetailResponse response = ResponseUtil.success(new LiabilityDetailResponse());
 
             response.setLiability(fillDTOWithType(liability));
             return response;
         }
-        return (LiabilityDetailResponse) ResponseUtil.dataNotExisting(new LiabilityDetailResponse());
+        return ResponseUtil.dataNotExisting(new LiabilityDetailResponse());
     }
 
     /**
@@ -54,16 +54,42 @@ public class LiabilityController extends BaseController {
      * @return
      */
     private LiabilityDTO fillDTOWithType(Liability liability) {
-
         LiabilityDTO liabilityDTO = new LiabilityDTO(liability);
-        AssetTypes assetTypes = assetTypesService.selectById(liability.getType(), liability.getUserId());
+        AssetTypes assetTypes = assetTypesService.selectById(liability.getType());
         if(assetTypes!=null) {
             liabilityDTO.setType(assetTypes.getTypeDesc());
         }
         return liabilityDTO;
     }
 
-    @ResponseBody
+    @RequestMapping(value = "/liability/put", method = RequestMethod.POST)
+    public BaseResponse addLiability(@ModelAttribute("request") LiabilityAddRequest request) {
+
+        if (request.getRepaymentDay() == null
+                || request.getType() == null
+                || request.getInstallment() == null
+                || request.getAmount() == null) {
+            return ResponseUtil.paramError();
+        }
+
+        Liability liability = new Liability();
+        liability.setRepaymentDay(request.getRepaymentDay());
+        liability.setType(request.getType());
+        liability.setAmount(request.getAmount());
+        liability.setInstallment(request.getInstallment());
+        liability.setUserId(request.getUserId());
+        try {
+            if (liabilityService.createLiabilityInfo(liability)) {
+                return ResponseUtil.success();
+            } else {
+                return ResponseUtil.error();
+            }
+        } catch (SQLException e) {
+            logger.error("create liability info error:", e);
+            return ResponseUtil.sysError();
+        }
+    }
+
     @RequestMapping("/liability/update")
     public BaseResponse updateLiability(@ModelAttribute("request") LiabilityUpdateRequest request) {
         Liability update = new Liability();

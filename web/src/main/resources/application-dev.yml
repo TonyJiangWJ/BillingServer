@@ -22,3 +22,6 @@ spring:
 rsa:
     key:
         path: D:/
+
+logback:
+    path: D:/logForBilling/

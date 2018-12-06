@@ -6,7 +6,7 @@ import com.tony.billing.response.BaseResponse;
 import java.util.List;
 
 /**
- * Author jiangwj20966 on 2017/6/2.
+ * @author jiangwj20966 on 2017/6/2.
  */
 public class CostRecordPageResponse extends BaseResponse {
     private List<CostRecordDTO> costRecordList;

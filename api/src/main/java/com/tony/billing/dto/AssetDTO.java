@@ -1,6 +1,7 @@
 package com.tony.billing.dto;
 
 import com.tony.billing.entity.Asset;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author TonyJiang on 2018/2/12
@@ -8,6 +9,7 @@ import com.tony.billing.entity.Asset;
 public class AssetDTO {
     private String name;
     private String type;
+    private String available;
     private Long id;
     private Long amount;
 
@@ -19,7 +21,8 @@ public class AssetDTO {
         if (asset != null) {
             this.amount = asset.getAmount();
             this.id = asset.getId();
-            this.name = asset.getName();
+            this.name = StringUtils.isNotEmpty(asset.getExtName()) ? asset.getExtName() : asset.getName();
+            this.available = asset.getAvailable();
         }
     }
 
@@ -27,7 +30,8 @@ public class AssetDTO {
         if (asset != null) {
             this.amount = asset.getAmount();
             this.id = asset.getId();
-            this.name = asset.getName();
+            this.name = StringUtils.isNotEmpty(asset.getExtName()) ? asset.getExtName() : asset.getName();
+            this.available = asset.getAvailable();
             this.type = typeDesc;
         }
     }
@@ -46,6 +50,14 @@ public class AssetDTO {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getAvailable() {
+        return available;
+    }
+
+    public void setAvailable(String available) {
+        this.available = available;
     }
 
     public Long getId() {

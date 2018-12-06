@@ -21,9 +21,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 /**
- * Author by TonyJiang on 2017/6/3.
+ * @author by TonyJiang on 2017/6/3.
  */
 @Service
 public class AlipayBillCsvConvertServiceImpl implements AlipayBillCsvConvertService {
@@ -32,39 +34,61 @@ public class AlipayBillCsvConvertServiceImpl implements AlipayBillCsvConvertServ
     @Resource
     private CostRecordDao costRecordDao;
 
+    private final String ALIPAY_RECORD_FLAG = "支付宝交易记录明细查询";
+
+    private final String BACKUP_FLAG = "交易号,订单号,创建时间,支付时间,修改时间,地点,订单类型,交易对方,商品名称,金额,支出/收入,订单状态,服务费,退款,备注,交易状态,是否删除,id,是否隐藏";
+
+    private final int ALIPAY_RECORD_LINES = 7;
+
+    private final String ZIP_NAME_SUFFIX = ".zip";
+    private final String CSV_NAME_SUFFIX = ".csv";
+
     @Override
     public boolean convertToPOJO(MultipartFile multipartFile, Long userId) {
         if (multipartFile != null) {
             try {
-                InputStream inputStream = multipartFile.getInputStream();
-                CsvParser csvParser = new CsvParser(inputStream);
-                if (!csvParser.getRow(0).equals("支付宝交易记录明细查询")) {
-                    throw new RuntimeException("Illegal file");
+                InputStream inputStream = null;
+                // 未解压的支付宝账单
+                if (multipartFile.getOriginalFilename().endsWith(ZIP_NAME_SUFFIX)) {
+                    ZipInputStream zipInputStream = new ZipInputStream(multipartFile.getInputStream());
+                    ZipEntry zipEntry = zipInputStream.getNextEntry();
+                    if (!zipEntry.isDirectory() && zipEntry.getName().endsWith(CSV_NAME_SUFFIX)) {
+                        inputStream = zipInputStream;
+                    }
+                    // 已解压成csv文件的支付宝账单
+                } else if (multipartFile.getOriginalFilename().endsWith(CSV_NAME_SUFFIX)) {
+                    inputStream = multipartFile.getInputStream();
                 }
-                if (!CollectionUtils.isEmpty(csvParser.getList())) {
-                    if (csvParser.getRowNum() <= 7) {
+                if (inputStream != null) {
+                    CsvParser csvParser = new CsvParser(inputStream);
+                    if (!ALIPAY_RECORD_FLAG.equals(csvParser.getRow(0))) {
                         throw new RuntimeException("Illegal file");
                     }
-                    // alipay format
-                    List<String> fixedList = csvParser.getListCustom(5, csvParser.getRowNum() - 7);
-                    try {
-                        RecordRefUtil recordRefUtil = new RecordRefUtil();
-                        List<Record> records = new ArrayList<Record>();
-                        for (String csvLine : fixedList) {
-                            records.add((Record) recordRefUtil.convertCsv2POJO(csvLine, Record.class));
+                    if (!CollectionUtils.isEmpty(csvParser.getList())) {
+                        if (csvParser.getRowNum() <= ALIPAY_RECORD_LINES) {
+                            throw new RuntimeException("Illegal file");
                         }
-                        if (!CollectionUtils.isEmpty(records)) {
-                            for (Record entity : records) {
-                                convertToDBJOAndInsert(entity, userId);
+                        // alipay format
+                        List<String> fixedList = csvParser.getListCustom(5, csvParser.getRowNum() - 7);
+                        try {
+                            RecordRefUtil<Record> recordRefUtil = new RecordRefUtil<>();
+                            List<Record> records = new ArrayList<>();
+                            for (String csvLine : fixedList) {
+                                records.add(recordRefUtil.convertCsv2POJO(csvLine, Record.class));
                             }
+                            if (!CollectionUtils.isEmpty(records)) {
+                                for (Record entity : records) {
+                                    convertToDBJOAndInsert(entity, userId);
+                                }
+                            }
+                            return true;
+                        } catch (IllegalAccessException | InstantiationException e) {
+                            logger.error("转换支付宝账单csv文件出错", e);
                         }
-                        return true;
-                    } catch (IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchMethodException e) {
-                        e.printStackTrace();
                     }
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.error("读取支付宝账单文件出错", e);
             }
         }
 
@@ -75,14 +99,13 @@ public class AlipayBillCsvConvertServiceImpl implements AlipayBillCsvConvertServ
     public List<String> convertPOJO2String(List<CostRecord> recordList) {
         List<String> result = new ArrayList<>();
         RecordRefUtil utl = new RecordRefUtil();
-        result.add("交易号,订单号,创建时间,支付时间,修改时间,地点,订单类型,交易对方" +
-                ",商品名称,金额,支出/收入,订单状态,服务费,退款,备注,交易状态,是否删除,id,是否隐藏");
+        result.add(BACKUP_FLAG);
         try {
             for (CostRecord costRecord : recordList) {
                 result.add(utl.convertPOJO2String(costRecord));
             }
-        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            logger.error("转换对象到csv文本失败", e);
         }
         return result;
     }
@@ -94,8 +117,7 @@ public class AlipayBillCsvConvertServiceImpl implements AlipayBillCsvConvertServ
             try {
                 InputStream inputStream = multipartFile.getInputStream();
                 CsvParser csvParser = new CsvParser(inputStream);
-                if (!csvParser.getRow(0).equals("交易号,订单号,创建时间,支付时间,修改时间,地点,订单类型,交易对方" +
-                        ",商品名称,金额,支出/收入,订单状态,服务费,退款,备注,交易状态,是否删除,id,是否隐藏")) {
+                if (!BACKUP_FLAG.equals(csvParser.getRow(0))) {
                     throw new RuntimeException("Illegal file");
                 }
                 if (!CollectionUtils.isEmpty(csvParser.getList())) {
@@ -116,11 +138,11 @@ public class AlipayBillCsvConvertServiceImpl implements AlipayBillCsvConvertServ
                         }
                         return true;
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        logger.error("从备份文件中恢复出错", e);
                     }
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.error("读取备份文件出错", e);
             }
         }
 
@@ -185,10 +207,10 @@ public class AlipayBillCsvConvertServiceImpl implements AlipayBillCsvConvertServ
 
     }
 
-    static class RecordRefUtil<T> {
-        private T convertCsv2POJO(String csvLine, T t) throws IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
+    private static class RecordRefUtil<T> {
+        private T convertCsv2POJO(String csvLine, Class t) throws IllegalAccessException, InstantiationException {
             String[] strings = csvLine.split(",");
-            Object record = ((Class) t).newInstance();
+            Object record = t.newInstance();
             Class clazz = record.getClass();
             Field[] fields = clazz.getDeclaredFields();
             if (strings.length != fields.length) {
@@ -199,12 +221,13 @@ public class AlipayBillCsvConvertServiceImpl implements AlipayBillCsvConvertServ
                     fields[i].setAccessible(true);
                     fields[i].set(record, StringUtils.trim(strings[i]));
                 }
+
                 return (T) record;
             }
         }
 
 
-        private String convertPOJO2String(CostRecord costRecord) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        private String convertPOJO2String(CostRecord costRecord) throws IllegalAccessException {
             Class clz = CostRecord.class;
             StringBuilder sb = new StringBuilder();
             Field[] fields = clz.getDeclaredFields();

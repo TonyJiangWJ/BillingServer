@@ -1,6 +1,7 @@
 package com.tony.billing.service.impl;
 
 import com.tony.billing.constants.enums.EnumTypeIdentify;
+import com.tony.billing.constants.enums.EnumYesOrNo;
 import com.tony.billing.dao.AssetDao;
 import com.tony.billing.dao.AssetTypesDao;
 import com.tony.billing.dto.AssetDTO;
@@ -8,6 +9,7 @@ import com.tony.billing.entity.Asset;
 import com.tony.billing.entity.AssetTypes;
 import com.tony.billing.model.AssetModel;
 import com.tony.billing.service.AssetService;
+import com.tony.billing.util.UserIdContainer;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
@@ -59,9 +61,7 @@ public class AssetServiceImpl implements AssetService {
                         }
                     } else {
                         // 不存在父级类别时将自己作为父级，例如现金
-                        if (parentTypesMap.get(assetTypes.getTypeCode()) == null) {
-                            parentTypesMap.put(assetTypes.getTypeCode(), assetTypes);
-                        }
+                        parentTypesMap.putIfAbsent(assetTypes.getTypeCode(), assetTypes);
                     }
                 }
             }
@@ -79,6 +79,10 @@ public class AssetServiceImpl implements AssetService {
                 model = typeModel.get(type.getTypeCode());
             }
             model.setTotal(asset.getAmount() + model.getTotal());
+            // 当前可使用的总额
+            if (EnumYesOrNo.YES.getCode().equals(asset.getAvailable())) {
+                model.setTotalAvailable(asset.getAmount() + model.getTotalAvailable());
+            }
             model.getAssetList().add(new AssetDTO(asset, type.getTypeDesc()));
         }
         for (Map.Entry<String, AssetModel> entry : typeModel.entrySet()) {
@@ -111,6 +115,11 @@ public class AssetServiceImpl implements AssetService {
         } else {
             return -1L;
         }
+    }
+
+    @Override
+    public boolean deleteAsset(Long assetId) {
+        return assetDao.deleteById(assetId, UserIdContainer.getUserId());
     }
 
 }

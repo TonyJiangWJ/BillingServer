@@ -4,7 +4,7 @@ import com.tony.billing.entity.Admin;
 import com.tony.billing.entity.ModifyAdmin;
 
 /**
- * Author by TonyJiang on 2017/5/18.
+ * @author by TonyJiang on 2017/5/18.
  */
 public interface AdminService {
 

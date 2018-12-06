@@ -1,7 +1,7 @@
 package com.tony.billing.dto;
 
 /**
- * Author jiangwj20966 on 2017/7/13.
+ * @author jiangwj20966 on 2017/7/13.
  */
 public class BudgetDTO {
     private String tagName;

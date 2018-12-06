@@ -1,7 +1,7 @@
 package com.tony.billing.request;
 
 /**
- * Author jiangwj20966 on 2017/8/9.
+ * @author jiangwj20966 on 2017/8/9.
  */
 public class RealNameRequest extends BaseRequest {
     private String realName;

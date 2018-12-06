@@ -6,7 +6,7 @@ import com.tony.billing.response.BaseResponse;
 import java.util.List;
 
 /**
- * Author by TonyJiang on 2017/6/15.
+ * @author by TonyJiang on 2017/6/15.
  */
 public class CostTagListResponse extends BaseResponse {
     private List<TagInfoDTO> tagInfoModels;

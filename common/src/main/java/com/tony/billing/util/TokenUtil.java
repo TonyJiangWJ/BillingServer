@@ -1,7 +1,7 @@
 package com.tony.billing.util;
 
 /**
- * Author by TonyJiang on 2017/7/2.
+ * @author by TonyJiang on 2017/7/2.
  */
 public class TokenUtil {
     public static String getToken(String... params) {

@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Author jiangwj20966 on 2017/6/1.
+ * @author jiangwj20966 on 2017/6/1.
  */
 public class CsvParser {
     private BufferedReader bufferedReader;
@@ -75,27 +75,33 @@ public class CsvParser {
         }
     }
 
-    public List getList() {
+    public List<String> getList() {
         return cvsLines;
     }
 
-    public List getListWithNoHeader() {
+    public List<String> getListWithNoHeader() {
         return cvsLines.subList(2, cvsLines.size());
     }
 
-    public List getListCustom(Integer start, Integer end) {
+    public List<String> getListCustom(Integer start, Integer end) {
         return cvsLines.subList(start, end == null ? cvsLines.size() : end);
     }
 
-    // 得到csv文件的行数
+    /**
+     * 得到csv文件的行数
+     */
+
     public int getRowNum() {
         return cvsLines.size();
     }
 
-    // 得到csv文件的列数
+    /**
+     * 得到csv文件的列数
+     */
     public int getColNum() {
-        if (!cvsLines.toString().equals("[]")) {
-            if (cvsLines.get(0).contains(",")) { // csv文件中，每列之间的是用','来分隔的
+        if (!"[]".equals(cvsLines.toString())) {
+            // csv文件中，每列之间的是用','来分隔的
+            if (cvsLines.get(0).contains(",")) {
                 return cvsLines.get(0).split(",").length;
             } else if (cvsLines.get(0).trim().length() != 0) {
                 return 1;
@@ -107,15 +113,23 @@ public class CsvParser {
         }
     }
 
-    // 取得指定行的值
+    /**
+     * 取得指定行的值
+     *
+     * @param index
+     * @return
+     */
     public String getRow(int index) {
-        if (this.cvsLines.size() != 0)
-            return (String) cvsLines.get(index);
-        else
+        if (this.cvsLines.size() != 0) {
+            return cvsLines.get(index);
+        } else {
             return null;
+        }
     }
 
-    // 取得指定列的值
+    /**
+     * 取得指定列的值
+     */
     public String getCol(int index) {
         if (this.getColNum() == 0) {
             return null;
@@ -139,7 +153,13 @@ public class CsvParser {
         return str;
     }
 
-    // 取得指定行，指定列的值
+    /**
+     * 取得指定行，指定列的值
+     *
+     * @param row
+     * @param col
+     * @return
+     */
     public String getString(int row, int col) {
         String temp = null;
         int colnum = this.getColNum();
@@ -166,8 +186,6 @@ public class CsvParser {
 
     public void createCsv(String biao, List cvsLines, String path)
             throws IOException {
-        List tt = cvsLines;
-        String data = "";
         SimpleDateFormat dataFormat = new SimpleDateFormat("yyyyMMdd");
         Date today = new Date();
         String dateToday = dataFormat.format(today);
@@ -178,13 +196,12 @@ public class CsvParser {
         } else {
             file.delete();
         }
-        String str[];
         StringBuilder sb = new StringBuilder("");
         sb.append(biao);
         FileOutputStream writerStream = new FileOutputStream(file, true);
         BufferedWriter output = new BufferedWriter(new OutputStreamWriter(
                 writerStream, "UTF-8"));
-        for (Object aTt : tt) {
+        for (Object aTt : cvsLines) {
             String fileStr = aTt.toString();
 
             sb.append(fileStr).append("\r\n");
@@ -381,9 +398,7 @@ public class CsvParser {
             Object result = null;
             try {
                 result = method.invoke(record);
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            } catch (InvocationTargetException e) {
+            } catch (IllegalAccessException | InvocationTargetException e) {
                 e.printStackTrace();
             }
             if (result != null) {
@@ -409,22 +424,7 @@ public class CsvParser {
     }
 
 
-    public static String fen2Yuan(Long money) {
-        if (money == null) {
-            return null;
-        }
-        String s = money + "";
-        if (s.length() < 2) {
-            s = "0.0" + s;
-        } else if (s.length() == 2) {
-            s = "0." + s;
-        } else {
-            s = s.substring(0, s.length() - 2) + "." + s.substring(s.length() - 2);
-        }
-        return s;
-    }
-
-    public static Long yuan2fen(String money) {
+    private static Long yuan2fen(String money) {
         if (StringUtils.isEmpty(money)) {
             return null;
         }

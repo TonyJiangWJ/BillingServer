@@ -5,7 +5,7 @@ import com.tony.billing.annotation.Table;
 import java.util.Date;
 
 /**
- * Author by TonyJiang on 2017/6/15.
+ * @author by TonyJiang on 2017/6/15.
  */
 @Table("t_cost_tag")
 public class TagCostRef {

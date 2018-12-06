@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Author jiangwj20966 on 2017/7/13.
+ * @author jiangwj20966 on 2017/7/13.
  */
 @RestController
 @RequestMapping("/bootDemo")
@@ -62,7 +62,7 @@ public class BudgetController extends BaseController {
     public BudgetListResponse listBudget(@ModelAttribute("request") BudgetListRequest request) {
         BudgetListResponse response = new BudgetListResponse();
         if (StringUtils.isEmpty(request.getYear()) || request.getMonth() == null) {
-            return (BudgetListResponse) ResponseUtil.paramError(response);
+            return ResponseUtil.paramError(response);
         }
         try {
             Budget query = new Budget();

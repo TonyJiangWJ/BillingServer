@@ -3,7 +3,7 @@ package com.tony.billing.entity;
 import java.util.Date;
 
 /**
- * Author by TonyJiang on 2017/5/18.
+ * @author by TonyJiang on 2017/5/18.
  */
 public class Admin {
     private Long id;

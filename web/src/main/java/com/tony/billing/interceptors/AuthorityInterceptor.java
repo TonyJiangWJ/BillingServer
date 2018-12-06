@@ -7,28 +7,32 @@ import com.tony.billing.util.AuthUtil;
 import com.tony.billing.util.CookieUtil;
 import com.tony.billing.util.RedisUtils;
 import com.tony.billing.util.ResponseUtil;
+import com.tony.billing.util.UserIdContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.support.StandardMultipartHttpServletRequest;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.annotation.Resource;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
 /**
- * Author by TonyJiang on 2017/7/1.
+ * @author by TonyJiang on 2017/7/1.
  * 权限校验
  */
 @Component
 public class AuthorityInterceptor implements HandlerInterceptor {
 
-    @Autowired
+    @Resource
     private AuthUtil authUtil;
+
+    @Resource
+    private RedisUtils redisUtils;
 
     private Logger logger = LoggerFactory.getLogger(AuthorityInterceptor.class);
 
@@ -51,15 +55,17 @@ public class AuthorityInterceptor implements HandlerInterceptor {
     @Override
     public void afterCompletion(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o, Exception e) throws Exception {
         logger.debug("完全结束");
+        UserIdContainer.removeUserId();
     }
 
     private boolean isUserLogin(HttpServletRequest request) throws Exception {
         Cookie tokenCok = CookieUtil.getCookie("token", request);
         if (tokenCok != null) {
             String tokenId = authUtil.getUserTokenId(tokenCok.getValue());
-            Map store = RedisUtils.get(tokenId, Admin.class);
-            if (store != null) {
-                Admin admin = (Admin) store.get(tokenId);
+            Map store = redisUtils.get(tokenId, Admin.class);
+            Admin admin;
+            if (store != null && (admin = (Admin) store.get(tokenId)) != null) {
+                UserIdContainer.setUserId(admin.getId());
                 if (request instanceof TokenServletRequestWrapper) {
                     ((TokenServletRequestWrapper) request).addParameter("tokenId", tokenId);
                     ((TokenServletRequestWrapper) request).addParameter("userId", String.valueOf(admin.getId()));
@@ -67,7 +73,7 @@ public class AuthorityInterceptor implements HandlerInterceptor {
                     ((TokenServletRequestWrapper) ((StandardMultipartHttpServletRequest) request).getRequest()).addParameter("tokenId", tokenId);
                     ((TokenServletRequestWrapper) ((StandardMultipartHttpServletRequest) request).getRequest()).addParameter("userId", String.valueOf(admin.getId()));
                 }
-                RedisUtils.set(tokenId, admin, 3600 * 24);
+                redisUtils.set(tokenId, admin, 3600 * 24);
                 return true;
             }
         }

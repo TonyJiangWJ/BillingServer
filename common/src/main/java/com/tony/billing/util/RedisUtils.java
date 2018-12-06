@@ -3,44 +3,47 @@ package com.tony.billing.util;
 import com.alibaba.fastjson.JSON;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.dao.DataAccessException;
-import org.springframework.data.redis.connection.RedisConnection;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * @author tonyjiang
+ */
 @Component
 public class RedisUtils {
 
-    @Resource
+
     private StringRedisTemplate stringRedisTemplate;
 
-    private static StringRedisTemplate redisTemplate;
-
-    @PostConstruct
-    public void init() {
-        redisTemplate = stringRedisTemplate;
+    @Autowired
+    public RedisUtils(StringRedisTemplate stringRedisTemplate) {
+        this.stringRedisTemplate = stringRedisTemplate;
     }
 
     private static Logger logger = LoggerFactory.getLogger(RedisUtils.class);
 
-    // 设置对象持久化
-    public static boolean set(final Object key, final Object val) {
+
+    /**
+     * 设置对象持久化
+     *
+     * @param key 键值
+     * @param val 内容
+     * @return
+     */
+    public boolean set(final Object key, final Object val) {
         boolean result = false;
         try {
-            result = redisTemplate.execute(new RedisCallback<Boolean>() {
-                public Boolean doInRedis(RedisConnection connection) throws DataAccessException {
-                    RedisSerializer<String> serializer = redisTemplate.getStringSerializer();
-                    byte[] keys = serializer.serialize(JSON.toJSONString(key));
-                    byte[] name = serializer.serialize(JSON.toJSONString(val));
-                    return connection.setNX(keys, name);
-                }
+            result = stringRedisTemplate.execute((RedisCallback<Boolean>) connection -> {
+                RedisSerializer<String> serializer = stringRedisTemplate.getStringSerializer();
+                byte[] keys = serializer.serialize(JSON.toJSONString(key));
+                byte[] name = serializer.serialize(JSON.toJSONString(val));
+                return connection.setNX(keys, name);
             });
         } catch (Exception e) {
             logger.error("设置cache错误", e);
@@ -49,17 +52,21 @@ public class RedisUtils {
         return result;
     }
 
-    // 设置对象存活时间,单位秒
-    public static void set(final Object key, final Object val, final long time) {
+    /**
+     * 设置对象存活时间,单位秒
+     *
+     * @param key  键值
+     * @param val  内容
+     * @param time 过期时间
+     */
+    public void set(final Object key, final Object val, final long time) {
         try {
-            redisTemplate.execute(new RedisCallback<Boolean>() {
-                public Boolean doInRedis(RedisConnection connection) throws DataAccessException {
-                    RedisSerializer<String> serializer = redisTemplate.getStringSerializer();
-                    byte[] keys = serializer.serialize(JSON.toJSONString(key));
-                    byte[] name = serializer.serialize(JSON.toJSONString(val));
-                    connection.setEx(keys, time, name);
-                    return true;
-                }
+            stringRedisTemplate.execute((RedisCallback<Boolean>) connection -> {
+                RedisSerializer<String> serializer = stringRedisTemplate.getStringSerializer();
+                byte[] keys = serializer.serialize(JSON.toJSONString(key));
+                byte[] name = serializer.serialize(JSON.toJSONString(val));
+                connection.setEx(keys, time, name);
+                return true;
             });
         } catch (Exception e) {
             logger.error("设置定时cache错误", e);
@@ -67,26 +74,32 @@ public class RedisUtils {
 
     }
 
-    // 获取对象
-    public static Map<Object, Object> get(final Object key, final Class<?> clazz) {
+
+    /**
+     * 获取对象
+     *
+     * @param key   键值
+     * @param clazz 对象类
+     * @return 返回键值对
+     */
+    public Map<Object, Object> get(final Object key, final Class<?> clazz) {
         Map<Object, Object> result = null;
         try {
-            result = redisTemplate.execute(new RedisCallback<Map<Object, Object>>() {
-                public Map<Object, Object> doInRedis(RedisConnection connection) throws DataAccessException {
-                    RedisSerializer<String> serializer = redisTemplate.getStringSerializer();
-                    byte[] keys = serializer.serialize(JSON.toJSONString(key));
-                    byte[] value = connection.get(keys);
-                    if (value == null) {
-                        return null;
-                    }
-                    String jsonString = serializer.deserialize(value);
-                    Map<Object, Object> map = new HashMap<Object, Object>();
-                    if (jsonString.startsWith("{"))
-                        map.put(key, JSON.parseObject(jsonString, clazz));
-                    else
-                        map.put(key, jsonString);
-                    return map;
+            result = stringRedisTemplate.execute((RedisCallback<Map<Object, Object>>) connection -> {
+                RedisSerializer<String> serializer = stringRedisTemplate.getStringSerializer();
+                byte[] keys = serializer.serialize(JSON.toJSONString(key));
+                byte[] value = connection.get(keys);
+                if (value == null) {
+                    return null;
                 }
+                String jsonString = serializer.deserialize(value);
+                Map<Object, Object> map = new HashMap<>();
+                if (jsonString.startsWith("{")) {
+                    map.put(key, JSON.parseObject(jsonString, clazz));
+                } else {
+                    map.put(key, jsonString);
+                }
+                return map;
             });
         } catch (Exception e) {
             logger.error("设置定时cache错误", e);
@@ -95,25 +108,31 @@ public class RedisUtils {
         return result;
     }
 
-    // 计数器
-    public static Long incr(final Object key, final Long by) {
-        return redisTemplate.execute(new RedisCallback<Long>() {
-            public Long doInRedis(RedisConnection connection) throws DataAccessException {
-                RedisSerializer<String> serializer = redisTemplate.getStringSerializer();
-                byte[] keys = serializer.serialize(JSON.toJSONString(key));
-                return connection.incrBy(keys, by == null ? 1 : by);
-            }
+    /**
+     * 递增计数器
+     *
+     * @param key 键值
+     * @param by  增加值
+     * @return 增加后的值
+     */
+    public Long incr(final Object key, final Long by) {
+        return stringRedisTemplate.execute((RedisCallback<Long>) connection -> {
+            RedisSerializer<String> serializer = stringRedisTemplate.getStringSerializer();
+            byte[] keys = serializer.serialize(JSON.toJSONString(key));
+            return connection.incrBy(keys, by == null ? 1 : by);
         });
     }
 
-    // 删除对象
-    public static boolean del(final Object key) {
-        return redisTemplate.execute(new RedisCallback<Boolean>() {
-            public Boolean doInRedis(RedisConnection connection) throws DataAccessException {
-                RedisSerializer<String> serializer = redisTemplate.getStringSerializer();
-                byte[] keys = serializer.serialize(JSON.toJSONString(key));
-                return connection.get(keys) == null || connection.del(keys) > 0;
-            }
+    /**
+     * 删除对象
+     *
+     * @param key 键
+     */
+    public boolean del(final Object key) {
+        return stringRedisTemplate.execute((RedisCallback<Boolean>) connection -> {
+            RedisSerializer<String> serializer = stringRedisTemplate.getStringSerializer();
+            byte[] keys = serializer.serialize(JSON.toJSONString(key));
+            return connection.get(keys) == null || connection.del(keys) > 0;
         });
     }
 }

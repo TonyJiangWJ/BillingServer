@@ -4,7 +4,7 @@ import com.tony.billing.entity.Admin;
 import org.springframework.stereotype.Repository;
 
 /**
- * Author by TonyJiang on 2017/7/12.
+ * @author by TonyJiang on 2017/7/12.
  */
 @Repository
 public interface AdminMapper {

@@ -13,7 +13,14 @@ public class AssetManageDTO {
 
     private Long totalAsset;
     private Long totalLiability;
-    private Long cleanAsset;// 净资产
+    /**
+     * 净资产
+     */
+    private Long cleanAsset;
+    /**
+     * 可使用的金额
+     */
+    private Long availableAsset;
     private List<AssetModel> assetModels;
     private List<LiabilityModel> liabilityModels;
     private List<MonthLiabilityModel> monthLiabilityModels;
@@ -40,6 +47,14 @@ public class AssetManageDTO {
 
     public void setCleanAsset(Long cleanAsset) {
         this.cleanAsset = cleanAsset;
+    }
+
+    public Long getAvailableAsset() {
+        return availableAsset;
+    }
+
+    public void setAvailableAsset(Long availableAsset) {
+        this.availableAsset = availableAsset;
     }
 
     public List<AssetModel> getAssetModels() {

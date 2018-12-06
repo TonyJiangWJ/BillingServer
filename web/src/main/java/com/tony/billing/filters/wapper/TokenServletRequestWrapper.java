@@ -11,7 +11,7 @@ import java.util.Enumeration;
 import java.util.Map;
 
 /**
- * Author by TonyJiang on 2017/7/2.
+ * @author by TonyJiang on 2017/7/2.
  */
 public class TokenServletRequestWrapper extends HttpServletRequestWrapper {
 

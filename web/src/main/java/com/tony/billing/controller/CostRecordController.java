@@ -8,15 +8,22 @@ import com.tony.billing.dto.CostRecordDTO;
 import com.tony.billing.dto.CostRecordDetailDTO;
 import com.tony.billing.entity.CostRecord;
 import com.tony.billing.entity.PagerGrid;
+import com.tony.billing.entity.TagInfo;
 import com.tony.billing.entity.query.CostRecordQuery;
 import com.tony.billing.request.BaseRequest;
-import com.tony.billing.request.costrecord.*;
+import com.tony.billing.request.costrecord.CostRecordDeleteRequest;
+import com.tony.billing.request.costrecord.CostRecordDetailRequest;
+import com.tony.billing.request.costrecord.CostRecordHideRequest;
+import com.tony.billing.request.costrecord.CostRecordPageRequest;
+import com.tony.billing.request.costrecord.CostRecordPutRequest;
+import com.tony.billing.request.costrecord.CostRecordUpdateRequest;
 import com.tony.billing.response.BaseResponse;
 import com.tony.billing.response.costrecord.CostRecordDeleteResponse;
 import com.tony.billing.response.costrecord.CostRecordDetailResponse;
 import com.tony.billing.response.costrecord.CostRecordPageResponse;
 import com.tony.billing.service.AlipayBillCsvConvertService;
 import com.tony.billing.service.CostRecordService;
+import com.tony.billing.service.TagInfoService;
 import com.tony.billing.util.MoneyUtil;
 import com.tony.billing.util.ResponseUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -36,10 +43,14 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
- * Author jiangwj20966 on 2017/6/2.
+ * @author jiangwj20966 on 2017/6/2.
  */
 @RestController
 @RequestMapping(value = "/bootDemo")
@@ -49,6 +60,8 @@ public class CostRecordController {
     private CostRecordService costRecordService;
     @Resource
     private AlipayBillCsvConvertService alipayBillCsvConvertService;
+    @Resource
+    private TagInfoService tagInfoService;
 
     /**
      * 获取分页数据
@@ -133,7 +146,7 @@ public class CostRecordController {
     public CostRecordDetailResponse getDetail(@ModelAttribute("request") CostRecordDetailRequest request) {
         CostRecordDetailResponse response = new CostRecordDetailResponse();
         if (StringUtils.isEmpty(request.getTradeNo())) {
-            return (CostRecordDetailResponse) ResponseUtil.paramError(response);
+            return ResponseUtil.paramError(response);
         }
         ResponseUtil.error(response);
         try {
@@ -184,7 +197,7 @@ public class CostRecordController {
         CostRecordDeleteResponse response = new CostRecordDeleteResponse();
         try {
             if (StringUtils.isEmpty(request.getTradeNo()) || request.getNowStatus() == null) {
-                return (CostRecordDeleteResponse) ResponseUtil.paramError(response);
+                return ResponseUtil.paramError(response);
             }
             Map<String, Object> params = new HashMap<String, Object>();
             params.put("tradeNo", request.getTradeNo());
@@ -373,6 +386,7 @@ public class CostRecordController {
         if (!CollectionUtils.isEmpty(list)) {
             List<CostRecordDTO> models = new ArrayList<CostRecordDTO>();
             CostRecordDTO model;
+            List<TagInfo> tagInfos;
             for (CostRecord entity : list) {
                 model = new CostRecordDTO();
                 model.setCreateTime(entity.getCreateTime());
@@ -387,6 +401,13 @@ public class CostRecordController {
                 model.setTarget(entity.getTarget());
                 model.setMemo(entity.getMemo());
                 model.setIsHidden(EnumHidden.getHiddenEnum(entity.getIsHidden()).desc());
+                tagInfos = tagInfoService.listTagInfoByTradeNo(entity.getTradeNo());
+                if (!CollectionUtils.isEmpty(tagInfos)) {
+                    model.setTags(new ArrayList<>());
+                    for (TagInfo tagInfo : tagInfos) {
+                        model.getTags().add(tagInfo.getTagName());
+                    }
+                }
                 models.add(model);
             }
             return models;

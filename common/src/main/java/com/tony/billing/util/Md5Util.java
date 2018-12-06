@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Author by TonyJiang on 2017/7/1.
+ * @author by TonyJiang on 2017/7/1.
  */
 public class Md5Util {
     public static String md5(String str) {
@@ -21,21 +21,20 @@ public class Md5Util {
             messageDigest = MessageDigest.getInstance("MD5");
             messageDigest.reset();
             messageDigest.update(str.getBytes("UTF-8"));
-        } catch (NoSuchAlgorithmException e) {
-            return str;
-        } catch (UnsupportedEncodingException e) {
+        } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
             return str;
         }
         byte[] byteArray = messageDigest.digest();
-        StringBuffer md5StrBuff = new StringBuffer();
-        for (int i = 0; i < byteArray.length; i++) {
-            if (Integer.toHexString(0xFF & byteArray[i]).length() == 1)
-                md5StrBuff.append("0").append(
-                        Integer.toHexString(0xFF & byteArray[i]));
-            else
-                md5StrBuff.append(Integer.toHexString(0xFF & byteArray[i]));
+        StringBuilder stringBuilder = new StringBuilder();
+        for (byte b : byteArray) {
+            if (Integer.toHexString(0xFF & b).length() == 1) {
+                stringBuilder.append("0").append(
+                        Integer.toHexString(0xFF & b));
+            } else {
+                stringBuilder.append(Integer.toHexString(0xFF & b));
+            }
         }
-        return md5StrBuff.toString();
+        return stringBuilder.toString();
     }
 
     public static String md5Sign(String priKey, Map<String, Object> paramMap) {

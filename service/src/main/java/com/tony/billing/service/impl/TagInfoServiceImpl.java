@@ -1,11 +1,14 @@
 package com.tony.billing.service.impl;
 
+import com.google.common.base.Preconditions;
 import com.tony.billing.constants.enums.EnumDeleted;
-import com.tony.billing.dao.TagInfoDao;
+import com.tony.billing.dao.mapper.TagInfoMapper;
 import com.tony.billing.entity.TagCostRef;
 import com.tony.billing.entity.TagInfo;
 import com.tony.billing.service.TagInfoService;
+import com.tony.billing.util.UserIdContainer;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -15,27 +18,27 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Author by TonyJiang on 2017/6/15.
+ * @author by TonyJiang on 2017/6/15.
  */
 @Service
 public class TagInfoServiceImpl implements TagInfoService {
     @Resource
-    private TagInfoDao tagInfoDao;
+    private TagInfoMapper tagInfoMapper;
 
     @Override
     public List<TagInfo> listTagInfo(TagInfo tagInfo) {
-        return tagInfoDao.find(tagInfo);
+        return tagInfoMapper.find(tagInfo);
     }
 
     @Override
     public Long putTagInfo(TagInfo tagInfo) {
-        if (CollectionUtils.isNotEmpty(tagInfoDao.find(tagInfo))) {
+        if (CollectionUtils.isNotEmpty(tagInfoMapper.find(tagInfo))) {
             return -1L;
         }
         tagInfo.setCreateTime(new Date());
         tagInfo.setModifyTime(new Date());
         tagInfo.setIsDelete(EnumDeleted.NOT_DELETED.val());
-        if (tagInfoDao.insert(tagInfo) > 0) {
+        if (tagInfoMapper.insert(tagInfo) > 0) {
             return tagInfo.getId();
         }
         return -1L;
@@ -45,7 +48,7 @@ public class TagInfoServiceImpl implements TagInfoService {
     public TagInfo findTagInfoByName(String tagName) {
         TagInfo tagInfo = new TagInfo();
         tagInfo.setTagName(tagName);
-        List<TagInfo> tagInfos = tagInfoDao.find(tagInfo);
+        List<TagInfo> tagInfos = tagInfoMapper.find(tagInfo);
         if (!CollectionUtils.isEmpty(tagInfos)) {
             return tagInfos.get(0);
         } else {
@@ -54,13 +57,18 @@ public class TagInfoServiceImpl implements TagInfoService {
     }
 
     @Override
-    public List<TagInfo> listTagInfoByTradeNo(Map param) {
-        return tagInfoDao.listTagInfoByTradeNo(param);
+    public List<TagInfo> listTagInfoByTradeNo(String tradeNo) {
+        Map<String, Object> params = new HashMap<>(4);
+        params.put("tradeNo", tradeNo);
+        params.put("userId", UserIdContainer.getUserId());
+        Preconditions.checkNotNull(params.get("userId"));
+        Preconditions.checkState(StringUtils.isNotEmpty(tradeNo));
+        return tagInfoMapper.listTagInfoByTradeNo(params);
     }
 
     @Override
     public TagInfo getTagInfoById(Long id) {
-        return tagInfoDao.getTagInfoById(id);
+        return tagInfoMapper.getTagInfoById(id);
     }
 
     @Override
@@ -68,7 +76,7 @@ public class TagInfoServiceImpl implements TagInfoService {
         tagCostRef.setCreateTime(new Date());
         tagCostRef.setModifyTime(new Date());
         tagCostRef.setIsDelete(EnumDeleted.NOT_DELETED.val());
-        if (tagInfoDao.insertTagCostRef(tagCostRef) > 0) {
+        if (tagInfoMapper.insertTagCostRef(tagCostRef) > 0) {
             return tagCostRef.getId();
         }
         return -1L;
@@ -80,7 +88,7 @@ public class TagInfoServiceImpl implements TagInfoService {
             throw new RuntimeException("param error");
         }
         param.put("modifyTime", new Date());
-        return tagInfoDao.deleteCostTag(param);
+        return tagInfoMapper.deleteCostTag(param);
     }
 
     @Override
@@ -88,8 +96,8 @@ public class TagInfoServiceImpl implements TagInfoService {
         Map<String, Object> param = new HashMap<>();
         param.put("tagId", id);
         param.put("modifyTime", new Date());
-        tagInfoDao.deleteCostTagByTagId(param);
-        return tagInfoDao.deleteTagById(param);
+        tagInfoMapper.deleteCostTagByTagId(param);
+        return tagInfoMapper.deleteTagById(param);
     }
 
 }

@@ -10,7 +10,7 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 import org.springframework.test.context.junit4.SpringRunner;
 
 /**
- * Author by TonyJiang on 2017/8/19.
+ * @author by TonyJiang on 2017/8/19.
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = TestApplication.class)

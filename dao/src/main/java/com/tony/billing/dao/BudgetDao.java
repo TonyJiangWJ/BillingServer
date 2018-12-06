@@ -5,7 +5,7 @@ import com.tony.billing.entity.Budget;
 import java.util.List;
 
 /**
- * Author by TonyJiang on 2017/7/5.
+ * @author by TonyJiang on 2017/7/5.
  */
 public interface BudgetDao {
     Long insert(Budget budget);

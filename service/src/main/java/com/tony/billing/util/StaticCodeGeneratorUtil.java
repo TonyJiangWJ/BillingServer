@@ -8,14 +8,11 @@ import java.lang.reflect.Field;
 import java.util.Date;
 
 /**
- * Author jiangwj20966 on 2017/6/2.
+ * @author jiangwj20966 on 2017/6/2.
  * 偷懒用
  */
 public class StaticCodeGeneratorUtil {
     public static void main(String[] args) {
-//        generateAll(CostRecord.class, true);
-//        System.out.println(insertSqlGenerator(CostRecord.class, true));
-//        System.out.println("under_score_case SQL:");
         generateAll(LoginLog.class, false);
     }
 
@@ -26,7 +23,6 @@ public class StaticCodeGeneratorUtil {
         System.out.println(allSqlGenerator(clz, isSqlCamelCase));
         System.out.println(insertSqlGenerator(clz, isSqlCamelCase));
         System.out.println(updateSqlGenerator(clz, isSqlCamelCase));
-//        System.out.println(whereCaseGenerator(clz, isSqlCamelCase));
         System.out.println(pageSqlGenerator(clz, isSqlCamelCase));
         System.out.println("</mapper>");
     }
@@ -195,7 +191,9 @@ public class StaticCodeGeneratorUtil {
         return tableName;
     }
 
-    //  几种常用类型的JDBCType转换，新加的要在这个里面加上
+    /**
+     * 几种常用类型的JDBCType转换，新加的要在这个里面加上
+     */
     private static String getJDBCType(Field field) {
         if (field.getType().getName().equals(Integer.class.getName())) {
             return "INTEGER";

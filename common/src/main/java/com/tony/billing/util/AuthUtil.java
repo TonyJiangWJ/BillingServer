@@ -14,7 +14,7 @@ import java.util.Map;
 
 
 /**
- * Author by TonyJiang on 2017/7/1.
+ * @author by TonyJiang on 2017/7/1.
  */
 public class AuthUtil {
 

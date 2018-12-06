@@ -9,13 +9,13 @@ import java.util.List;
  */
 public interface AssetTypesService {
 
-    List<AssetTypes> selectAssetTypeList(Long userId);
+    List<AssetTypes> selectAssetTypeList();
 
-    List<AssetTypes> selectLiabilityTypeList(Long userId);
+    List<AssetTypes> selectLiabilityTypeList();
 
-    List<AssetTypes> selectAssetTypeListByParent(String parentCode, Long userId);
+    List<AssetTypes> selectAssetTypeListByParent(String parentCode);
 
-    List<AssetTypes> selectLiabilityTypeListByParent(String parentCode, Long userId);
+    List<AssetTypes> selectLiabilityTypeListByParent(String parentCode);
 
     List<AssetTypes> getAssetTypeByCondition(AssetTypes condition);
 
@@ -23,7 +23,7 @@ public interface AssetTypesService {
 
     boolean update(AssetTypes assetTypes);
 
-    boolean deleteById(Integer id, Long userId);
+    boolean deleteById(Integer id);
 
-    AssetTypes selectById(Integer id, Long userId);
+    AssetTypes selectById(Integer id);
 }

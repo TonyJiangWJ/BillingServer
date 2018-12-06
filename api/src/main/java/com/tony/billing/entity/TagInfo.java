@@ -6,7 +6,7 @@ import com.tony.billing.annotation.Table;
 import java.util.Date;
 
 /**
- * Author by TonyJiang on 2017/6/13.
+ * @author by TonyJiang on 2017/6/13.
  */
 @Table("t_tag_info")
 public class TagInfo {

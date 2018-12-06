@@ -3,7 +3,7 @@ package com.tony.billing.dao;
 import com.tony.billing.entity.Admin;
 
 /**
- * Author by TonyJiang on 2017/5/18.
+ * @author by TonyJiang on 2017/5/18.
  */
 public interface AdminDao {
     Long doLogin(Admin admin);

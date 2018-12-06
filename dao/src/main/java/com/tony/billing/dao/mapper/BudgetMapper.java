@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 /**
- * Author by TonyJiang on 2017/7/12.
+ * @author by TonyJiang on 2017/7/12.
  */
 @Repository
 public interface BudgetMapper {

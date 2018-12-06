@@ -29,7 +29,10 @@ spring:
         max-idle: 8
         min-idle: 0
       timeout: 3000
-
+    mail:
+      host: smtp.yeah.net
+      username: tony_sama@yeah.net
+      password:
 # MyBatis
 mybatis:
     typeAliasesPackage: com.tony.billing.entity

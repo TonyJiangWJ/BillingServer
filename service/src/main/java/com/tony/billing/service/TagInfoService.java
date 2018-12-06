@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Author by TonyJiang on 2017/6/15.
+ * @author by TonyJiang on 2017/6/15.
  */
 public interface TagInfoService {
     List<TagInfo> listTagInfo(TagInfo tagInfo);
@@ -16,7 +16,7 @@ public interface TagInfoService {
 
     TagInfo findTagInfoByName(String tagName);
 
-    List<TagInfo> listTagInfoByTradeNo(Map param);
+    List<TagInfo> listTagInfoByTradeNo(String tradeNo);
 
     TagInfo getTagInfoById(Long id);
 
