@@ -22,6 +22,7 @@ public class AssetDTO {
             this.amount = asset.getAmount();
             this.id = asset.getId();
             this.name = StringUtils.isNotEmpty(asset.getExtName()) ? asset.getExtName() : asset.getName();
+            this.available = asset.getAvailable();
         }
     }
 
@@ -30,6 +31,7 @@ public class AssetDTO {
             this.amount = asset.getAmount();
             this.id = asset.getId();
             this.name = StringUtils.isNotEmpty(asset.getExtName()) ? asset.getExtName() : asset.getName();
+            this.available = asset.getAvailable();
             this.type = typeDesc;
         }
     }

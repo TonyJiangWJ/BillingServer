@@ -35,4 +35,12 @@ public interface AssetService {
      */
     Long addAsset(Asset asset);
 
+    /**
+     * 删除资产信息
+     *
+     * @param assetId
+     * @return
+     */
+    boolean deleteAsset(Long assetId);
+
 }

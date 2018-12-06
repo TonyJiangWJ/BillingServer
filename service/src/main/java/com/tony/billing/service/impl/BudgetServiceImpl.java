@@ -2,9 +2,10 @@ package com.tony.billing.service.impl;
 
 import com.tony.billing.dao.BudgetDao;
 import com.tony.billing.dao.CostRecordDao;
-import com.tony.billing.dao.TagInfoDao;
+import com.tony.billing.dao.mapper.TagInfoMapper;
 import com.tony.billing.entity.Budget;
 import com.tony.billing.entity.CostRecord;
+import com.tony.billing.entity.TagInfo;
 import com.tony.billing.model.BudgetCostModel;
 import com.tony.billing.model.BudgetModel;
 import com.tony.billing.service.BudgetService;
@@ -30,7 +31,7 @@ public class BudgetServiceImpl implements BudgetService {
     @Resource
     private CostRecordDao costRecordDao;
     @Resource
-    private TagInfoDao tagInfoDao;
+    private TagInfoMapper tagInfoMapper;
 
     @Override
     public Long saveBudget(Budget budget) {
@@ -67,7 +68,11 @@ public class BudgetServiceImpl implements BudgetService {
                     params.put("userId", budget.getUserId());
                     List<CostRecord> costs = costRecordDao.findByTagId(params);
                     if (CollectionUtils.isNotEmpty(costs)) {
-                        String tagName = tagInfoDao.getTagInfoById(entity.getTagId()).getTagName();
+                        TagInfo tagInfo = tagInfoMapper.getTagInfoById(entity.getTagId());
+                        if (tagInfo == null) {
+                            throw new IllegalStateException("tagInfo不存在");
+                        }
+                        String tagName = tagInfo.getTagName();
                         budgetCostModel = new BudgetCostModel();
                         budgetCostModel.setBudgetMoney(entity.getBudgetMoney());
                         budgetCostModel.setBelongMonth(entity.getBelongMonth());

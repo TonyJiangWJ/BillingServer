@@ -9,6 +9,7 @@ public class AssetAddRequest extends BaseRequest {
     private Integer type;
     private String name;
     private Long amount;
+    private Boolean available;
 
     public Integer getType() {
         return type;
@@ -32,5 +33,13 @@ public class AssetAddRequest extends BaseRequest {
 
     public void setAmount(Long amount) {
         this.amount = amount;
+    }
+
+    public Boolean getAvailable() {
+        return available;
+    }
+
+    public void setAvailable(boolean available) {
+        this.available = available;
     }
 }

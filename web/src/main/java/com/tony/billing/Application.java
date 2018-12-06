@@ -10,7 +10,6 @@ import org.springframework.context.annotation.ComponentScan;
  * @author by TonyJiang on 2017/5/18.
  */
 @SpringBootApplication
-@ComponentScan
 @ServletComponentScan
 @MapperScan("com.tony.billing.dao.mapper")
 public class Application {

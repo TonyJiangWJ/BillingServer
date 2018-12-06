@@ -9,6 +9,7 @@ import com.tony.billing.entity.Asset;
 import com.tony.billing.entity.AssetTypes;
 import com.tony.billing.model.AssetModel;
 import com.tony.billing.service.AssetService;
+import com.tony.billing.util.UserIdContainer;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
@@ -114,6 +115,11 @@ public class AssetServiceImpl implements AssetService {
         } else {
             return -1L;
         }
+    }
+
+    @Override
+    public boolean deleteAsset(Long assetId) {
+        return assetDao.deleteById(assetId, UserIdContainer.getUserId());
     }
 
 }

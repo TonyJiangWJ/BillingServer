@@ -16,4 +16,6 @@ public interface AssetDao {
     List<Asset> list(Asset asset);
 
     Asset getAssetById(Long id);
+
+    boolean deleteById(Long id, Long userId);
 }

@@ -2,7 +2,7 @@ package com.tony.billing.request.liability;
 
 import com.tony.billing.request.BaseRequest;
 
-import java.sql.Date;
+import java.util.Date;
 
 /**
  *

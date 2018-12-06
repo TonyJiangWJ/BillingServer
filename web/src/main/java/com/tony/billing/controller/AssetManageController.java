@@ -1,17 +1,17 @@
 package com.tony.billing.controller;
 
+import com.tony.billing.constants.enums.EnumYesOrNo;
 import com.tony.billing.dto.AssetDTO;
 import com.tony.billing.dto.AssetManageDTO;
 import com.tony.billing.entity.Asset;
-import com.tony.billing.entity.Liability;
 import com.tony.billing.model.AssetModel;
 import com.tony.billing.model.LiabilityModel;
 import com.tony.billing.model.MonthLiabilityModel;
 import com.tony.billing.request.BaseRequest;
 import com.tony.billing.request.asset.AssetAddRequest;
+import com.tony.billing.request.asset.AssetDeleteRequest;
 import com.tony.billing.request.asset.AssetDetailRequest;
 import com.tony.billing.request.asset.AssetUpdateRequest;
-import com.tony.billing.request.liability.LiabilityAddRequest;
 import com.tony.billing.response.BaseResponse;
 import com.tony.billing.response.asset.AssetDetailResponse;
 import com.tony.billing.response.asset.AssetManageResponse;
@@ -25,11 +25,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
-import java.sql.SQLException;
 
 /**
  * @author TonyJiang on 2018/2/12
@@ -92,6 +90,9 @@ public class AssetManageController extends BaseController {
         update.setAmount(request.getAmount());
         update.setExtName(request.getName());
         update.setUserId(request.getUserId());
+        if (StringUtils.isNotEmpty(request.getAvailable())) {
+            update.setAvailable("true".equalsIgnoreCase(request.getAvailable()) ? EnumYesOrNo.YES.getCode() : EnumYesOrNo.NO.getCode());
+        }
         if (assetService.modifyAssetInfoById(update)) {
             return ResponseUtil.success();
         } else {
@@ -110,6 +111,9 @@ public class AssetManageController extends BaseController {
         asset.setAmount(request.getAmount());
         asset.setType(request.getType());
         asset.setUserId(request.getUserId());
+        if (request.getAvailable() != null) {
+            asset.setAvailable(request.getAvailable() ? EnumYesOrNo.YES.getCode() : EnumYesOrNo.NO.getCode());
+        }
 
         if (StringUtils.isNotEmpty(request.getName())) {
             asset.setExtName(request.getName());
@@ -122,31 +126,15 @@ public class AssetManageController extends BaseController {
     }
 
 
-    @RequestMapping(value = "/liability/put", method = RequestMethod.POST)
-    public BaseResponse addLiability(@ModelAttribute("request") LiabilityAddRequest request) {
-
-        if (request.getRepaymentDay() == null
-                || request.getType() == null
-                || request.getInstallment() == null
-                || request.getAmount() == null) {
+    @RequestMapping("/asset/delete")
+    public BaseResponse deleteAsset(@ModelAttribute("request") AssetDeleteRequest request) {
+        if (request.getAssetId() == null) {
             return ResponseUtil.paramError();
         }
-
-        Liability liability = new Liability();
-        liability.setRepaymentDay(request.getRepaymentDay());
-        liability.setType(request.getType());
-        liability.setAmount(request.getAmount());
-        liability.setInstallment(request.getInstallment());
-        liability.setUserId(request.getUserId());
-        try {
-            if (liabilityService.createLiabilityInfo(liability)) {
-                return ResponseUtil.success();
-            } else {
-                return ResponseUtil.error();
-            }
-        } catch (SQLException e) {
-            logger.error("create liability info error:", e);
-            return ResponseUtil.sysError();
+        if (assetService.deleteAsset(request.getAssetId())) {
+            return ResponseUtil.success();
+        } else {
+            return ResponseUtil.error();
         }
     }
 
