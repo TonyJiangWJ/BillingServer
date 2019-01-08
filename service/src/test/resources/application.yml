@@ -13,16 +13,38 @@ spring:
         encoding.force: true
         encoding.enabled: true
     datasource:
-      driver-class-name: com.mysql.cj.jdbc.Driver
-      url: jdbc:mysql://192.168.139.138:3306/my_daily_cost?serverTimezone=CTT&characterEncoding=utf8&useUnicode=true&useSSL=false
-      username: root
-      password: 123456
+
+      druid:
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        url: jdbc:mysql://127.0.0.1:3306/my_daily_cost?serverTimezone=CTT&characterEncoding=utf8&useUnicode=true&useSSL=false
+        username: root
+        password:
+
+        initial-size: 5
+        max-active: 30
+        min-idle: 5
+        max-wait: 60000
+        time-between-eviction-runs-millis: 60000
+        min-evictable-idle-time-millis: 30000
+        validation-query: SELECT 1 FROM DUAL
+        test-while-idle: true
+        test-on-borrow: false
+        test-on-return: false
+        pool-prepared-statements: false
+#        connection-properties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=500
+        use-global-data-source-stat: true
+        filter:
+#          stat:
+#            enabled: false
+          slf4j:
+            enabled: true
+#        filters: slf4j
 
     redis:
       database: 0
-      host: 192.168.139.138
+      host: 127.0.0.1
       port: 6379
-      password: 123456
+      password:
       pool:
         max-active: 8
         max-wait: -1
@@ -40,5 +62,8 @@ mybatis:
     configLocation: classpath:/mybatis-config-test.xml
 
 rsa:
-    key:
-        path: D:/
+  key:
+    path: /Users/jiangwenjie/
+
+logback:
+  path: /Users/jiangwenjie/logs/logForBilling/

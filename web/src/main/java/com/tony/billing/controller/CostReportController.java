@@ -1,6 +1,5 @@
 package com.tony.billing.controller;
 
-import com.alibaba.fastjson.JSON;
 import com.tony.billing.dto.ReportDTO;
 import com.tony.billing.entity.ReportEntity;
 import com.tony.billing.request.costreport.CostReportRequest;
@@ -57,13 +56,7 @@ public class CostReportController extends BaseController {
                     tempDate = calendar.getTime();
                 } while (tempDate.compareTo(endDate) <= 0);
             }
-            List<ReportEntity> reportList = costReportService.getReportByDatePrefix(monthList, request.getUserId());
-            if (CollectionUtils.isEmpty(reportList)) {
-                ResponseUtil.dataNotExisting(response);
-            } else {
-                response.setReportList(BeanCopyUtil.copy(reportList, ReportDTO.class));
-                ResponseUtil.success(response);
-            }
+            return getReportResponse(monthList, request.getUserId(), response);
         } catch (Exception e) {
             logger.error("/report/get error", e);
             ResponseUtil.sysError(response);
@@ -84,37 +77,29 @@ public class CostReportController extends BaseController {
             Date endDate = simpleDateFormat.parse(reportRequest.getEndDate());
             Calendar start = Calendar.getInstance();
             start.setTime(startDate);
-            Calendar end = Calendar.getInstance();
-            end.setTime(endDate);
+
+            long dayBetween = (endDate.getTime() - startDate.getTime()) / (3600 * 24 * 1000);
             List<String> datePrefixes = new ArrayList<>();
-            while (start.compareTo(end) <= 0) {
+            while (dayBetween-- >= 0) {
                 datePrefixes.add(simpleDateFormat.format(start.getTime()));
                 start.add(Calendar.DATE, 1);
             }
-            List<ReportEntity> result = costReportService.getReportByDatePrefix(datePrefixes, reportRequest.getUserId());
-            if (CollectionUtils.isEmpty(result)) {
-                ResponseUtil.dataNotExisting(response);
-            } else {
-                response.setReportList(BeanCopyUtil.copy(result, ReportDTO.class));
-                ResponseUtil.success(response);
-            }
-            return response;
+
+            return getReportResponse(datePrefixes, reportRequest.getUserId(), response);
         } catch (Exception e) {
             logger.error("/daily/report/get error", e);
             return ResponseUtil.sysError(response);
         }
     }
 
-
-    public static void main(String[] args) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.MONTH, -6);
-        List<String> monthList = new ArrayList<>();
-        for (int i = 0; i < 6; i++) {
-            calendar.add(Calendar.MONTH, 1);
-            monthList.add(sdf.format(calendar.getTime()));
+    private ReportResponse getReportResponse(List<String> prefixes, Long userId, ReportResponse response) {
+        List<ReportEntity> result = costReportService.getReportByDatePrefix(prefixes, userId);
+        if (CollectionUtils.isEmpty(result)) {
+            ResponseUtil.dataNotExisting(response);
+        } else {
+            response.setReportList(BeanCopyUtil.copy(result, ReportDTO.class));
+            ResponseUtil.success(response);
         }
-        System.out.println(JSON.toJSONString(monthList));
+        return response;
     }
 }

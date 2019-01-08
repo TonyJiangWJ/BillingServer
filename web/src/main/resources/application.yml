@@ -1,35 +1,56 @@
 # Server settings
 server:
-    port: 1310
-    address: 0.0.0.0
-    tomcat:
-        uri-encoding: utf-8
+  port: 1310
+  address: 0.0.0.0
+  tomcat:
+    uri-encoding: utf-8
 # SPRING PROFILES
 spring:
-#    spring.jackson.default-property-inclusion=NON_NULL
-    # HTTP ENCODING
-    http:
-        encoding.charset: UTF-8
-        encoding.force: true
-        encoding.enabled: true
+  #    spring.jackson.default-property-inclusion=NON_NULL
+  # HTTP ENCODING
+  http:
+    encoding.charset: UTF-8
+    encoding.force: true
+    encoding.enabled: true
 
-        multipart:
-          max-file-size: 30Mb
-          max-request-size: 40Mb
+    multipart:
+      max-file-size: 30Mb
+      max-request-size: 40Mb
 
-    profiles:
-      active: '@activatedProperties@'
-    thymeleaf:
-      cache: false
-      prefix: classpath:/templates/
+  profiles:
+    active: '@activatedProperties@'
+  thymeleaf:
+    cache: false
+    prefix: classpath:/templates/
 
-    mail:
-      host: smtp.yeah.net
-      username: tony_sama@yeah.net
-      password:
+  mail:
+    host: smtp.yeah.net
+    username: tony_sama@yeah.net
+    password:
 
+  datasource:
+    druid:
+      initial-size: 5
+      max-active: 30
+      min-idle: 5
+      max-wait: 60000
+      time-between-eviction-runs-millis: 60000
+      min-evictable-idle-time-millis: 30000
+      validation-query: SELECT 1 FROM DUAL
+      test-while-idle: true
+      test-on-borrow: false
+      test-on-return: false
+      pool-prepared-statements: false
+      connection-properties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=500
+      use-global-data-source-stat: true
+      filter:
+        stat:
+          enabled: false
+        slf4j:
+          enabled: true
+      filters: slf4j
 # MyBatis
 mybatis:
-    typeAliasesPackage: com.tony.billing.entity
-    mapperLocations: classpath:/sqlMapper/*SqlMap.xml
-    configLocation: classpath:/mybatis-config.xml
+  typeAliasesPackage: com.tony.billing.entity
+  mapperLocations: classpath:/sqlMapper/*SqlMap.xml
+  configLocation: classpath:/mybatis-config.xml
