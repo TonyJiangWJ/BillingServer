@@ -22,11 +22,11 @@ public class RawReportEntity {
     public void calculateAdditional() {
         totalCostExceptDeleted = totalCost - totalCostDeleted;
         totalCostExceptHidden = totalCost - totalCostHidden;
-        totalCostExceptDeletedAndHidden = totalCost - totalCostHidden - totalCostDeleted;
+
 
         totalIncomeExceptDeleted = totalIncome - totalIncomeDeleted;
         totalIncomeExceptHidden = totalIncome - totalIncomeHidden;
-        totalIncomeExceptDeletedAndHidden = totalIncome - totalIncomeDeleted - totalIncomeHidden;
+
     }
 
     public Long getTotalCost() {
