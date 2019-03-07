@@ -53,7 +53,6 @@ public class AuthUtil {
         try {
             return javaWebToken.verifyJavaWebToken(token);
         } catch (Exception e) {
-            System.err.println("");
             return null;
         }
     }
@@ -68,8 +67,7 @@ public class AuthUtil {
         }
 
         private Key getKeyInstance() {
-//        return MacProvider.generateKey();
-            //We will sign our JavaWebToken with our ApiKey secret
+            // We will sign our JavaWebToken with our ApiKey secret
             SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
             byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(jwtKey);
             return new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());

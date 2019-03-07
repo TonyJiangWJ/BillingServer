@@ -50,6 +50,8 @@ public class CustomMVCConfiguration extends WebMvcConfigurerAdapter {
         registry.addInterceptor(authorityInterceptor)
                 .excludePathPatterns("/bootDemo/user/login*")
                 .excludePathPatterns("/bootDemo/user/register/put*")
+                .excludePathPatterns("/bootDemo/user/pre/reset/password")
+                .excludePathPatterns("/bootDemo/user/reset/password")
                 .excludePathPatterns("/thymeleaf/login*")
                 .excludePathPatterns("/thymeleaf/login/put*")
                 .excludePathPatterns("/thymeleaf/register/put*")

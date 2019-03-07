@@ -54,12 +54,13 @@ spring:
     mail:
       host: smtp.yeah.net
       username: tony_sama@yeah.net
-      password:
+      password: XleBw21XPkk
 # MyBatis
 mybatis:
     typeAliasesPackage: com.tony.billing.entity
     mapperLocations: classpath:/sqlMapper/*SqlMap.xml
     configLocation: classpath:/mybatis-config-test.xml
+
 
 rsa:
   key:
@@ -67,3 +68,9 @@ rsa:
 
 logback:
   path: /Users/jiangwenjie/logs/logForBilling/
+
+
+system:
+  host:
+    reset:
+      password: http://127.0.0.1/bootDemo/reset

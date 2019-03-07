@@ -41,7 +41,12 @@ public class TagInfoController extends BaseController {
     @Resource
     private TagInfoService tagInfoService;
 
-    // 列出所有标签
+    /**
+     * 列出所有标签
+     *
+     * @param request
+     * @return
+     */
     @RequestMapping(value = "/tag/list")
     public TagInfoListResponse listTag(@ModelAttribute("request") BaseRequest request) {
         TagInfoListResponse response = new TagInfoListResponse();
@@ -64,7 +69,12 @@ public class TagInfoController extends BaseController {
         return response;
     }
 
-    // 添加标签
+    /**
+     * 添加标签
+     *
+     * @param request
+     * @return
+     */
     @RequestMapping(value = "/tag/put")
     public BaseResponse putTag(@ModelAttribute("request") TagInfoPutRequest request) {
         BaseResponse response = new BaseResponse();
@@ -87,7 +97,12 @@ public class TagInfoController extends BaseController {
         return response;
     }
 
-    // 删除标签
+    /**
+     * 删除标签
+     *
+     * @param request
+     * @return
+     */
     @RequestMapping(value = "/tag/delete")
     public BaseResponse delTag(@ModelAttribute("request") TagInfoDelRequest request) {
         BaseResponse response = new BaseResponse();
@@ -107,7 +122,12 @@ public class TagInfoController extends BaseController {
         return response;
     }
 
-    // 列出账单赋值的标签
+    /**
+     * 列出账单赋值的标签
+     *
+     * @param request
+     * @return
+     */
     @RequestMapping(value = "/cost/tag/list")
     public CostTagListResponse listCostTag(@ModelAttribute("request") CostTagListRequest request) {
         CostTagListResponse response = new CostTagListResponse();
@@ -137,7 +157,12 @@ public class TagInfoController extends BaseController {
         return response;
     }
 
-    // 添加账单标签
+    /**
+     * 添加账单标签
+     *
+     * @param request
+     * @return
+     */
     @RequestMapping(value = "/cost/tag/put")
     public BaseResponse putCostTag(@ModelAttribute("request") CostTagPutRequest request) {
         BaseResponse response = new BaseResponse();
@@ -166,7 +191,12 @@ public class TagInfoController extends BaseController {
         return response;
     }
 
-    // 删除账单标签
+    /**
+     * 删除账单标签
+     *
+     * @param request
+     * @return
+     */
     @RequestMapping(value = "/cost/tag/delete")
     public BaseResponse delCostTag(@ModelAttribute("request") CostTagDelRequest request) {
         BaseResponse response = new BaseResponse();

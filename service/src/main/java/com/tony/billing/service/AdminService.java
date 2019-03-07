@@ -15,4 +15,15 @@ public interface AdminService {
     boolean logout(String tokenId);
 
     boolean modifyPwd(ModifyAdmin admin);
+
+
+    Admin preResetPwd(String userName);
+    /**
+     * oldPwd save the token
+     * @param admin 修改密码的对象，保存新的密码，以及缓存token
+     * @return
+     */
+    boolean resetPwd(ModifyAdmin admin);
+
+
 }

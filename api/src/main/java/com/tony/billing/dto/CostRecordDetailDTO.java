@@ -21,13 +21,13 @@ public class CostRecordDetailDTO {
     private String memo;
     private String tradeStatus;
     private Integer isDelete;
-    private String isHidden;
+    private Integer isHidden;
 
-    public String getIsHidden() {
+    public Integer getIsHidden() {
         return isHidden;
     }
 
-    public void setIsHidden(String isHidden) {
+    public void setIsHidden(Integer isHidden) {
         this.isHidden = isHidden;
     }
 

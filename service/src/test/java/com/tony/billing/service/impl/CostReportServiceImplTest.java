@@ -8,8 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.*;
-
 /**
  * @author jiangwj20966 8/6/2018
  */
@@ -23,6 +21,6 @@ public class CostReportServiceImplTest extends BaseServiceTest {
         datePrefix.add("2018-04-25");
         datePrefix.add("2018-04-26");
         datePrefix.add("2018-04-27");
-        debug(costReportService.getReportByDatePrefix(datePrefix, 2L));
+        debugInfo(costReportService.getReportByDatePrefix(datePrefix, 2L));
     }
 }

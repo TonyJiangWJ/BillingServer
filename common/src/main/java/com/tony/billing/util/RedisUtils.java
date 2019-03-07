@@ -1,6 +1,7 @@
 package com.tony.billing.util;
 
 import com.alibaba.fastjson.JSON;
+import com.sun.istack.internal.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,8 +10,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Optional;
 
 /**
  * @author tonyjiang
@@ -82,27 +82,24 @@ public class RedisUtils {
      * @param clazz 对象类
      * @return 返回键值对
      */
-    public Map<Object, Object> get(final Object key, final Class<?> clazz) {
-        Map<Object, Object> result = null;
+    public <E> Optional<E> get(final Object key, Class<E> clazz) {
+        Optional<E> result = Optional.empty();
         try {
-            result = stringRedisTemplate.execute((RedisCallback<Map<Object, Object>>) connection -> {
+            result = stringRedisTemplate.execute((RedisCallback<Optional<E>>) connection -> {
                 RedisSerializer<String> serializer = stringRedisTemplate.getStringSerializer();
                 byte[] keys = serializer.serialize(JSON.toJSONString(key));
                 byte[] value = connection.get(keys);
                 if (value == null) {
-                    return null;
+                    return Optional.empty();
                 }
                 String jsonString = serializer.deserialize(value);
-                Map<Object, Object> map = new HashMap<>();
-                if (jsonString.startsWith("{")) {
-                    map.put(key, JSON.parseObject(jsonString, clazz));
-                } else {
-                    map.put(key, jsonString);
+                if (clazz != null) {
+                    return Optional.of(JSON.parseObject(jsonString, clazz));
                 }
-                return map;
+                return Optional.empty();
             });
         } catch (Exception e) {
-            logger.error("设置定时cache错误", e);
+            logger.error("获取缓存信息失败", e);
         }
 
         return result;

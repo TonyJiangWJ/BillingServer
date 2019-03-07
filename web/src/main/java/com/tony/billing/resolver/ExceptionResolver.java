@@ -1,6 +1,7 @@
 package com.tony.billing.resolver;
 
 import com.alibaba.fastjson.JSON;
+import com.tony.billing.exceptions.BaseBusinessException;
 import com.tony.billing.response.BaseResponse;
 import com.tony.billing.util.ResponseUtil;
 import org.slf4j.Logger;
@@ -26,13 +27,16 @@ public class ExceptionResolver implements HandlerExceptionResolver {
     public ModelAndView resolveException(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o, Exception e) {
         logger.error("biz error:", e);
         BaseResponse baseResponse = ResponseUtil.sysError(new BaseResponse());
+        if (e instanceof BaseBusinessException) {
+            baseResponse.setMsg(e.getMessage());
+        }
         httpServletResponse.setContentType(MediaType.APPLICATION_JSON_VALUE);
         httpServletResponse.setCharacterEncoding("UTF-8");
         httpServletResponse.setHeader("Cache-Control", "no-cache, must-revalidate");
         try {
             httpServletResponse.getWriter().write(JSON.toJSONString(baseResponse));
-        } catch (IOException e1) {
-            logger.error("与客户端通讯异常：" + e.getMessage(), e);
+        } catch (IOException ioe) {
+            logger.error("与客户端通讯异常：" + ioe.getMessage(), ioe);
         }
 
         return new ModelAndView();

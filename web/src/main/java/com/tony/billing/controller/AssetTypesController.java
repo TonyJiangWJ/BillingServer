@@ -81,6 +81,13 @@ public class AssetTypesController extends BaseController {
 
     @RequestMapping("/asset/types/put")
     public BaseResponse putAssetParentType(@ModelAttribute("request") AssetTypeAddRequest request) {
+        if (StringUtils.isEmpty(request.getParentCode())
+                || StringUtils.isEmpty(request.getTypeIdentify())
+                || StringUtils.isEmpty(request.getTypeCode())
+                || StringUtils.isEmpty(request.getTypeDesc())
+        ) {
+            return ResponseUtil.paramError();
+        }
         AssetTypes assetTypes = new AssetTypes();
         assetTypes.setUserId(request.getUserId());
         assetTypes.setParentCode(request.getParentCode());

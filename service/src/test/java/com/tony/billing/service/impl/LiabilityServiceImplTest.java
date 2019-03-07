@@ -23,17 +23,17 @@ public class LiabilityServiceImplTest extends BaseServiceTest {
 
     @Test
     public void listLiabilityByUserId() {
-        debug(liabilityService.listLiabilityByUserId(2L));
+        debugInfo(liabilityService.listLiabilityByUserId(2L));
     }
 
     @Test
     public void getLiabilityModelsByUserId() {
-        debug(liabilityService.getLiabilityModelsByUserId(2L));
+        debugInfo(liabilityService.getLiabilityModelsByUserId(2L));
     }
 
     @Test
     public void getMonthLiabilityModelsByUserId() {
-        debug(liabilityService.getMonthLiabilityModelsByUserId(2L));
+        debugInfo(liabilityService.getMonthLiabilityModelsByUserId(2L));
     }
 
     @Test
@@ -47,6 +47,6 @@ public class LiabilityServiceImplTest extends BaseServiceTest {
 
         liabilityService.createLiabilityInfo(liability);
 
-        debug(liabilityService.getMonthLiabilityModelsByUserId(1L));
+        debugInfo(liabilityService.getMonthLiabilityModelsByUserId(1L));
     }
 }

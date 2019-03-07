@@ -23,7 +23,7 @@ public class CostRecordServiceImplTest extends BaseServiceTest {
         costRecordQuery.setContent("支付");
         costRecordQuery.setUserId(2L);
         PagerGrid<CostRecordQuery> pagerGrid = new PagerGrid<>(costRecordQuery);
-        debug(costRecordService.page(pagerGrid));
+        debugInfo(costRecordService.page(pagerGrid));
 
     }
 }

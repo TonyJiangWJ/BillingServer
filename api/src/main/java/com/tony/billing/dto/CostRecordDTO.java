@@ -16,15 +16,15 @@ public class CostRecordDTO {
     private String inOutType;
     private String orderStatus;
     private Integer isDelete;
-    private String isHidden;
+    private Integer isHidden;
     private String target;
-    List<String> tags;
+    private List<String> tags;
 
-    public String getIsHidden() {
+    public Integer getIsHidden() {
         return isHidden;
     }
 
-    public void setIsHidden(String isHidden) {
+    public void setIsHidden(Integer isHidden) {
         this.isHidden = isHidden;
     }
 

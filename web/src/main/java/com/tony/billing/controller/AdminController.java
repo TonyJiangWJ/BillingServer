@@ -6,6 +6,7 @@ import com.tony.billing.request.BaseRequest;
 import com.tony.billing.request.admin.AdminLoginRequest;
 import com.tony.billing.request.admin.AdminModifyPwdRequest;
 import com.tony.billing.request.admin.AdminRegisterRequest;
+import com.tony.billing.request.admin.ResetPasswordRequest;
 import com.tony.billing.response.BaseResponse;
 import com.tony.billing.service.AdminService;
 import com.tony.billing.util.AuthUtil;
@@ -121,6 +122,37 @@ public class AdminController extends BaseController {
     @RequestMapping(value = "/login/status", method = RequestMethod.POST)
     public BaseResponse checkLoginStatus(@ModelAttribute("request") BaseRequest baseRequest) {
         return ResponseUtil.success();
+    }
+
+    @RequestMapping(value = "/user/pre/reset/password", method = RequestMethod.POST)
+    public BaseResponse preResetPassword(@ModelAttribute("request") ResetPasswordRequest request) {
+        if (StringUtils.isEmpty(request.getUserName())) {
+            return ResponseUtil.paramError();
+        }
+        if (adminService.preResetPwd(request.getUserName()) != null) {
+            return ResponseUtil.success();
+        } else {
+            return ResponseUtil.error();
+        }
+    }
+
+    @RequestMapping(value = "/user/reset/password", method = RequestMethod.POST)
+    public BaseResponse resetPassword(@ModelAttribute("request") ResetPasswordRequest request) {
+        if (StringUtils.isEmpty(request.getToken())
+                || StringUtils.isEmpty(request.getNewPassword())) {
+            return ResponseUtil.paramError();
+        }
+
+        ModifyAdmin modifyAdmin = new ModifyAdmin();
+        modifyAdmin.setNewPassword(request.getNewPassword());
+        modifyAdmin.setTokenId(request.getToken());
+
+        if (adminService.resetPwd(modifyAdmin)) {
+            return ResponseUtil.success();
+        } else {
+            return ResponseUtil.error();
+        }
+
     }
 
 }

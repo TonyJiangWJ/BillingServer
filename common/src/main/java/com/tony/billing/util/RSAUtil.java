@@ -3,6 +3,7 @@ package com.tony.billing.util;
 import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.security.interfaces.RSAKey;
 import java.security.interfaces.RSAPrivateKey;
@@ -17,6 +18,13 @@ public class RSAUtil {
 
     private RSAPrivateKey privateKey;
     private RSAPublicKey publicKey;
+
+    /**
+     * 密文有效期30秒
+     */
+    @Value("${rsa.valid.time:30000}")
+    private long CIPHER_VALID_TIME;
+    private final int TIMESTAMP_LENGTH = 13;
 
     public RSAUtil(String filePath) throws Exception {
         publicKey = RSAEncrypt.loadPublicKeyByByteArray(RSAEncrypt.loadPublicKeyByFile(filePath));
@@ -35,10 +43,10 @@ public class RSAUtil {
             byte[] cipherArray = RSAEncrypt.decrypt(privateKey, Base64.decodeBase64(cipher));
             if (cipherArray != null) {
                 String cipherStr = new String(cipherArray, 0, cipherArray.length);
-                if (cipherStr.length() > 13) {
-                    Long timestamp = Long.valueOf(cipherStr.substring(0, 13));
-                    if (System.currentTimeMillis() - timestamp < 30 * 1000) {
-                        return cipherStr.substring(13);
+                if (cipherStr.length() > TIMESTAMP_LENGTH) {
+                    long timestamp = Long.valueOf(cipherStr.substring(0, TIMESTAMP_LENGTH));
+                    if (System.currentTimeMillis() - timestamp < CIPHER_VALID_TIME) {
+                        return cipherStr.substring(TIMESTAMP_LENGTH);
                     } else {
                         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                         logger.error("验证信息超时：{}", simpleDateFormat.format(new Date(timestamp)));
@@ -51,6 +59,12 @@ public class RSAUtil {
         return null;
     }
 
+    /**
+     * 将明文加密 前置添加TIMESTAMP13时间戳 用于校验密文有效性
+     * @param content 明文内容
+     * @param key 加密秘钥public or private key
+     * @return 加密后的内容 Base64处理
+     */
     private String encrypt(String content, RSAKey key) {
         if (content != null) {
             long timestamp = System.currentTimeMillis();

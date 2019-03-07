@@ -1,7 +1,5 @@
 package com.tony.billing.controller;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.tony.billing.constants.TradeStatus;
 import com.tony.billing.constants.enums.EnumHidden;
 import com.tony.billing.dto.CostRecordDTO;
@@ -69,7 +67,7 @@ public class CostRecordController {
      * @param request
      * @return
      */
-    @RequestMapping(value = "/page/get")
+    @RequestMapping(value = "/cost/record/page/get")
     public CostRecordPageResponse getPage(@ModelAttribute("request") CostRecordPageRequest request) {
         CostRecordPageResponse response = new CostRecordPageResponse();
         try {
@@ -142,7 +140,7 @@ public class CostRecordController {
      * @param request
      * @return
      */
-    @RequestMapping(value = "/detail/get")
+    @RequestMapping(value = "/record/detail/get")
     public CostRecordDetailResponse getDetail(@ModelAttribute("request") CostRecordDetailRequest request) {
         CostRecordDetailResponse response = new CostRecordDetailResponse();
         if (StringUtils.isEmpty(request.getTradeNo())) {
@@ -192,7 +190,7 @@ public class CostRecordController {
      * @param request
      * @return
      */
-    @RequestMapping(value = "/delete")
+    @RequestMapping(value = "/record/toggle/delete")
     public CostRecordDeleteResponse deleteRecord(@ModelAttribute("request") CostRecordDeleteRequest request) {
         CostRecordDeleteResponse response = new CostRecordDeleteResponse();
         try {
@@ -216,7 +214,7 @@ public class CostRecordController {
         return response;
     }
 
-    @RequestMapping(value = "/toggle/hide")
+    @RequestMapping(value = "/toggle/record/hide")
     public BaseResponse toggleHiddenStatus(@ModelAttribute("request") CostRecordHideRequest request) {
         BaseResponse response = new BaseResponse();
         try {
@@ -287,23 +285,24 @@ public class CostRecordController {
         return response;
     }
 
-    @RequestMapping("/csv/convert")
-    public JSON doConvert(@ModelAttribute("file") MultipartFile file, @ModelAttribute("request") BaseRequest request) {
-        JSONObject json = new JSONObject();
+    @RequestMapping("/record/csv/convert")
+    public BaseResponse doConvert(@ModelAttribute("file") MultipartFile file, @ModelAttribute("request") BaseRequest request) {
+
         try {
             if (alipayBillCsvConvertService.convertToPOJO(file, request.getUserId())) {
-                json.put("msg", "转换成功");
+                return ResponseUtil.success();
             } else {
-                json.put("msg", "转换失败");
+                return ResponseUtil.error();
             }
         } catch (Exception e) {
             logger.error("backup/csv/put error", e);
-            json.put("msg", "文件错误请检查");
+            BaseResponse response = ResponseUtil.error();
+            response.setMsg("文件错误请检查");
+            return response;
         }
-        return json;
     }
 
-    @RequestMapping("/backup/csv/get")
+    @RequestMapping("/record/backup/csv/get")
     public void backUp(HttpServletResponse response, @ModelAttribute("request") BaseRequest request) {
         CostRecord requestParam = new CostRecord();
         requestParam.setUserId(request.getUserId());
@@ -329,24 +328,25 @@ public class CostRecordController {
             bufferedWriter.close();
             outputStream.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("创建备份文件失败", e);
         }
     }
 
-    @RequestMapping("/backup/csv/put")
-    public JSON getFromBackUp(@ModelAttribute("file") MultipartFile file, @ModelAttribute("request") BaseRequest request) {
-        JSONObject json = new JSONObject();
+    @RequestMapping("/record/backup/csv/put")
+    public BaseResponse getFromBackUp(@ModelAttribute("file") MultipartFile file, @ModelAttribute("request") BaseRequest request) {
+
         try {
             if (alipayBillCsvConvertService.getFromBackUp(file, request.getUserId())) {
-                json.put("msg", "备份恢复成功");
+                return ResponseUtil.success();
             } else {
-                json.put("msg", "转换失败");
+                return ResponseUtil.error();
             }
         } catch (Exception e) {
             logger.error("backup/csv/put error", e);
-            json.put("msg", "文件错误请检查");
+            BaseResponse response = ResponseUtil.error();
+            response.setMsg("文件错误请检查");
+            return response;
         }
-        return json;
     }
 
     private String generateTradeNo(String createTime) throws ParseException {
@@ -377,7 +377,7 @@ public class CostRecordController {
         model.setTarget(record.getTarget());
         model.setTradeNo(record.getTradeNo());
         model.setTradeStatus(record.getTradeStatus());
-        model.setIsHidden(EnumHidden.getHiddenEnum(record.getIsHidden()).desc());
+        model.setIsHidden(record.getIsHidden());
         return model;
     }
 
@@ -400,7 +400,7 @@ public class CostRecordController {
                 model.setTradeNo(entity.getTradeNo());
                 model.setTarget(entity.getTarget());
                 model.setMemo(entity.getMemo());
-                model.setIsHidden(EnumHidden.getHiddenEnum(entity.getIsHidden()).desc());
+                model.setIsHidden(entity.getIsHidden());
                 tagInfos = tagInfoService.listTagInfoByTradeNo(entity.getTradeNo());
                 if (!CollectionUtils.isEmpty(tagInfos)) {
                     model.setTags(new ArrayList<>());

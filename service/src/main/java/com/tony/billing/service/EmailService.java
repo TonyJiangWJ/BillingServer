@@ -20,6 +20,7 @@ public interface EmailService {
      * @param sendTo 邮件地址
      * @param title 标题
      * @param contents 内容
+     * @param templateName 邮件模板名称
      */
-    void sendThymeleafMail(String sendTo, String title, Map<String, Object> contents) throws MessagingException;
+    void sendThymeleafMail(String sendTo, String title, Map<String, Object> contents, String templateName) throws MessagingException;
 }

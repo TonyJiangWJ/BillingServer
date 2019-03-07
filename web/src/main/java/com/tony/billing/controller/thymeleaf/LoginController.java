@@ -18,6 +18,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * <p>
@@ -44,8 +45,8 @@ public class LoginController extends BaseController {
         try {
             String tokenId;
             if (tokenCookie != null && ((tokenId = authUtil.getUserTokenId(tokenCookie.getValue())) != null)) {
-                Map store = redisUtils.get(tokenId, Admin.class);
-                if (store != null) {
+                Optional store = redisUtils.get(tokenId, Admin.class);
+                if (store.isPresent()) {
                     return "/thymeleaf/login/success";
                 }
             }

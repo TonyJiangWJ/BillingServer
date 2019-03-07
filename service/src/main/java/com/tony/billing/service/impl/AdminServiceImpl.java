@@ -1,10 +1,14 @@
 package com.tony.billing.service.impl;
 
+import com.google.common.base.Preconditions;
 import com.tony.billing.constants.enums.EnumDeleted;
+import com.tony.billing.constants.enums.EnumMailTemplateName;
 import com.tony.billing.dao.AdminDao;
 import com.tony.billing.entity.Admin;
 import com.tony.billing.entity.ModifyAdmin;
+import com.tony.billing.exceptions.BaseBusinessException;
 import com.tony.billing.service.AdminService;
+import com.tony.billing.service.EmailService;
 import com.tony.billing.util.RSAUtil;
 import com.tony.billing.util.RedisUtils;
 import com.tony.billing.util.ShaSignHelper;
@@ -16,7 +20,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import javax.mail.MessagingException;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 
 /**
  * @author by TonyJiang on 2017/5/18.
@@ -31,7 +40,15 @@ public class AdminServiceImpl implements AdminService {
 
     @Resource
     private RedisUtils redisUtils;
+    @Resource
+    private EmailService emailService;
 
+    @Value("${system.host.reset.password}")
+    private String resetPwdUrl;
+
+    /**
+     * 会话有效期为1天
+     */
     private final Long VERIFY_TIME = 3600 * 24 * 1000L;
 
     @Resource
@@ -90,8 +107,10 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public boolean modifyPwd(ModifyAdmin admin) {
-        admin.setNewPassword(sha256(admin.getNewPassword()));
-        admin.setPassword(sha256(admin.getPassword()));
+        Preconditions.checkNotNull(admin.getId(), "用户id不能为空");
+        // 现将密码进行加解密处理
+        admin.setNewPassword(sha256(rsaUtil.decrypt(admin.getNewPassword())));
+        admin.setPassword(sha256(rsaUtil.decrypt(admin.getPassword())));
         if (admin.getNewPassword() == null) {
             return false;
         }
@@ -100,6 +119,55 @@ public class AdminServiceImpl implements AdminService {
             stored.setPassword(admin.getNewPassword());
             return adminDao.modifyPwd(stored) > 0;
         }
+        logger.error("用户：{} 修改密码，旧密码不正确", admin.getId());
+        return false;
+    }
+
+    @Override
+    public Admin preResetPwd(String userName) {
+        Admin user = adminDao.queryByUserName(userName);
+        if (user != null) {
+            String email = user.getEmail();
+            if (StringUtils.isNotEmpty(email)) {
+                String token = sha256(UUID.randomUUID().toString());
+                user = deleteSecret(user);
+                redisUtils.set(token, deleteSecret(user), 3600);
+                user.setTokenId(token);
+                // TODO send reset email
+                Map<String, Object> contents = new HashMap<>();
+                contents.put("title", "重置密码");
+                contents.put("typeDesc", "重置密码");
+                contents.put("resetLink", resetPwdUrl + "?token=" + token);
+                try {
+                    emailService.sendThymeleafMail(email, "用户重置密码", contents, EnumMailTemplateName.RESET_PWD_MAIL.getTemplateName());
+                } catch (MessagingException e) {
+                    throw new BaseBusinessException("发送重置邮件失败");
+                }
+                return user;
+            }
+        }
+        throw new BaseBusinessException("用户名不存在, 或者未绑定邮箱");
+    }
+
+    @Override
+    public boolean resetPwd(ModifyAdmin admin) {
+        Preconditions.checkNotNull(admin.getNewPassword(), "新密码不能为空");
+        // 密码预处理
+        admin.setNewPassword(sha256(rsaUtil.decrypt(admin.getNewPassword())));
+        String token = admin.getTokenId();
+        Optional<Admin> optional = redisUtils.get(token, Admin.class);
+        if (optional.isPresent()) {
+            Admin cachedUser = optional.get();
+            cachedUser.setPassword(admin.getNewPassword());
+            if (adminDao.modifyPwd(cachedUser) > 0) {
+                // 密码修改完毕之后将缓存删除
+                redisUtils.del(token);
+                return true;
+            }
+        } else {
+            throw new BaseBusinessException("token无效，请重新申请重置密码");
+        }
+        logger.error("重置密码失败");
         return false;
     }
 
