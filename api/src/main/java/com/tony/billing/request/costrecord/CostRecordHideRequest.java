@@ -7,7 +7,7 @@ import com.tony.billing.request.BaseRequest;
  */
 public class CostRecordHideRequest extends BaseRequest {
     private String tradeNo;
-    private String nowStatus;
+    private Integer nowStatus;
 
     public String getTradeNo() {
         return tradeNo;
@@ -17,11 +17,11 @@ public class CostRecordHideRequest extends BaseRequest {
         this.tradeNo = tradeNo;
     }
 
-    public String getNowStatus() {
+    public Integer getNowStatus() {
         return nowStatus;
     }
 
-    public void setNowStatus(String nowStatus) {
+    public void setNowStatus(Integer nowStatus) {
         this.nowStatus = nowStatus;
     }
 }

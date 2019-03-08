@@ -542,6 +542,10 @@ paths:
           in: 'query'
           type: 'string'
           description: '查询内容'
+        - name: 'showTags'
+          in: 'query'
+          type: 'boolean'
+          description: '是否显示标签'
       responses:
         200:
           description: '操作成功'
@@ -683,6 +687,18 @@ paths:
           type: 'string'
           required: true
           description: '交易对方'
+        - name: 'location'
+          in: 'query'
+          type: 'string'
+          description: '交易地点'
+        - name: 'memo'
+          in: 'query'
+          type: 'string'
+          description: '备注'
+        - name: 'orderType'
+          in: 'query'
+          type: 'string'
+          description: '交易类型'
       responses:
         200:
           description: '操作成功'
@@ -808,6 +824,26 @@ paths:
           description: '操作成功'
           schema:
             $ref: '#/definitions/TagInfoListResponse'
+
+  /tag/name/unique:
+    get:
+      tags:
+        - 'tag'
+      summary: '标签名称唯一性校验'
+      security:
+        - cookie: []
+      parameters:
+        - name: 'tagName'
+          in: 'query'
+          type: 'string'
+          description: '标签名称'
+          required: true
+      responses:
+        200:
+          description: '操作成功'
+          schema:
+            $ref: '#/definitions/BaseResponse'
+
 
   /tag/put:
     post:
@@ -1467,7 +1503,7 @@ definitions:
       tags:
         type: 'array'
         items:
-          type: 'string'
+          $ref: '#/definitions/TagInfoDTO'
         description: '标签'
   ReportDTO:
     type: 'object'

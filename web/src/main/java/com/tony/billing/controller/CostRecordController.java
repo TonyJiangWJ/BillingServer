@@ -1,9 +1,9 @@
 package com.tony.billing.controller;
 
 import com.tony.billing.constants.TradeStatus;
-import com.tony.billing.constants.enums.EnumHidden;
 import com.tony.billing.dto.CostRecordDTO;
 import com.tony.billing.dto.CostRecordDetailDTO;
+import com.tony.billing.dto.TagInfoDTO;
 import com.tony.billing.entity.CostRecord;
 import com.tony.billing.entity.PagerGrid;
 import com.tony.billing.entity.TagInfo;
@@ -46,6 +46,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author jiangwj20966 on 2017/6/2.
@@ -109,8 +110,8 @@ public class CostRecordController {
             }
 
             pagerGrid = costRecordService.page(pagerGrid);
-//            logger.info(JSON.toJSONString(pagerGrid.getResult()));
-            response.setCostRecordList(formatModelList(pagerGrid.getResult()));
+            boolean showTags = Boolean.TRUE.equals(request.getShowTags());
+            response.setCostRecordList(formatModelList(pagerGrid.getResult(), showTags));
             response.setCurrentAmount(calculateCurrentAmount(pagerGrid.getResult()));
             response.setPageNo(pagerGrid.getPage());
             response.setPageSize(pagerGrid.getOffset());
@@ -178,6 +179,7 @@ public class CostRecordController {
         record.setMemo(request.getMemo());
         record.setTradeNo(request.getTradeNo());
         record.setUserId(request.getUserId());
+        record.setOrderType(request.getOrderType());
         if (costRecordService.updateByTradeNo(record) > 0) {
             return ResponseUtil.success(response);
         }
@@ -214,19 +216,17 @@ public class CostRecordController {
         return response;
     }
 
-    @RequestMapping(value = "/toggle/record/hide")
+    @RequestMapping(value = "/record/toggle/hide")
     public BaseResponse toggleHiddenStatus(@ModelAttribute("request") CostRecordHideRequest request) {
         BaseResponse response = new BaseResponse();
         try {
-            if (StringUtils.isEmpty(request.getNowStatus()) || StringUtils.isEmpty(request.getTradeNo())) {
+            if (request.getNowStatus() == null || StringUtils.isEmpty(request.getTradeNo())) {
                 return ResponseUtil.paramError(response);
             }
             Map<String, Object> params = new HashMap<>();
             params.put("tradeNo", request.getTradeNo());
-            params.put("nowStatus", EnumHidden.getHiddenEnum(request.getNowStatus()).val());
-            params.put("isHidden",
-                    EnumHidden.getHiddenEnum(request.getNowStatus()).val().equals(EnumHidden.HIDDEN.val())
-                            ? EnumHidden.NOT_HIDDEN.val() : EnumHidden.HIDDEN.val());
+            params.put("nowStatus", request.getNowStatus());
+            params.put("isHidden", request.getNowStatus().equals(0) ? 1 : 0);
             params.put("userId", request.getUserId());
             if (costRecordService.toggleHideStatus(params) > 0) {
                 ResponseUtil.success(response);
@@ -378,13 +378,23 @@ public class CostRecordController {
         model.setTradeNo(record.getTradeNo());
         model.setTradeStatus(record.getTradeStatus());
         model.setIsHidden(record.getIsHidden());
+        List<TagInfo> tagInfos = tagInfoService.listTagInfoByTradeNo(record.getTradeNo());
+        if (!CollectionUtils.isEmpty(tagInfos)) {
+            model.setTagInfos(tagInfos.stream().map(tagInfo -> {
+                        TagInfoDTO tagInfoDTO = new TagInfoDTO();
+                        tagInfoDTO.setTagId(tagInfo.getId());
+                        tagInfoDTO.setTagName(tagInfo.getTagName());
+                        return tagInfoDTO;
+                    }).collect(Collectors.toList())
+            );
+        }
         return model;
     }
 
 
-    private List<CostRecordDTO> formatModelList(List<CostRecordQuery> list) {
+    private List<CostRecordDTO> formatModelList(List<CostRecordQuery> list, boolean showTags) {
         if (!CollectionUtils.isEmpty(list)) {
-            List<CostRecordDTO> models = new ArrayList<CostRecordDTO>();
+            List<CostRecordDTO> models = new ArrayList<>();
             CostRecordDTO model;
             List<TagInfo> tagInfos;
             for (CostRecord entity : list) {
@@ -401,11 +411,10 @@ public class CostRecordController {
                 model.setTarget(entity.getTarget());
                 model.setMemo(entity.getMemo());
                 model.setIsHidden(entity.getIsHidden());
-                tagInfos = tagInfoService.listTagInfoByTradeNo(entity.getTradeNo());
-                if (!CollectionUtils.isEmpty(tagInfos)) {
-                    model.setTags(new ArrayList<>());
-                    for (TagInfo tagInfo : tagInfos) {
-                        model.getTags().add(tagInfo.getTagName());
+                if (showTags) {
+                    tagInfos = tagInfoService.listTagInfoByTradeNo(entity.getTradeNo());
+                    if (!CollectionUtils.isEmpty(tagInfos)) {
+                        model.setTags(tagInfos.stream().map(TagInfo::getTagName).collect(Collectors.toList()));
                     }
                 }
                 models.add(model);

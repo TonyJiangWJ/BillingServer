@@ -19,6 +19,7 @@ public class CostRecordPageRequest extends BaseRequest {
     private String sort;
     private String orderBy;
     private String content;
+    private Boolean showTags;
 
     public String getContent() {
         return content;
@@ -105,5 +106,13 @@ public class CostRecordPageRequest extends BaseRequest {
 
     public void setEndDate(String endDate) {
         this.endDate = endDate;
+    }
+
+    public Boolean getShowTags() {
+        return showTags;
+    }
+
+    public void setShowTags(Boolean showTags) {
+        this.showTags = showTags;
     }
 }

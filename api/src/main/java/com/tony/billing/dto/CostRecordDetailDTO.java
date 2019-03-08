@@ -1,5 +1,7 @@
 package com.tony.billing.dto;
 
+import java.util.List;
+
 /**
  * @author jiangwj20966 on 2017/6/2.
  */
@@ -22,6 +24,7 @@ public class CostRecordDetailDTO {
     private String tradeStatus;
     private Integer isDelete;
     private Integer isHidden;
+    private List<TagInfoDTO> tagInfos;
 
     public Integer getIsHidden() {
         return isHidden;
@@ -165,5 +168,13 @@ public class CostRecordDetailDTO {
 
     public void setIsDelete(Integer isDelete) {
         this.isDelete = isDelete;
+    }
+
+    public List<TagInfoDTO> getTagInfos() {
+        return tagInfos;
+    }
+
+    public void setTagInfos(List<TagInfoDTO> tagInfos) {
+        this.tagInfos = tagInfos;
     }
 }

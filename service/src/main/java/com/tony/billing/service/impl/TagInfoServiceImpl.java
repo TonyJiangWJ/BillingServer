@@ -48,6 +48,7 @@ public class TagInfoServiceImpl implements TagInfoService {
     public TagInfo findTagInfoByName(String tagName) {
         TagInfo tagInfo = new TagInfo();
         tagInfo.setTagName(tagName);
+        tagInfo.setUserId(UserIdContainer.getUserId());
         List<TagInfo> tagInfos = tagInfoMapper.find(tagInfo);
         if (!CollectionUtils.isEmpty(tagInfos)) {
             return tagInfos.get(0);

@@ -20,6 +20,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
@@ -95,6 +96,18 @@ public class TagInfoController extends BaseController {
             ResponseUtil.sysError(response);
         }
         return response;
+    }
+
+    /**
+     * 校验标签名称是否唯一
+     *
+     * @param tagName 标签名称
+     * @return
+     */
+    @RequestMapping(value = "/tag/name/unique")
+    public BaseResponse checkTagNameUnique(@RequestParam("tagName") String tagName) {
+        TagInfo record = tagInfoService.findTagInfoByName(tagName);
+        return record == null ? ResponseUtil.success() : ResponseUtil.error();
     }
 
     /**

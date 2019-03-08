@@ -10,6 +10,7 @@ public class CostRecordUpdateRequest extends BaseRequest {
     private String goodsName;
     private String memo;
     private String location;
+    private String orderType;
 
     public String getTradeNo() {
         return tradeNo;
@@ -41,5 +42,13 @@ public class CostRecordUpdateRequest extends BaseRequest {
 
     public void setLocation(String location) {
         this.location = location;
+    }
+
+    public String getOrderType() {
+        return orderType;
+    }
+
+    public void setOrderType(String orderType) {
+        this.orderType = orderType;
     }
 }
