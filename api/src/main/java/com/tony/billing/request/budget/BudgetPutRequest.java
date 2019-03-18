@@ -7,18 +7,9 @@ import com.tony.billing.request.BaseRequest;
  */
 public class BudgetPutRequest extends BaseRequest {
 
-    private Long tagId;
     private Long budgetMoney;
     private String year;
     private Integer month;
-
-    public Long getTagId() {
-        return tagId;
-    }
-
-    public void setTagId(Long tagId) {
-        this.tagId = tagId;
-    }
 
     public Long getBudgetMoney() {
         return budgetMoney;

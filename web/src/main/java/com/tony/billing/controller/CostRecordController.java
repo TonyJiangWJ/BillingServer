@@ -73,8 +73,8 @@ public class CostRecordController {
         CostRecordPageResponse response = new CostRecordPageResponse();
         try {
             CostRecordQuery costRecord = new CostRecordQuery();
-            if (request.getIsDelete() != null) {
-                costRecord.setIsDelete(request.getIsDelete());
+            if (request.getIsDeleted() != null) {
+                costRecord.setIsDeleted(request.getIsDeleted());
             }
             if (StringUtils.isNotEmpty(request.getInOutType())) {
                 costRecord.setInOutType(request.getInOutType());
@@ -93,7 +93,7 @@ public class CostRecordController {
             }
             costRecord.setStartDate(request.getStartDate());
             costRecord.setUserId(request.getUserId());
-            PagerGrid<CostRecordQuery> pagerGrid = new PagerGrid<CostRecordQuery>(costRecord);
+            PagerGrid<CostRecord> pagerGrid = new PagerGrid<>(costRecord);
             if (request.getPageSize() != null && !request.getPageSize().equals(0)) {
                 pagerGrid.setOffset(request.getPageSize());
             }
@@ -127,11 +127,8 @@ public class CostRecordController {
         return response;
     }
 
-    private String calculateCurrentAmount(List<CostRecordQuery> result) {
-        long total = 0L;
-        for (CostRecord entity : result) {
-            total += entity.getMoney();
-        }
+    private String calculateCurrentAmount(List<CostRecord> result) {
+        long total = result.stream().map(CostRecord::getMoney).reduce((a, b) -> a + b).orElse(0L);
         return MoneyUtil.fen2Yuan(total);
     }
 
@@ -202,7 +199,7 @@ public class CostRecordController {
             Map<String, Object> params = new HashMap<String, Object>();
             params.put("tradeNo", request.getTradeNo());
             params.put("nowStatus", request.getNowStatus());
-            params.put("isDelete", request.getNowStatus().equals(0) ? 1 : 0);
+            params.put("isDeleted", request.getNowStatus().equals(0) ? 1 : 0);
             params.put("userId", request.getUserId());
             if (costRecordService.toggleDeleteStatus(params) > 0) {
                 ResponseUtil.success(response);
@@ -265,8 +262,8 @@ public class CostRecordController {
             record.setPaidTime(request.getCreateTime());
             record.setOrderType(request.getOrderType());
             record.setMoney(MoneyUtil.yuan2fen(request.getMoney()));
-            record.setCreateTime(request.getCreateTime());
-            record.setIsDelete(0);
+            record.setCostCreateTime(request.getCreateTime());
+            record.setIsDeleted(0);
             record.setOrderStatus(TradeStatus.TRADE_SUCCESS);
             record.setInOutType(request.getInOutType());
             record.setMemo(request.getMemo());
@@ -360,14 +357,14 @@ public class CostRecordController {
 
     private CostRecordDetailDTO formatDetailModel(CostRecord record) {
         CostRecordDetailDTO model = new CostRecordDetailDTO();
-        model.setCreateTime(record.getCreateTime());
+        model.setCreateTime(record.getCostCreateTime());
         model.setGoodsName(record.getGoodsName());
         model.setInOutType(record.getInOutType());
-        model.setIsDelete(record.getIsDelete());
+        model.setIsDeleted(record.getIsDeleted());
         model.setLocation(record.getLocation());
         model.setMemo(record.getMemo());
         model.setMoney(MoneyUtil.fen2Yuan(record.getMoney()));
-        model.setModifyTime(record.getModifyTime());
+        model.setModifyTime(record.getCostModifyTime());
         model.setOrderNo(record.getOrderNo());
         model.setOrderStatus(record.getOrderStatus());
         model.setOrderType(record.getOrderType());
@@ -392,17 +389,17 @@ public class CostRecordController {
     }
 
 
-    private List<CostRecordDTO> formatModelList(List<CostRecordQuery> list, boolean showTags) {
+    private List<CostRecordDTO> formatModelList(List<CostRecord> list, boolean showTags) {
         if (!CollectionUtils.isEmpty(list)) {
             List<CostRecordDTO> models = new ArrayList<>();
             CostRecordDTO model;
             List<TagInfo> tagInfos;
             for (CostRecord entity : list) {
                 model = new CostRecordDTO();
-                model.setCreateTime(entity.getCreateTime());
+                model.setCreateTime(entity.getCostCreateTime());
                 model.setGoodsName(entity.getGoodsName());
                 model.setInOutType(entity.getInOutType());
-                model.setIsDelete(entity.getIsDelete());
+                model.setIsDeleted(entity.getIsDeleted());
                 model.setMoney(MoneyUtil.fen2Yuan(entity.getMoney()));
                 model.setLocation(entity.getLocation());
                 model.setOrderStatus(entity.getOrderStatus());

@@ -3,12 +3,14 @@ package com.tony.billing.service.impl;
 import com.google.common.base.Preconditions;
 import com.tony.billing.constants.enums.EnumDeleted;
 import com.tony.billing.constants.enums.EnumMailTemplateName;
-import com.tony.billing.dao.AdminDao;
+import com.tony.billing.dao.mapper.AdminMapper;
+import com.tony.billing.dao.mapper.base.AbstractMapper;
 import com.tony.billing.entity.Admin;
 import com.tony.billing.entity.ModifyAdmin;
 import com.tony.billing.exceptions.BaseBusinessException;
 import com.tony.billing.service.AdminService;
 import com.tony.billing.service.EmailService;
+import com.tony.billing.service.base.AbstractService;
 import com.tony.billing.util.RSAUtil;
 import com.tony.billing.util.RedisUtils;
 import com.tony.billing.util.ShaSignHelper;
@@ -31,12 +33,12 @@ import java.util.UUID;
  * @author by TonyJiang on 2017/5/18.
  */
 @Service
-public class AdminServiceImpl implements AdminService {
+public class AdminServiceImpl extends AbstractService<Admin> implements AdminService {
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Resource
-    private AdminDao adminDao;
+    private AdminMapper adminMapper;
 
     @Resource
     private RedisUtils redisUtils;
@@ -45,7 +47,6 @@ public class AdminServiceImpl implements AdminService {
 
     @Value("${system.host.reset.password}")
     private String resetPwdUrl;
-
     /**
      * 会话有效期为1天
      */
@@ -57,6 +58,12 @@ public class AdminServiceImpl implements AdminService {
     @Value("${pwd.salt:springboot}")
     private String pwdSalt;
 
+
+    @Override
+    protected AbstractMapper<Admin> getMapper() {
+        return adminMapper;
+    }
+
     @Override
     public Admin login(Admin admin) {
         admin.setPassword(sha256(rsaUtil.decrypt(admin.getPassword())));
@@ -64,13 +71,13 @@ public class AdminServiceImpl implements AdminService {
             logger.error("password error");
             return null;
         }
-        Admin checkUser = adminDao.preLogin(admin);
+        Admin checkUser = adminMapper.preLogin(admin);
         if (checkUser != null) {
             redisUtils.del(checkUser.getTokenId());
             checkUser.setTokenId(TokenUtil.getToken(checkUser.getCode(), checkUser.getUserName(), checkUser.getPassword()));
             checkUser.setTokenVerify(VERIFY_TIME);
             checkUser.setLastLogin(new Date());
-            if (adminDao.doLogin(checkUser) > 0) {
+            if (adminMapper.doLogin(checkUser) > 0) {
                 redisUtils.set(checkUser.getTokenId(), deleteSecret(checkUser), VERIFY_TIME / 1000);
                 return checkUser;
             }
@@ -81,7 +88,7 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public Long register(Admin admin) {
-        if (null == adminDao.queryByUserName(admin.getUserName())) {
+        if (null == adminMapper.queryByUserName(admin.getUserName())) {
             admin.setCreateTime(new Date());
             admin.setModifyTime(admin.getCreateTime());
             admin.setVersion(1);
@@ -91,7 +98,7 @@ public class AdminServiceImpl implements AdminService {
                 return -1L;
             }
             admin.setIsDeleted(EnumDeleted.NOT_DELETED.val());
-            if (adminDao.register(admin) > 0) {
+            if (adminMapper.register(admin) > 0) {
                 return admin.getId();
             } else {
                 return -1L;
@@ -114,10 +121,10 @@ public class AdminServiceImpl implements AdminService {
         if (admin.getNewPassword() == null) {
             return false;
         }
-        Admin stored = adminDao.getAdminById(admin.getId());
+        Admin stored = adminMapper.getAdminById(admin.getId());
         if (stored != null && StringUtils.equals(stored.getPassword(), admin.getPassword())) {
             stored.setPassword(admin.getNewPassword());
-            return adminDao.modifyPwd(stored) > 0;
+            return adminMapper.modifyPwd(stored) > 0;
         }
         logger.error("用户：{} 修改密码，旧密码不正确", admin.getId());
         return false;
@@ -125,7 +132,7 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public Admin preResetPwd(String userName) {
-        Admin user = adminDao.queryByUserName(userName);
+        Admin user = adminMapper.queryByUserName(userName);
         if (user != null) {
             String email = user.getEmail();
             if (StringUtils.isNotEmpty(email)) {
@@ -159,7 +166,7 @@ public class AdminServiceImpl implements AdminService {
         if (optional.isPresent()) {
             Admin cachedUser = optional.get();
             cachedUser.setPassword(admin.getNewPassword());
-            if (adminDao.modifyPwd(cachedUser) > 0) {
+            if (adminMapper.modifyPwd(cachedUser) > 0) {
                 // 密码修改完毕之后将缓存删除
                 redisUtils.del(token);
                 return true;
@@ -187,4 +194,5 @@ public class AdminServiceImpl implements AdminService {
             return null;
         }
     }
+
 }

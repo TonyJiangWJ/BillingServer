@@ -1,6 +1,10 @@
 package com.tony.billing.test;
 
 import com.tony.billing.TestApplication;
+import com.tony.billing.util.UserIdContainer;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,5 +26,15 @@ public class BaseServiceTestNoTransaction extends AbstractJUnit4SpringContextTes
     @Override
     public Logger getLogger() {
         return logger;
+    }
+
+    @Before
+    public void setCommonUp() {
+        UserIdContainer.setUserId(2L);
+    }
+
+    @After
+    public void afterTest() {
+        UserIdContainer.removeUserId();
     }
 }

@@ -1,5 +1,6 @@
 package com.tony.billing.service.impl;
 
+import com.tony.billing.entity.CostRecord;
 import com.tony.billing.entity.PagerGrid;
 import com.tony.billing.entity.query.CostRecordQuery;
 import com.tony.billing.service.CostRecordService;
@@ -22,7 +23,7 @@ public class CostRecordServiceImplTest extends BaseServiceTest {
         CostRecordQuery costRecordQuery = new CostRecordQuery();
         costRecordQuery.setContent("支付");
         costRecordQuery.setUserId(2L);
-        PagerGrid<CostRecordQuery> pagerGrid = new PagerGrid<>(costRecordQuery);
+        PagerGrid<CostRecord> pagerGrid = new PagerGrid<>(costRecordQuery);
         debugInfo(costRecordService.page(pagerGrid));
 
     }

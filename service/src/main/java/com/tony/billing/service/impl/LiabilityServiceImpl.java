@@ -3,14 +3,18 @@ package com.tony.billing.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.tony.billing.constants.enums.EnumLiabilityStatus;
 import com.tony.billing.constants.enums.EnumTypeIdentify;
-import com.tony.billing.dao.AssetTypesDao;
-import com.tony.billing.dao.LiabilityDao;
+import com.tony.billing.dao.mapper.AssetTypesMapper;
+import com.tony.billing.dao.mapper.LiabilityMapper;
+import com.tony.billing.dao.mapper.base.AbstractMapper;
 import com.tony.billing.dto.LiabilityDTO;
 import com.tony.billing.entity.AssetTypes;
 import com.tony.billing.entity.Liability;
 import com.tony.billing.model.LiabilityModel;
 import com.tony.billing.model.MonthLiabilityModel;
 import com.tony.billing.service.LiabilityService;
+import com.tony.billing.service.base.AbstractService;
+import com.tony.billing.util.UserIdContainer;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,15 +25,28 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Stream;
 
 @Service
-public class LiabilityServiceImpl implements LiabilityService {
+public class LiabilityServiceImpl extends AbstractService<Liability> implements LiabilityService {
 
     @Resource
-    private LiabilityDao liabilityDao;
+    private LiabilityMapper liabilityMapper;
     @Resource
-    private AssetTypesDao assetTypesDao;
+    private AssetTypesMapper assetTypesMapper;
+
+    @Override
+    protected AbstractMapper<Liability> getMapper() {
+        return liabilityMapper;
+    }
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -37,7 +54,7 @@ public class LiabilityServiceImpl implements LiabilityService {
     public List<Liability> listLiabilityByUserId(Long userId) {
         Liability query = new Liability();
         query.setUserId(userId);
-        return liabilityDao.list(query);
+        return super.list(query);
     }
 
     /**
@@ -52,30 +69,30 @@ public class LiabilityServiceImpl implements LiabilityService {
         Liability query = new Liability();
         query.setUserId(userId);
         query.setStatus(0);
-        List<Liability> liabilities = liabilityDao.list(query);
+        List<Liability> liabilities = super.list(query);
         Map<String, AssetTypes> parentTypeMap = new HashMap<>();
-        Map<Integer, AssetTypes> assetTypesMap = new HashMap<>();
+        Map<Long, AssetTypes> assetTypesMap = new HashMap<>();
         fillAssetTypeMap(liabilities, parentTypeMap, assetTypesMap, userId);
         List<LiabilityModel> allModels = fillLiabilityModels(liabilities, parentTypeMap, assetTypesMap);
         return mergeLiabilityByType(allModels);
     }
 
     private List<LiabilityModel> mergeLiabilityByType(List<LiabilityModel> allModels) {
-        for(LiabilityModel model:allModels) {
+        for (LiabilityModel model : allModels) {
             Map<String, LiabilityDTO> liabilityDTOMap = new HashMap<>();
-            for(LiabilityDTO liabilityDTO:model.getLiabilityList()){
+            for (LiabilityDTO liabilityDTO : model.getLiabilityList()) {
                 LiabilityDTO mergedDto = null;
-                if((mergedDto=liabilityDTOMap.get(liabilityDTO.getType()))!=null) {
-                    mergedDto.setAmount(liabilityDTO.getAmount()-liabilityDTO.getPaid()+mergedDto.getAmount());
+                if ((mergedDto = liabilityDTOMap.get(liabilityDTO.getType())) != null) {
+                    mergedDto.setAmount(liabilityDTO.getAmount() - liabilityDTO.getPaid() + mergedDto.getAmount());
                 } else {
                     mergedDto = new LiabilityDTO();
                     BeanUtils.copyProperties(liabilityDTO, mergedDto);
-                    mergedDto.setAmount(liabilityDTO.getAmount()-liabilityDTO.getPaid());
+                    mergedDto.setAmount(liabilityDTO.getAmount() - liabilityDTO.getPaid());
                     liabilityDTOMap.put(liabilityDTO.getType(), mergedDto);
                 }
             }
             List<LiabilityDTO> mergedList = new ArrayList<>();
-            for(Map.Entry<String, LiabilityDTO> entry:liabilityDTOMap.entrySet()) {
+            for (Map.Entry<String, LiabilityDTO> entry : liabilityDTOMap.entrySet()) {
                 mergedList.add(entry.getValue());
             }
             model.setLiabilityList(mergedList);
@@ -83,7 +100,7 @@ public class LiabilityServiceImpl implements LiabilityService {
         return allModels;
     }
 
-    private List<LiabilityModel> fillLiabilityModels(List<Liability> liabilities, Map<String, AssetTypes> parentTypeMap, Map<Integer, AssetTypes> assetTypesMap) {
+    private List<LiabilityModel> fillLiabilityModels(List<Liability> liabilities, Map<String, AssetTypes> parentTypeMap, Map<Long, AssetTypes> assetTypesMap) {
         Map<String, LiabilityModel> modelMap = new HashMap<>();
         for (Map.Entry<String, AssetTypes> entry : parentTypeMap.entrySet()) {
             modelMap.put(entry.getKey(), new LiabilityModel(entry.getValue().getTypeDesc()));
@@ -114,7 +131,7 @@ public class LiabilityServiceImpl implements LiabilityService {
         Liability query = new Liability();
         query.setUserId(userId);
         query.setStatus(0);
-        List<Liability> liabilities = liabilityDao.list(query);
+        List<Liability> liabilities = super.list(query);
         Collections.sort(liabilities);
         SimpleDateFormat monthFormat = new SimpleDateFormat("yyyy-MM");
         String month = null;
@@ -133,7 +150,7 @@ public class LiabilityServiceImpl implements LiabilityService {
             monthLiabilityModel = new MonthLiabilityModel(month);
 
             Map<String, AssetTypes> parentTypeMap = new HashMap<>();
-            Map<Integer, AssetTypes> assetTypesMap = new HashMap<>();
+            Map<Long, AssetTypes> assetTypesMap = new HashMap<>();
             fillAssetTypeMap(entry.getValue(), parentTypeMap, assetTypesMap, userId);
             monthLiabilityModel.setLiabilityModels(fillLiabilityModels(entry.getValue(), parentTypeMap, assetTypesMap));
             countDownMonthAmount(monthLiabilityModel);
@@ -143,16 +160,25 @@ public class LiabilityServiceImpl implements LiabilityService {
         return monthLiabilityModels;
     }
 
-    public void fillAssetTypeMap(List<Liability> liabilities, Map<String, AssetTypes> parentTypeMap, Map<Integer, AssetTypes> assetTypesMap, Long userId) {
+    public void fillAssetTypeMap(List<Liability> liabilities, Map<String, AssetTypes> parentTypeMap, Map<Long, AssetTypes> assetTypesMap, Long userId) {
         for (Liability liability : liabilities) {
             if (assetTypesMap.get(liability.getType()) == null) {
-                AssetTypes assetTypes = assetTypesDao.selectById(liability.getType());
+                AssetTypes assetTypes = assetTypesMapper.getById(liability.getType(), UserIdContainer.getUserId());
                 if (assetTypes != null) {
                     assetTypesMap.put(liability.getType(), assetTypes);
                     if (StringUtils.isNotEmpty(assetTypes.getParentCode())) {
                         if (parentTypeMap.get(assetTypes.getParentCode()) == null) {
-                            assetTypes = assetTypesDao.getByTypeCode(assetTypes.getParentCode(), EnumTypeIdentify.LIABILITY.getIdentify(), userId);
-                            if (assetTypes != null) {
+                            String parentCode = assetTypes.getParentCode();
+                            List<AssetTypes> record = assetTypesMapper.list(Stream.generate(() -> {
+                                        AssetTypes condition = new AssetTypes();
+                                        condition.setParentCode(parentCode);
+                                        condition.setTypeIdentify(EnumTypeIdentify.LIABILITY.getIdentify());
+                                        condition.setUserId(userId);
+                                        return condition;
+                                    }
+                            ).findAny().get());
+                            if (CollectionUtils.isNotEmpty(record)) {
+                                assetTypes = record.get(0);
                                 parentTypeMap.put(assetTypes.getTypeCode(), assetTypes);
                             }
                         } else {
@@ -166,7 +192,7 @@ public class LiabilityServiceImpl implements LiabilityService {
 
     @Override
     public Liability getLiabilityInfoById(Long id) {
-        return liabilityDao.getLiabilityById(id);
+        return super.getById(id);
     }
 
     @Override
@@ -174,7 +200,7 @@ public class LiabilityServiceImpl implements LiabilityService {
         if (liability.getAmount().equals(liability.getPaid())) {
             liability.setStatus(EnumLiabilityStatus.PAID.getStatus());
         }
-        return liabilityDao.update(liability) > 0;
+        return super.update(liability);
     }
 
     @Override
@@ -183,7 +209,7 @@ public class LiabilityServiceImpl implements LiabilityService {
         Date repaymentDay = liability.getRepaymentDay();
         int installment = liability.getInstallment();
 
-        AssetTypes assetTypes = assetTypesDao.selectById(liability.getType());
+        AssetTypes assetTypes = assetTypesMapper.getById(liability.getType(), UserIdContainer.getUserId());
         if (assetTypes != null && (assetTypes.getUserId().equals(liability.getUserId()) || assetTypes.getUserId().equals(-1L))) {
             liability.setName(assetTypes.getTypeDesc());
         } else {
@@ -193,7 +219,7 @@ public class LiabilityServiceImpl implements LiabilityService {
 
         if (installment == 1) {
             liability.setIndex(1);
-            return liabilityDao.insert(liability) > 0;
+            return super.insert(liability) > 0;
         } else {
             Long totalAmount = liability.getAmount();
             Long perInstallmentAmount = totalAmount / installment;
@@ -220,7 +246,7 @@ public class LiabilityServiceImpl implements LiabilityService {
                 newRecord.setType(liability.getType());
                 newRecord.setUserId(liability.getUserId());
                 newLiabilities.add(newRecord);
-                if (liabilityDao.insert(newRecord) <= 0) {
+                if (super.insert(newRecord) <= 0) {
                     throw new SQLException("error insert");
                 }
                 calendar.add(Calendar.MONTH, 1);

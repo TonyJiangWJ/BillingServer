@@ -1,9 +1,11 @@
 package com.tony.billing.dto;
 
+import com.tony.billing.dto.base.BaseDTO;
+
 /**
  * @author jiangwj20966 on 2017/7/13.
  */
-public class BudgetCostDTO {
+public class BudgetCostDTO extends BaseDTO {
     private String totalCost;
     private String restMoney;
     private String budgetMoney;

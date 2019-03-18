@@ -1,32 +1,22 @@
 package com.tony.billing.entity;
 
+import com.tony.billing.entity.base.BaseVersionedEntity;
+
 import java.util.Date;
 
 /**
  * 分期负债
  */
-public class Liability implements Comparable<Liability> {
-
-    private Long id;
+public class Liability extends BaseVersionedEntity implements Comparable<Liability> {
     private Long userId;
-    private Date createTime;
     private Date repaymentDay;
-    private Date modifyTime;
     private String name;
-    private Integer type;
+    private Long type;
     private Long amount;
     private Integer status;
     private Integer installment;
     private Integer index;
     private Long paid;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public Long getUserId() {
         return userId;
@@ -34,14 +24,6 @@ public class Liability implements Comparable<Liability> {
 
     public void setUserId(Long userId) {
         this.userId = userId;
-    }
-
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
     }
 
     public Date getRepaymentDay() {
@@ -60,11 +42,11 @@ public class Liability implements Comparable<Liability> {
         this.name = name;
     }
 
-    public Integer getType() {
+    public Long getType() {
         return type;
     }
 
-    public void setType(Integer type) {
+    public void setType(Long type) {
         this.type = type;
     }
 
@@ -90,14 +72,6 @@ public class Liability implements Comparable<Liability> {
 
     public void setIndex(Integer index) {
         this.index = index;
-    }
-
-    public Date getModifyTime() {
-        return modifyTime;
-    }
-
-    public void setModifyTime(Date modifyTime) {
-        this.modifyTime = modifyTime;
     }
 
     public Integer getStatus() {

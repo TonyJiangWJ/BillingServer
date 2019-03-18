@@ -1,5 +1,6 @@
 package com.tony.billing.service;
 
+import com.tony.billing.entity.TagBudgetRef;
 import com.tony.billing.entity.TagCostRef;
 import com.tony.billing.entity.TagInfo;
 
@@ -22,7 +23,23 @@ public interface TagInfoService {
 
     Long insertTagCostRef(TagCostRef tagCostRef);
 
-    Long deleteCostTag(Map param);
-
     Long deleteTagById(Long id);
+
+    Long countTagUsage(Long id);
+
+    /**
+     * 添加预算标签关联关系
+     * @param budgetRef
+     * @return
+     */
+    Long insertTagBudgetRef(TagBudgetRef budgetRef);
+
+    /**
+     * 获取预算关联标签列表
+     * @param budgetId
+     * @return
+     */
+    List<TagInfo> listTagInfoByBudgetId(Long budgetId);
+
+    boolean deleteCostTag(Long costId, Long tagId);
 }

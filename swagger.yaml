@@ -500,7 +500,7 @@ paths:
           type: 'integer'
           description: '分页页面大小'
           default: '10'
-        - name: 'isDelete'
+        - name: 'isDeleted'
           in: 'query'
           description: '是否已删除'
           type: 'integer'
@@ -1425,7 +1425,7 @@ definitions:
       orderStatus:
         type: 'string'
         description: '交易状态'
-      isDelete:
+      isDeleted:
         type: 'integer'
         description: '是否已删除'
         enum: [0,1]
@@ -1489,7 +1489,7 @@ definitions:
       refundMoney:
         type: 'string'
         description: '退款金额'
-      isDelete:
+      isDeleted:
         type: 'integer'
         description: '是否已删除'
         enum: [0,1]

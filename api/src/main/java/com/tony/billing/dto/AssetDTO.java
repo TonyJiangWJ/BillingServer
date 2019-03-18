@@ -1,12 +1,13 @@
 package com.tony.billing.dto;
 
+import com.tony.billing.dto.base.VersionedDTO;
 import com.tony.billing.entity.Asset;
 import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author TonyJiang on 2018/2/12
  */
-public class AssetDTO {
+public class AssetDTO extends VersionedDTO {
     private String name;
     private String type;
     private String available;

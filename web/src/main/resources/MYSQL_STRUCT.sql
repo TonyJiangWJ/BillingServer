@@ -107,7 +107,7 @@ CREATE TABLE `t_cost_info` (
   `refundMoney` bigint(20) DEFAULT 0,
   `memo` varchar(100) DEFAULT NULL,
   `tradeStatus` varchar(100) DEFAULT NULL,
-  `isDelete` tinyint(4) NOT NULL DEFAULT 0,
+  `isDeleted` tinyint(4) NOT NULL DEFAULT 0,
   `isHidden` int(11) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   UNIQUE KEY `tradeNo` (`tradeNo`)
@@ -159,7 +159,7 @@ CREATE TABLE `t_cost_tag` (
   `costId` bigint(20) NOT NULL,
   `createTime` datetime NOT NULL,
   `modifyTime` datetime NOT NULL,
-  `isDelete` tinyint(4) NOT NULL DEFAULT 0,
+  `isDeleted` tinyint(4) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -178,7 +178,7 @@ CREATE TABLE `t_credit_info` (
   `repaymentDate` varchar(20) NOT NULL DEFAULT '',
   `creditType` varchar(20) NOT NULL DEFAULT '',
   `amount` bigint(20) NOT NULL DEFAULT 0,
-  `isDelete` tinyint(4) NOT NULL DEFAULT 0,
+  `isDeleted` tinyint(4) NOT NULL DEFAULT 0,
   `createTime` datetime NOT NULL,
   `modifyTime` datetime DEFAULT NULL,
   `version` int(11) NOT NULL DEFAULT 0,
@@ -204,7 +204,7 @@ CREATE TABLE `t_liability` (
   `amount` bigint(20) DEFAULT NULL COMMENT '总金额 单位分',
   `installment` int(11) DEFAULT NULL COMMENT '分期总期数',
   `index` int(11) DEFAULT NULL COMMENT '第几期',
-  `isDelete` tinyint(4) NOT NULL DEFAULT 0 COMMENT '是否删除0否 1是',
+  `isDeleted` tinyint(4) NOT NULL DEFAULT 0 COMMENT '是否删除0否 1是',
   `status` int(11) NOT NULL DEFAULT 0 COMMENT '当前状态0 未还，1已还',
   `paid` bigint(20) NOT NULL DEFAULT 0 COMMENT '已还金额',
   PRIMARY KEY (`id`)
@@ -244,7 +244,7 @@ CREATE TABLE `t_tag_info` (
   `tagName` varchar(32) NOT NULL,
   `createTime` datetime NOT NULL,
   `modifyTime` datetime NOT NULL,
-  `isDelete` tinyint(4) NOT NULL DEFAULT 0,
+  `isDeleted` tinyint(4) NOT NULL DEFAULT 0,
   `userId` bigint(20) NOT NULL DEFAULT -1,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

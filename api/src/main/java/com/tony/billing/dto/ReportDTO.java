@@ -1,9 +1,11 @@
 package com.tony.billing.dto;
 
+import com.tony.billing.dto.base.BaseDTO;
+
 /**
  * @author by TonyJiang on 2017/6/10.
  */
-public class ReportDTO {
+public class ReportDTO extends BaseDTO {
     private String month;
     private String totalCost;
     private String totalCostExceptDeleted;

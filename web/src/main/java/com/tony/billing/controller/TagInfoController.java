@@ -25,9 +25,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author by TonyJiang on 2017/6/14.
@@ -55,16 +57,16 @@ public class TagInfoController extends BaseController {
         tagInfo.setUserId(request.getUserId());
         List<TagInfo> tagInfos = tagInfoService.listTagInfo(tagInfo);
         if (!CollectionUtils.isEmpty(tagInfos)) {
-
-            List<TagInfoDTO> list = new ArrayList<>();
-            TagInfoDTO model = null;
-            for (TagInfo entity : tagInfos) {
-                model = new TagInfoDTO();
-                model.setTagId(entity.getId());
-                model.setTagName(entity.getTagName());
-                list.add(model);
-            }
-            response.setTagInfoList(list);
+            response.setTagInfoList(tagInfos.stream()
+                    .map(tag -> {
+                        TagInfoDTO model = new TagInfoDTO();
+                        model.setTagName(tag.getTagName());
+                        model.setTagId(tag.getId());
+                        model.setUsageCount(tagInfoService.countTagUsage(tag.getId()));
+                        return model;
+                    })
+                    .sorted(Comparator.comparing(TagInfoDTO::getUsageCount).reversed())
+                    .collect(Collectors.toList()));
         }
         ResponseUtil.success(response);
         return response;
@@ -220,10 +222,7 @@ public class TagInfoController extends BaseController {
             CostRecord costRecord = costRecordService.findByTradeNo(request.getTradeNo(), request.getUserId());
             TagInfo tagInfo = tagInfoService.getTagInfoById(request.getTagId());
             if (costRecord != null && tagInfo != null) {
-                Map<String, Object> param = new HashMap<>();
-                param.put("tagId", tagInfo.getId());
-                param.put("costId", costRecord.getId());
-                if (tagInfoService.deleteCostTag(param) > 0) {
+                if (tagInfoService.deleteCostTag(costRecord.getId(), tagInfo.getId())) {
                     ResponseUtil.success(response);
                 } else {
                     ResponseUtil.error(response);

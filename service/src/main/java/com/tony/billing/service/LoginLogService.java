@@ -10,6 +10,4 @@ import java.util.List;
 public interface LoginLogService {
 
     Long addLog(LoginLog loginLog);
-
-    List<LoginLog> selectList();
 }

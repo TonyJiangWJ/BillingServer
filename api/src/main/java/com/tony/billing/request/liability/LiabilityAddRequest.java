@@ -10,16 +10,16 @@ import java.util.Date;
  */
 public class LiabilityAddRequest extends BaseRequest {
 
-    private Integer type;
+    private Long type;
     private Date repaymentDay;
     private Long amount;
     private Integer installment;
 
-    public Integer getType() {
+    public Long getType() {
         return type;
     }
 
-    public void setType(Integer type) {
+    public void setType(Long type) {
         this.type = type;
     }
 

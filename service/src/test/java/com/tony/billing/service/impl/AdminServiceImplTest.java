@@ -1,6 +1,6 @@
 package com.tony.billing.service.impl;
 
-import com.tony.billing.dao.AdminDao;
+import com.tony.billing.dao.mapper.AdminMapper;
 import com.tony.billing.entity.Admin;
 import com.tony.billing.entity.ModifyAdmin;
 import com.tony.billing.service.AdminService;
@@ -22,7 +22,7 @@ public class AdminServiceImplTest extends BaseServiceTest {
     @Autowired
     private AdminService adminService;
     @Autowired
-    private AdminDao adminDao;
+    private AdminMapper adminMapper;
     @Autowired
     private RSAUtil rsaUtil;
     @Autowired
@@ -81,7 +81,7 @@ public class AdminServiceImplTest extends BaseServiceTest {
 
     @Test
     public void modifyPwd() {
-        Admin admin = adminDao.queryByUserName(userName);
+        Admin admin = adminMapper.queryByUserName(userName);
         Assert.notNull(admin);
         ModifyAdmin modifyAdmin = new ModifyAdmin();
         modifyAdmin.setId(admin.getId());

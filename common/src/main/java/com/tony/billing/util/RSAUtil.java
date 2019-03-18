@@ -40,6 +40,8 @@ public class RSAUtil {
 
     public String decrypt(String cipher) {
         try {
+            // 当base64编码串中包含空格，转换为加号
+            cipher = cipher.replaceAll("[ ]", "+");
             byte[] cipherArray = RSAEncrypt.decrypt(privateKey, Base64.decodeBase64(cipher));
             if (cipherArray != null) {
                 String cipherStr = new String(cipherArray, 0, cipherArray.length);

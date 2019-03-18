@@ -1,11 +1,14 @@
 package com.tony.billing.dto;
 
+import com.tony.billing.dto.base.BaseDTO;
+import com.tony.billing.dto.base.VersionedDTO;
+
 import java.util.List;
 
 /**
  * @author jiangwj20966 on 2017/6/2.
  */
-public class CostRecordDTO {
+public class CostRecordDTO extends BaseDTO {
     private String tradeNo;
     private String createTime;
     private String location;
@@ -15,7 +18,7 @@ public class CostRecordDTO {
     private String money;
     private String inOutType;
     private String orderStatus;
-    private Integer isDelete;
+    private Integer isDeleted;
     private Integer isHidden;
     private String target;
     private List<String> tags;
@@ -100,12 +103,12 @@ public class CostRecordDTO {
         this.orderStatus = orderStatus;
     }
 
-    public Integer getIsDelete() {
-        return isDelete;
+    public Integer getIsDeleted() {
+        return isDeleted;
     }
 
-    public void setIsDelete(Integer isDelete) {
-        this.isDelete = isDelete;
+    public void setIsDeleted(Integer isDeleted) {
+        this.isDeleted = isDeleted;
     }
 
     public String getMemo() {

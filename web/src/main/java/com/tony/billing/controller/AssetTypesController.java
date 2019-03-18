@@ -53,8 +53,8 @@ public class AssetTypesController extends BaseController {
     }
 
     @RequestMapping("/list/asset/type/by/parent/id")
-    public AssetTypeResponse listAssetTypesByParentId(@RequestParam("id") Integer id, @ModelAttribute("request") BaseRequest request) {
-        AssetTypes assetTypes = assetTypesService.selectById(id);
+    public AssetTypeResponse listAssetTypesByParentId(@RequestParam("id") Long id, @ModelAttribute("request") BaseRequest request) {
+        AssetTypes assetTypes = assetTypesService.getById(id);
         if (assetTypes != null && StringUtils.isEmpty(assetTypes.getParentCode())) {
             return listAssetTypesByParent(assetTypes.getTypeCode(), assetTypes.getTypeIdentify(), request);
         }

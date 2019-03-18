@@ -135,7 +135,7 @@
         LIMIT #{index} , #{offset}
     </select>
 
-    <select id="selectList" resultType="com.tony.billing.entity.LoginLog">
+    <select id="list" resultType="com.tony.billing.entity.LoginLog">
         SELECT
         <include refid="all"/>
         FROM t_login_log

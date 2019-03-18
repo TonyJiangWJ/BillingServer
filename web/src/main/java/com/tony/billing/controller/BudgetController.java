@@ -2,13 +2,11 @@ package com.tony.billing.controller;
 
 import com.tony.billing.dto.BudgetDTO;
 import com.tony.billing.entity.Budget;
-import com.tony.billing.model.BudgetModel;
 import com.tony.billing.request.budget.BudgetListRequest;
 import com.tony.billing.request.budget.BudgetPutRequest;
 import com.tony.billing.response.BaseResponse;
 import com.tony.billing.response.budget.BudgetListResponse;
 import com.tony.billing.service.BudgetService;
-import com.tony.billing.util.MoneyUtil;
 import com.tony.billing.util.ResponseUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -17,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -35,7 +32,6 @@ public class BudgetController extends BaseController {
         if (StringUtils.isEmpty(request.getYear())
                 || request.getBudgetMoney() == null
                 || request.getMonth() == null
-                || request.getTagId() == null
                 || request.getUserId() == null) {
             return ResponseUtil.paramError(response);
         }
@@ -44,9 +40,8 @@ public class BudgetController extends BaseController {
             budget.setBelongMonth(request.getMonth());
             budget.setBelongYear(request.getYear());
             budget.setBudgetMoney(request.getBudgetMoney());
-            budget.setTagId(request.getTagId());
             budget.setUserId(request.getUserId());
-            if (budgetService.saveBudget(budget) > 0) {
+            if (budgetService.insert(budget) > 0) {
                 ResponseUtil.success(response);
             } else {
                 ResponseUtil.error(response);
@@ -68,18 +63,10 @@ public class BudgetController extends BaseController {
             Budget query = new Budget();
             query.setBelongMonth(request.getMonth());
             query.setBelongYear(request.getYear());
-            List<BudgetModel> budgets = budgetService.queryBudgetsByCondition(query);
+            query.setUserId(request.getUserId());
+            List<BudgetDTO> budgets = budgetService.queryBudgetsByCondition(query);
             if (CollectionUtils.isNotEmpty(budgets)) {
-                BudgetDTO budgetDTO;
-                List<BudgetDTO> budgetDTOS = new ArrayList<>();
-                for (BudgetModel budget : budgets) {
-                    budgetDTO = new BudgetDTO();
-                    budgetDTO.setBudgetMoney(MoneyUtil.fen2Yuan(budget.getBudgetMoney()));
-                    budgetDTO.setTagName(budget.getTagName());
-                    budgetDTO.setYearMonth(budget.getBelongYear() + "-" + budget.getBelongMonth());
-                    budgetDTOS.add(budgetDTO);
-                }
-                response.setBudgetList(budgetDTOS);
+                response.setBudgetList(budgets);
                 ResponseUtil.success(response);
             } else {
                 ResponseUtil.dataNotExisting(response);

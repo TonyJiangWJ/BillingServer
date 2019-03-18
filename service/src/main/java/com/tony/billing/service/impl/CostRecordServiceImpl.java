@@ -1,15 +1,18 @@
 package com.tony.billing.service.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.tony.billing.dao.CostRecordDao;
+import com.google.common.base.Preconditions;
+import com.tony.billing.dao.mapper.CostRecordMapper;
+import com.tony.billing.dao.mapper.base.AbstractMapper;
 import com.tony.billing.entity.CostRecord;
 import com.tony.billing.entity.PagerGrid;
-import com.tony.billing.entity.query.CostRecordQuery;
 import com.tony.billing.service.CostRecordService;
+import com.tony.billing.service.base.AbstractService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,18 +21,23 @@ import java.util.Map;
  * @author jiangwj20966 on 2017/6/2.
  */
 @Service
-public class CostRecordServiceImpl implements CostRecordService {
+public class CostRecordServiceImpl extends AbstractService<CostRecord> implements CostRecordService {
 
     @Resource
-    private CostRecordDao costRecordDao;
+    private CostRecordMapper costRecordMapper;
 
     @Override
-    public List<CostRecord> find(CostRecord record) {
-        return costRecordDao.find(record);
+    protected AbstractMapper<CostRecord> getMapper() {
+        return costRecordMapper;
     }
 
     @Override
-    public PagerGrid<CostRecordQuery> page(PagerGrid<CostRecordQuery> pagerGrid) {
+    public List<CostRecord> find(CostRecord record) {
+        return super.list(record);
+    }
+
+    @Override
+    public PagerGrid<CostRecord> page(PagerGrid<CostRecord> pagerGrid) {
         Map<String, Object> params;
         if (pagerGrid.getT() == null) {
             params = new HashMap<String, Object>();
@@ -45,8 +53,8 @@ public class CostRecordServiceImpl implements CostRecordService {
             params.put("sort", pagerGrid.getSort());
         }
 
-        List<CostRecordQuery> list = costRecordDao.page(params);
-        Integer count = costRecordDao.count(params);
+        List<CostRecord> list = costRecordMapper.page(params);
+        Integer count = costRecordMapper.count(params);
         pagerGrid.setResult(list);
         pagerGrid.setCount(count);
         return pagerGrid;
@@ -58,17 +66,17 @@ public class CostRecordServiceImpl implements CostRecordService {
         Map<String, Object> params = new HashMap<>();
         params.put("tradeNo", tradeNo);
         params.put("userId", userId);
-        return costRecordDao.findByTradeNo(params);
+        return costRecordMapper.findByTradeNo(params);
     }
 
     @Override
     public Integer toggleDeleteStatus(Map<String, Object> params) {
-        return costRecordDao.toggleDeleteStatus(params);
+        return costRecordMapper.toggleDeleteStatus(params);
     }
 
     @Override
     public Integer toggleHideStatus(Map<String, Object> params) {
-        return costRecordDao.toggleHideStatus(params);
+        return costRecordMapper.toggleHideStatus(params);
     }
 
     @Override
@@ -76,19 +84,17 @@ public class CostRecordServiceImpl implements CostRecordService {
         Map<String, Object> params = new HashMap<>();
         params.put("tradeNo", record.getTradeNo());
         params.put("userId", record.getUserId());
-        if (costRecordDao.findByTradeNo(params) != null) {
+        if (costRecordMapper.findByTradeNo(params) != null) {
             return -1L;
         } else {
-            if (costRecordDao.insert(record) > 0) {
-                return record.getId();
-            } else {
-                return -1L;
-            }
+            return super.insert(record);
         }
     }
 
     @Override
     public Integer updateByTradeNo(CostRecord record) {
-        return costRecordDao.updateByTradeNo(record);
+        Preconditions.checkNotNull(record.getVersion(), "version must not be null");
+        record.setModifyTime(new Date());
+        return costRecordMapper.updateByTradeNo(record);
     }
 }

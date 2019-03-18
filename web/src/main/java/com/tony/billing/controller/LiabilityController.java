@@ -55,7 +55,7 @@ public class LiabilityController extends BaseController {
      */
     private LiabilityDTO fillDTOWithType(Liability liability) {
         LiabilityDTO liabilityDTO = new LiabilityDTO(liability);
-        AssetTypes assetTypes = assetTypesService.selectById(liability.getType());
+        AssetTypes assetTypes = assetTypesService.getById(liability.getType());
         if(assetTypes!=null) {
             liabilityDTO.setType(assetTypes.getTypeDesc());
         }

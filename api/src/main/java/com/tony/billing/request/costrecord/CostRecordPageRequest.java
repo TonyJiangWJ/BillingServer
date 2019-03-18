@@ -11,7 +11,7 @@ import java.lang.reflect.Field;
 public class CostRecordPageRequest extends BaseRequest {
     private Integer pageNo;
     private Integer pageSize;
-    private Integer isDelete;
+    private Integer isDeleted;
     private Integer isHidden;
     private String inOutType;
     private String startDate;
@@ -68,12 +68,12 @@ public class CostRecordPageRequest extends BaseRequest {
         this.inOutType = inOutType;
     }
 
-    public Integer getIsDelete() {
-        return isDelete;
+    public Integer getIsDeleted() {
+        return isDeleted;
     }
 
-    public void setIsDelete(Integer isDelete) {
-        this.isDelete = isDelete;
+    public void setIsDeleted(Integer isDeleted) {
+        this.isDeleted = isDeleted;
     }
 
     public Integer getPageNo() {

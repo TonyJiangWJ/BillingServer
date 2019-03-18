@@ -10,7 +10,9 @@
         available available,
         amount amount,
         create_time createTime,
-        modify_time modifyTime
+        modify_time modifyTime,
+        is_deleted isDeleted,
+        `version` version
     </sql>
     <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.tony.billing.entity.Asset">
         INSERT INTO t_asset (
@@ -42,6 +44,12 @@
             <if test=" modifyTime!=null ">
                 modify_time,
             </if>
+            <if test="isDeleted != null">
+                is_deleted,
+            </if>
+            <if test="version != null">
+                `version`,
+            </if>
         </trim>
         ) VALUES (
         <trim suffixOverrides=",">
@@ -58,7 +66,7 @@
                 #{extName,jdbcType=VARCHAR},
             </if>
             <if test=" type!=null ">
-                #{type,jdbcType=INTEGER},
+                #{type,jdbcType=BIGINT},
             </if>
             <if test=" available!=null and available!='' ">
                 #{available,jdbcType=VARCHAR},
@@ -71,6 +79,12 @@
             </if>
             <if test=" modifyTime!=null ">
                 #{modifyTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="isDeleted != null">
+                #{isDeleted,jdbcType=TINYINT},
+            </if>
+            <if test="version != null">
+                #{version,jdbcType=INTEGER},
             </if>
         </trim>
         )
@@ -85,7 +99,7 @@
                 ext_name=#{extName,jdbcType=VARCHAR},
             </if>
             <if test=" type!=null ">
-                `type`=#{type,jdbcType=INTEGER},
+                `type`=#{type,jdbcType=BIGINT},
             </if>
             <if test=" available!=null and available!='' ">
                 available=#{available,jdbcType=VARCHAR},
@@ -99,14 +113,17 @@
             <if test=" modifyTime!=null ">
                 modify_time=#{modifyTime,jdbcType=TIMESTAMP},
             </if>
+            <if test="version != null">
+                `version`=#{version,jdbcType=INTEGER} + 1
+            </if>
         </trim>
-        WHERE id=#{id, jdbcType=BIGINT} AND user_id=#{userId,jdbcType=BIGINT}
+        WHERE id=#{id, jdbcType=BIGINT} AND user_id=#{userId,jdbcType=BIGINT} AND `version`=#{version,jdbcType=INTEGER} AND is_deleted='0'
     </update>
     <select id="page" parameterType="java.util.Map" resultType="com.tony.billing.entity.Asset">
         SELECT
         <include refid="all"/>
-        FROM t_asset
-        <trim prefix="WHERE" prefixOverrides="and">
+        FROM t_asset WHERE is_deleted='0'
+        <trim prefixOverrides="and">
             <if test=" id!=null ">
                 and id=#{id,jdbcType=BIGINT}
             </if>
@@ -120,7 +137,7 @@
                 and ext_name=#{extName,jdbcType=VARCHAR}
             </if>
             <if test=" type!=null ">
-                and `type`=#{type,jdbcType=INTEGER}
+                and `type`=#{type,jdbcType=BIGINT}
             </if>
             <if test=" available!=null and available!='' ">
                 and available=#{available,jdbcType=VARCHAR}
@@ -148,8 +165,8 @@
     <select id="list" parameterType="com.tony.billing.entity.Asset" resultType="com.tony.billing.entity.Asset">
         SELECT
         <include refid="all"/>
-        FROM t_asset
-        <trim prefix="WHERE" prefixOverrides="and">
+        FROM t_asset where is_deleted ='0'
+        <trim prefixOverrides="and">
             <if test=" id!=null ">
                 and id=#{id,jdbcType=BIGINT}
             </if>
@@ -163,7 +180,7 @@
                 and ext_ame=#{extName,jdbcType=VARCHAR}
             </if>
             <if test=" type!=null ">
-                and `type`=#{type,jdbcType=INTEGER}
+                and `type`=#{type,jdbcType=BIGINT}
             </if>
             <if test=" available!=null and available!='' ">
                 and available=#{available,jdbcType=VARCHAR}
@@ -183,11 +200,11 @@
     <select id="getById" parameterType="Long" resultType="com.tony.billing.entity.Asset">
         SELECT
         <include refid="all"/>
-        FROM t_asset WHERE id=#{id,jdbcType=BIGINT}
+        FROM t_asset WHERE id=#{id,jdbcType=BIGINT} and is_deleted='0'
     </select>
 
-    <delete id="deleteById" parameterType="java.util.Map">
-        DELETE FROM t_asset
+    <update id="deleteById">
+        update t_asset set is_deleted = '1'
         WHERE id=#{id,jdbcType=BIGINT} AND user_id=#{userId, jdbcType=BIGINT}
-    </delete>
+    </update>
 </mapper>

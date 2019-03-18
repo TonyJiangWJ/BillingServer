@@ -10,7 +10,8 @@
         type_desc typeDesc,
         create_time createTime,
         modify_time modifyTime,
-        is_deleted isDeleted
+        is_deleted isDeleted,
+        version version
     </sql>
     <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.tony.billing.entity.AssetTypes">
         INSERT INTO t_asset_types (
@@ -39,11 +40,17 @@
             <if test=" modifyTime!=null">
                 modify_time,
             </if>
+            <if test="isDeleted != null">
+                is_deleted,
+            </if>
+            <if test="version != null">
+                `version`,
+            </if>
         </trim>
         ) VALUES (
         <trim suffixOverrides=",">
             <if test=" id!=null">
-                #{id,jdbcType=INTEGER},
+                #{id,jdbcType=BIGINT},
             </if>
             <if test=" userId!=null">
                 #{userId,jdbcType=BIGINT},
@@ -65,6 +72,12 @@
             </if>
             <if test=" modifyTime!=null">
                 #{modifyTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="isDeleted != null">
+                #{isDeleted,jdbcType=TINYINT},
+            </if>
+            <if test="version != null">
+                #{version,jdbcType=INTEGER},
             </if>
         </trim>
         )
@@ -90,17 +103,20 @@
             <if test=" modifyTime!=null">
                 modify_time = #{modifyTime,jdbcType=TIMESTAMP},
             </if>
+            <if test="version != null">
+                `version` = #{version,jdbcType=INTEGER} + 1,
+            </if>
         </trim>
-        WHERE id=#{id, jdbcType=BIGINT}
+        WHERE id=#{id, jdbcType=BIGINT} and `version`=#{version,jdbcType=INTEGER} and is_deleted='0'
     </update>
 
 
-    <select id="listByCondition" parameterType="com.tony.billing.entity.AssetTypes"
+    <select id="list" parameterType="com.tony.billing.entity.AssetTypes"
             resultType="com.tony.billing.entity.AssetTypes">
         SELECT
         <include refid="all"/>
-        FROM t_asset_types
-        <trim prefix="WHERE" prefixOverrides="and">
+        FROM t_asset_types WHERE is_deleted='0'
+        <trim prefixOverrides="and">
             <if test=" typeIdentify!=null and typeCode!=''">
                 AND type_identify = #{typeIdentify,jdbcType=VARCHAR}
             </if>
@@ -126,13 +142,13 @@
 
     </select>
 
-    <select id="getById" parameterType="Integer" resultType="com.tony.billing.entity.AssetTypes">
+    <select id="getById" resultType="com.tony.billing.entity.AssetTypes">
         SELECT
         <include refid="all"/>
-        FROM t_asset_types WHERE id=#{id,jdbcType=INTEGER}
+        FROM t_asset_types WHERE id=#{id,jdbcType=BIGINT} and is_deleted='0' and (user_id = #{userId,jdbcType=BIGINT} or user_id= '-1')
     </select>
 
-    <update id="deleteById" parameterType="java.util.Map">
-        UPDATE t_asset_types SET is_deleted='1' WHERE id=#{id,jdbcType=INTEGER} and user_id=#{userId,jdbcType=BIGINT}
+    <update id="deleteById">
+        UPDATE t_asset_types SET is_deleted='1' WHERE id=#{id,jdbcType=BIGINT} and user_id=#{userId,jdbcType=BIGINT}
     </update>
 </mapper>

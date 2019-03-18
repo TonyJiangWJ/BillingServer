@@ -13,7 +13,9 @@
         installment installment,
         `index` 'index',
         status status,
-        paid paid
+        paid paid,
+        is_deleted isDeleted,
+        `version` version
     </sql>
     <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.tony.billing.entity.Liability">
         INSERT INTO t_liability (
@@ -54,6 +56,12 @@
             <if test=" paid!=null ">
                 paid,
             </if>
+            <if test="isDeleted != null">
+                is_deleted,
+            </if>
+            <if test="version != null">
+                `version`,
+            </if>
         </trim>
         ) VALUES (
         <trim suffixOverrides=",">
@@ -93,6 +101,12 @@
             <if test=" paid!=null ">
                 #{paid,jdbcType=BIGINT},
             </if>
+            <if test="isDeleted != null">
+                #{isDeleted,jdbcType=TINYINT},
+            </if>
+            <if test="version != null">
+                #{version,jdbcType=INTEGER},
+            </if>
         </trim>
         )
     </insert>
@@ -129,14 +143,17 @@
             <if test=" paid!=null ">
                 paid=#{paid,jdbcType=BIGINT},
             </if>
+            <if test="version != null">
+                #{version,jdbcType=INTEGER},
+            </if>
         </trim>
-        WHERE id=#{id, jdbcType=BIGINT} AND user_id=#{userId,jdbcType=BIGINT}
+        WHERE id=#{id, jdbcType=BIGINT} AND user_id=#{userId,jdbcType=BIGINT} AND is_deleted='0' AND version=#{version,jdbcType=INTEGER}
     </update>
     <select id="page" parameterType="java.util.Map" resultType="com.tony.billing.entity.Liability">
         SELECT
         <include refid="all"/>
-        FROM t_liability
-        <trim prefix="WHERE" prefixOverrides="and">
+        FROM t_liability WHERE is_deleted='0'
+        <trim prefixOverrides="and">
             <if test=" id!=null ">
                 and id=#{id,jdbcType=BIGINT}
             </if>
@@ -187,8 +204,8 @@
     <select id="list" resultType="com.tony.billing.entity.Liability" parameterType="com.tony.billing.entity.Liability">
         SELECT
         <include refid="all"/>
-        FROM t_liability
-        <trim prefix="WHERE" prefixOverrides="and">
+        FROM t_liability where is_deleted='0'
+        <trim prefixOverrides="and">
             <if test=" id!=null ">
                 and id=#{id,jdbcType=BIGINT}
             </if>
@@ -232,6 +249,6 @@
         SELECT
         <include refid="all"/>
         FROM t_liability
-        WHERE id=#{id, jdbcType=BIGINT}
+        WHERE id=#{id, jdbcType=BIGINT} AND is_deleted = '0'
     </select>
 </mapper>

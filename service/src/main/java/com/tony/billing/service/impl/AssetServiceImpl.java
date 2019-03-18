@@ -2,14 +2,17 @@ package com.tony.billing.service.impl;
 
 import com.tony.billing.constants.enums.EnumTypeIdentify;
 import com.tony.billing.constants.enums.EnumYesOrNo;
-import com.tony.billing.dao.AssetDao;
-import com.tony.billing.dao.AssetTypesDao;
+import com.tony.billing.dao.mapper.AssetMapper;
+import com.tony.billing.dao.mapper.AssetTypesMapper;
+import com.tony.billing.dao.mapper.base.AbstractMapper;
 import com.tony.billing.dto.AssetDTO;
 import com.tony.billing.entity.Asset;
 import com.tony.billing.entity.AssetTypes;
 import com.tony.billing.model.AssetModel;
 import com.tony.billing.service.AssetService;
+import com.tony.billing.service.base.AbstractService;
 import com.tony.billing.util.UserIdContainer;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
@@ -18,20 +21,26 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 @Service
-public class AssetServiceImpl implements AssetService {
+public class AssetServiceImpl extends AbstractService<Asset> implements AssetService {
 
     @Resource
-    private AssetDao assetDao;
+    private AssetMapper assetMapper;
     @Resource
-    private AssetTypesDao assetTypesDao;
+    private AssetTypesMapper assetTypesMapper;
+
+    @Override
+    protected AbstractMapper<Asset> getMapper() {
+        return assetMapper;
+    }
 
     @Override
     public List<Asset> listAssetByUserId(Long userId) {
         Asset query = new Asset();
         query.setUserId(userId);
-        return assetDao.list(query);
+        return super.list(query);
     }
 
     @Override
@@ -39,23 +48,31 @@ public class AssetServiceImpl implements AssetService {
         assert userId != null;
         Asset query = new Asset();
         query.setUserId(userId);
-        List<Asset> assetList = assetDao.list(query);
+        List<Asset> assetList = super.list(query);
         List<AssetModel> assetModels = new ArrayList<>();
         AssetTypes assetTypes;
-        Map<Integer, AssetTypes> assetTypesMap = new HashMap<>();
+        Map<Long, AssetTypes> assetTypesMap = new HashMap<>();
         Map<String, AssetTypes> parentTypesMap = new HashMap<>();
         for (Asset asset : assetList) {
             // 当type没有缓存从数据库中读取
             if (assetTypesMap.get(asset.getType()) == null) {
-                assetTypes = assetTypesDao.selectById(asset.getType());
+                assetTypes = assetTypesMapper.getById(asset.getType(), userId);
                 if (assetTypes != null) {
                     assetTypesMap.put(asset.getType(), assetTypes);
                     // 当存在父级类别时缓存
                     if (StringUtils.isNotEmpty(assetTypes.getParentCode())) {
                         String parentCode = assetTypes.getParentCode();
                         if (parentTypesMap.get(parentCode) == null) {
-                            assetTypes = assetTypesDao.getByTypeCode(parentCode, EnumTypeIdentify.ASSET.getIdentify(), userId);
-                            if (assetTypes != null) {
+                            List<AssetTypes> records = assetTypesMapper.list(Stream.generate(() -> {
+                                AssetTypes condition = new AssetTypes();
+                                condition.setTypeIdentify(EnumTypeIdentify.ASSET.getIdentify());
+                                condition.setTypeCode(parentCode);
+                                condition.setUserId(userId);
+                                return condition;
+                            }).findAny().get());
+
+                            if (CollectionUtils.isNotEmpty(records)) {
+                                assetTypes = records.get(0);
                                 parentTypesMap.put(assetTypes.getTypeCode(), assetTypes);
                             }
                         }
@@ -93,17 +110,18 @@ public class AssetServiceImpl implements AssetService {
 
     @Override
     public Asset getAssetInfoById(Long id) {
-        return assetDao.getAssetById(id);
+        return super.getById(id);
     }
 
     @Override
     public boolean modifyAssetInfoById(Asset asset) {
-        return assetDao.update(asset) > 0;
+        return super.update(asset);
     }
 
     @Override
     public Long addAsset(Asset asset) {
-        AssetTypes assetTypes = assetTypesDao.selectById(asset.getType());
+        asset.setUserId(UserIdContainer.getUserId());
+        AssetTypes assetTypes = assetTypesMapper.getById(asset.getType(), asset.getUserId());
         boolean isAssetTypeValid = assetTypes != null && (assetTypes.getUserId().equals(-1L) || assetTypes.getUserId().equals(asset.getUserId()));
         if (isAssetTypeValid) {
             if (StringUtils.isNotEmpty(asset.getExtName())) {
@@ -111,7 +129,7 @@ public class AssetServiceImpl implements AssetService {
             } else {
                 asset.setName(assetTypes.getTypeDesc());
             }
-            return assetDao.insert(asset);
+            return super.insert(asset);
         } else {
             return -1L;
         }
@@ -119,7 +137,7 @@ public class AssetServiceImpl implements AssetService {
 
     @Override
     public boolean deleteAsset(Long assetId) {
-        return assetDao.deleteById(assetId, UserIdContainer.getUserId());
+        return super.deleteById(assetId);
     }
 
 }

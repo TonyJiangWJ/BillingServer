@@ -13,7 +13,7 @@ import java.util.Map;
 public interface CostRecordService {
     List<CostRecord> find(CostRecord record);
 
-    PagerGrid<CostRecordQuery> page(PagerGrid<CostRecordQuery> pagerGrid);
+    PagerGrid<CostRecord> page(PagerGrid<CostRecord> pagerGrid);
 
     CostRecord findByTradeNo(String tradeNo, Long userId);
 

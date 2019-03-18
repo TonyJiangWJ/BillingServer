@@ -1,24 +1,18 @@
 package com.tony.billing.entity;
 
 import com.tony.billing.annotation.Table;
-
-import java.util.Date;
+import com.tony.billing.entity.base.BaseVersionedEntity;
 
 /**
  * @author by TonyJiang on 2017/7/5.
  */
 @Table("t_budget")
-public class Budget {
+public class Budget extends BaseVersionedEntity {
     private Long userId;
-    private Long id;
-    private Long tagId;
+    private String budgetName;
     private Long budgetMoney;
-    private Date createTime;
-    private Date modifyTime;
     private String belongYear;
     private Integer belongMonth;
-    private Integer isDelete;
-    private Integer version;
 
     public Long getUserId() {
         return userId;
@@ -28,20 +22,12 @@ public class Budget {
         this.userId = userId;
     }
 
-    public Long getId() {
-        return id;
+    public String getBudgetName() {
+        return budgetName;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getTagId() {
-        return tagId;
-    }
-
-    public void setTagId(Long tagId) {
-        this.tagId = tagId;
+    public void setBudgetName(String budgetName) {
+        this.budgetName = budgetName;
     }
 
     public Long getBudgetMoney() {
@@ -50,22 +36,6 @@ public class Budget {
 
     public void setBudgetMoney(Long budgetMoney) {
         this.budgetMoney = budgetMoney;
-    }
-
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
-
-    public Date getModifyTime() {
-        return modifyTime;
-    }
-
-    public void setModifyTime(Date modifyTime) {
-        this.modifyTime = modifyTime;
     }
 
     public String getBelongYear() {
@@ -82,21 +52,5 @@ public class Budget {
 
     public void setBelongMonth(Integer belongMonth) {
         this.belongMonth = belongMonth;
-    }
-
-    public Integer getIsDelete() {
-        return isDelete;
-    }
-
-    public void setIsDelete(Integer isDelete) {
-        this.isDelete = isDelete;
-    }
-
-    public Integer getVersion() {
-        return version;
-    }
-
-    public void setVersion(Integer version) {
-        this.version = version;
     }
 }

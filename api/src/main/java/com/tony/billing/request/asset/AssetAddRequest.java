@@ -6,16 +6,16 @@ import com.tony.billing.request.BaseRequest;
  * @author TonyJiang on 2018/7/12
  */
 public class AssetAddRequest extends BaseRequest {
-    private Integer type;
+    private Long type;
     private String name;
     private Long amount;
     private Boolean available;
 
-    public Integer getType() {
+    public Long getType() {
         return type;
     }
 
-    public void setType(Integer type) {
+    public void setType(Long type) {
         this.type = type;
     }
 
