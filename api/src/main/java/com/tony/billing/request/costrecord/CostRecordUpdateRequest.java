@@ -1,11 +1,16 @@
 package com.tony.billing.request.costrecord;
 
-import com.tony.billing.request.BaseRequest;
+import com.tony.billing.constraints.OwnershipCheck;
+import com.tony.billing.constraints.enums.EnumOwnershipCheckTables;
+import com.tony.billing.request.BaseVersionedRequest;
+import org.hibernate.validator.constraints.NotEmpty;
 
 /**
  * @author by TonyJiang on 2017/6/9.
  */
-public class CostRecordUpdateRequest extends BaseRequest {
+public class CostRecordUpdateRequest extends BaseVersionedRequest {
+    @OwnershipCheck(EnumOwnershipCheckTables.COST_RECORD)
+    @NotEmpty
     private String tradeNo;
     private String goodsName;
     private String memo;

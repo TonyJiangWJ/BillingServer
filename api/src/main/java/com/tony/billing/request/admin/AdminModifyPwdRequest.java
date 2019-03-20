@@ -1,10 +1,13 @@
 package com.tony.billing.request.admin;
 
 import com.tony.billing.request.BaseRequest;
+import org.hibernate.validator.constraints.NotEmpty;
 
 public class AdminModifyPwdRequest extends BaseRequest {
 
+    @NotEmpty
     private String newPassword;
+    @NotEmpty
     private String oldPassword;
 
     public String getNewPassword() {

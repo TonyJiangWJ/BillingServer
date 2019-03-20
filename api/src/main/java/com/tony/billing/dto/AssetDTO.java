@@ -24,6 +24,7 @@ public class AssetDTO extends VersionedDTO {
             this.id = asset.getId();
             this.name = StringUtils.isNotEmpty(asset.getExtName()) ? asset.getExtName() : asset.getName();
             this.available = asset.getAvailable();
+            this.setVersion(asset.getVersion());
         }
     }
 
@@ -34,6 +35,7 @@ public class AssetDTO extends VersionedDTO {
             this.name = StringUtils.isNotEmpty(asset.getExtName()) ? asset.getExtName() : asset.getName();
             this.available = asset.getAvailable();
             this.type = typeDesc;
+            this.setVersion(asset.getVersion());
         }
     }
 

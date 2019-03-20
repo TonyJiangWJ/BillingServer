@@ -11,6 +11,7 @@ import com.tony.billing.response.liability.LiabilityDetailResponse;
 import com.tony.billing.service.AssetTypesService;
 import com.tony.billing.service.LiabilityService;
 import com.tony.billing.util.ResponseUtil;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -34,10 +35,7 @@ public class LiabilityController extends BaseController {
     private AssetTypesService assetTypesService;
 
     @RequestMapping("/liability/detail/get")
-    public LiabilityDetailResponse getLiabilityInfo(@ModelAttribute("request") LiabilityDetailRequest request) {
-        if (request.getId() == null) {
-            return ResponseUtil.paramError(new LiabilityDetailResponse());
-        }
+    public LiabilityDetailResponse getLiabilityInfo(@ModelAttribute("request") @Validated LiabilityDetailRequest request) {
         Liability liability = liabilityService.getLiabilityInfoById(request.getId());
         if (liability != null && liability.getUserId().equals(request.getUserId())) {
             LiabilityDetailResponse response = ResponseUtil.success(new LiabilityDetailResponse());
@@ -63,14 +61,7 @@ public class LiabilityController extends BaseController {
     }
 
     @RequestMapping(value = "/liability/put", method = RequestMethod.POST)
-    public BaseResponse addLiability(@ModelAttribute("request") LiabilityAddRequest request) {
-
-        if (request.getRepaymentDay() == null
-                || request.getType() == null
-                || request.getInstallment() == null
-                || request.getAmount() == null) {
-            return ResponseUtil.paramError();
-        }
+    public BaseResponse addLiability(@ModelAttribute("request") @Validated LiabilityAddRequest request) {
 
         Liability liability = new Liability();
         liability.setRepaymentDay(request.getRepaymentDay());
@@ -91,11 +82,8 @@ public class LiabilityController extends BaseController {
     }
 
     @RequestMapping("/liability/update")
-    public BaseResponse updateLiability(@ModelAttribute("request") LiabilityUpdateRequest request) {
+    public BaseResponse updateLiability(@ModelAttribute("request") @Validated LiabilityUpdateRequest request) {
         Liability update = new Liability();
-        if (request.getId() == null || request.getAmount() == null) {
-            return ResponseUtil.paramError();
-        }
         update.setId(request.getId());
         update.setAmount(request.getAmount());
         update.setPaid(request.getPaid());

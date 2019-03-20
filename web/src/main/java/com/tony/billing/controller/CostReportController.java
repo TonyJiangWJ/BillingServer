@@ -10,6 +10,7 @@ import com.tony.billing.util.BeanCopyUtil;
 import com.tony.billing.util.ResponseUtil;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -65,13 +66,9 @@ public class CostReportController extends BaseController {
     }
 
     @RequestMapping("/daily/report/get")
-    public ReportResponse getDailyCostReport(@ModelAttribute("request") DailyCostReportRequest reportRequest) {
+    public ReportResponse getDailyCostReport(@ModelAttribute("request") @Validated DailyCostReportRequest reportRequest) {
         ReportResponse response = new ReportResponse();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        if (StringUtils.isEmpty(reportRequest.getEndDate())
-                || StringUtils.isEmpty(reportRequest.getStartDate())) {
-            return ResponseUtil.paramError(response);
-        }
         try {
             Date startDate = simpleDateFormat.parse(reportRequest.getStartDate());
             Date endDate = simpleDateFormat.parse(reportRequest.getEndDate());

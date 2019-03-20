@@ -59,3 +59,8 @@ system:
   host:
     reset:
       password: http://localhost:8080/#/reset/pwd
+
+# spring validation 是否快速失败 [默认值]true是：只有一个参数不正确则立即报错 false否：校验所有参数
+validation:
+  fail:
+    fast: false

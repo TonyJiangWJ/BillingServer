@@ -1,5 +1,7 @@
 package com.tony.billing.controller;
 
+import com.tony.billing.request.BaseRequest;
+import com.tony.billing.request.BaseVersionedRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -8,4 +10,13 @@ import org.slf4j.LoggerFactory;
  */
 public class BaseController {
     protected Logger logger = LoggerFactory.getLogger(getClass());
+
+    protected boolean commonValidate(BaseRequest request) {
+        if (request instanceof BaseVersionedRequest) {
+            if (((BaseVersionedRequest) request).getVersion()==null) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

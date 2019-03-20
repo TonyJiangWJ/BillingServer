@@ -1,14 +1,18 @@
 package com.tony.billing.request.admin;
 
 import com.tony.billing.request.BaseRequest;
+import org.hibernate.validator.constraints.NotEmpty;
 
 /**
  * @author jiangwenjie 2019-02-02
  */
 public class ResetPasswordRequest extends BaseRequest {
 
+    @NotEmpty
     private String userName;
+    @NotEmpty
     private String token;
+    @NotEmpty
     private String newPassword;
 
     public String getUserName() {

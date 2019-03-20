@@ -1,13 +1,21 @@
 package com.tony.billing.request.asset;
 
-import com.tony.billing.request.BaseRequest;
+import com.tony.billing.constraints.OwnershipCheck;
+import com.tony.billing.constraints.enums.EnumOwnershipCheckTables;
+import com.tony.billing.request.BaseVersionedRequest;
+
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 
 /**
- *
  * @author jiangwj20966 2018/2/22
  */
-public class AssetUpdateRequest extends BaseRequest {
+public class AssetUpdateRequest extends BaseVersionedRequest {
+
+    @NotNull
+    @OwnershipCheck(EnumOwnershipCheckTables.ASSET)
     private Long id;
+    @Min(0)
     private Long amount;
     private String name;
     private String available;

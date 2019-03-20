@@ -1,15 +1,20 @@
 package com.tony.billing.request.assettypes;
 
 import com.tony.billing.request.BaseRequest;
+import org.hibernate.validator.constraints.NotEmpty;
 
 /**
  * @author jiangwj20966 7/2/2018
  */
 public class AssetTypeAddRequest extends BaseRequest {
     private String type;
+    @NotEmpty
     private String parentCode;
+    @NotEmpty
     private String typeIdentify;
+    @NotEmpty
     private String typeCode;
+    @NotEmpty
     private String typeDesc;
 
     public String getType() {

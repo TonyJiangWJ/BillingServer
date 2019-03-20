@@ -28,6 +28,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -139,11 +140,8 @@ public class CostRecordController {
      * @return
      */
     @RequestMapping(value = "/record/detail/get")
-    public CostRecordDetailResponse getDetail(@ModelAttribute("request") CostRecordDetailRequest request) {
+    public CostRecordDetailResponse getDetail(@ModelAttribute("request") @Validated CostRecordDetailRequest request) {
         CostRecordDetailResponse response = new CostRecordDetailResponse();
-        if (StringUtils.isEmpty(request.getTradeNo())) {
-            return ResponseUtil.paramError(response);
-        }
         ResponseUtil.error(response);
         try {
             CostRecord record = costRecordService.findByTradeNo(request.getTradeNo(), request.getUserId());
@@ -165,11 +163,9 @@ public class CostRecordController {
      * @return
      */
     @RequestMapping(value = "/record/update")
-    public BaseResponse updateRecord(@ModelAttribute("request") CostRecordUpdateRequest request) {
+    public BaseResponse updateRecord(@ModelAttribute("request") @Validated CostRecordUpdateRequest request) {
         BaseResponse response = new BaseResponse();
-        if (StringUtils.isEmpty(request.getTradeNo())) {
-            return ResponseUtil.paramError(response);
-        }
+
         CostRecord record = new CostRecord();
         record.setLocation(request.getLocation());
         record.setGoodsName(request.getGoodsName());
@@ -190,12 +186,10 @@ public class CostRecordController {
      * @return
      */
     @RequestMapping(value = "/record/toggle/delete")
-    public CostRecordDeleteResponse deleteRecord(@ModelAttribute("request") CostRecordDeleteRequest request) {
+    public CostRecordDeleteResponse deleteRecord(@ModelAttribute("request") @Validated CostRecordDeleteRequest request) {
         CostRecordDeleteResponse response = new CostRecordDeleteResponse();
         try {
-            if (StringUtils.isEmpty(request.getTradeNo()) || request.getNowStatus() == null) {
-                return ResponseUtil.paramError(response);
-            }
+
             Map<String, Object> params = new HashMap<String, Object>();
             params.put("tradeNo", request.getTradeNo());
             params.put("nowStatus", request.getNowStatus());
@@ -214,12 +208,9 @@ public class CostRecordController {
     }
 
     @RequestMapping(value = "/record/toggle/hide")
-    public BaseResponse toggleHiddenStatus(@ModelAttribute("request") CostRecordHideRequest request) {
+    public BaseResponse toggleHiddenStatus(@ModelAttribute("request") @Validated CostRecordHideRequest request) {
         BaseResponse response = new BaseResponse();
         try {
-            if (request.getNowStatus() == null || StringUtils.isEmpty(request.getTradeNo())) {
-                return ResponseUtil.paramError(response);
-            }
             Map<String, Object> params = new HashMap<>();
             params.put("tradeNo", request.getTradeNo());
             params.put("nowStatus", request.getNowStatus());
@@ -244,17 +235,10 @@ public class CostRecordController {
      * @return
      */
     @RequestMapping(value = "/record/put")
-    public BaseResponse putDetail(@ModelAttribute("request") CostRecordPutRequest request) {
+    public BaseResponse putDetail(@ModelAttribute("request") @Validated CostRecordPutRequest request) {
 
         BaseResponse response = new BaseResponse();
         try {
-            if (StringUtils.isEmpty(request.getCreateTime())
-                    || StringUtils.isEmpty(request.getInOutType())
-                    || StringUtils.isEmpty(request.getMoney())
-                    || StringUtils.isEmpty(request.getTarget())) {
-                return ResponseUtil.paramError(response);
-            }
-
             CostRecord record = new CostRecord();
             record.setTradeStatus(TradeStatus.TRADE_SUCCESS);
             record.setTradeNo(generateTradeNo(request.getCreateTime()));
@@ -357,6 +341,7 @@ public class CostRecordController {
 
     private CostRecordDetailDTO formatDetailModel(CostRecord record) {
         CostRecordDetailDTO model = new CostRecordDetailDTO();
+        model.setVersion(record.getVersion());
         model.setCreateTime(record.getCostCreateTime());
         model.setGoodsName(record.getGoodsName());
         model.setInOutType(record.getInOutType());

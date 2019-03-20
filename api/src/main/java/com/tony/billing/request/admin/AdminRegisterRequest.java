@@ -1,12 +1,15 @@
 package com.tony.billing.request.admin;
 
 import com.tony.billing.request.BaseRequest;
+import org.hibernate.validator.constraints.NotEmpty;
 
 /**
  * @author by TonyJiang on 2017/7/8.
  */
 public class AdminRegisterRequest extends BaseRequest {
+    @NotEmpty
     private String userName;
+    @NotEmpty
     private String password;
 
     public String getUserName() {

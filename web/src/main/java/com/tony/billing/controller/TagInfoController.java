@@ -18,6 +18,7 @@ import com.tony.billing.service.TagInfoService;
 import com.tony.billing.util.ResponseUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.CollectionUtils;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -26,9 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -79,11 +78,8 @@ public class TagInfoController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/tag/put")
-    public BaseResponse putTag(@ModelAttribute("request") TagInfoPutRequest request) {
+    public BaseResponse putTag(@ModelAttribute("request") @Validated TagInfoPutRequest request) {
         BaseResponse response = new BaseResponse();
-        if (StringUtils.isEmpty(request.getTagName())) {
-            return ResponseUtil.paramError(response);
-        }
         try {
             TagInfo tagInfo = new TagInfo();
             tagInfo.setTagName(request.getTagName());
@@ -119,11 +115,8 @@ public class TagInfoController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/tag/delete")
-    public BaseResponse delTag(@ModelAttribute("request") TagInfoDelRequest request) {
+    public BaseResponse delTag(@ModelAttribute("request") @Validated TagInfoDelRequest request) {
         BaseResponse response = new BaseResponse();
-        if (request.getTagId() == null) {
-            return ResponseUtil.paramError(response);
-        }
         try {
             if (tagInfoService.deleteTagById(request.getTagId()) > 0) {
                 ResponseUtil.success(response);
@@ -144,11 +137,8 @@ public class TagInfoController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/cost/tag/list")
-    public CostTagListResponse listCostTag(@ModelAttribute("request") CostTagListRequest request) {
+    public CostTagListResponse listCostTag(@ModelAttribute("request") @Validated CostTagListRequest request) {
         CostTagListResponse response = new CostTagListResponse();
-        if (StringUtils.isEmpty(request.getTradeNo())) {
-            return ResponseUtil.paramError(response);
-        }
         try {
             List<TagInfo> costTagList = tagInfoService.listTagInfoByTradeNo(request.getTradeNo());
             TagInfoDTO model;
@@ -179,11 +169,8 @@ public class TagInfoController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/cost/tag/put")
-    public BaseResponse putCostTag(@ModelAttribute("request") CostTagPutRequest request) {
+    public BaseResponse putCostTag(@ModelAttribute("request") @Validated CostTagPutRequest request) {
         BaseResponse response = new BaseResponse();
-        if (StringUtils.isEmpty(request.getTradeNo()) || request.getTagId() == null) {
-            return ResponseUtil.paramError(response);
-        }
         try {
             CostRecord costRecord = costRecordService.findByTradeNo(request.getTradeNo(), request.getUserId());
             TagInfo tagInfo = tagInfoService.getTagInfoById(request.getTagId());
@@ -213,11 +200,8 @@ public class TagInfoController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/cost/tag/delete")
-    public BaseResponse delCostTag(@ModelAttribute("request") CostTagDelRequest request) {
+    public BaseResponse delCostTag(@ModelAttribute("request") @Validated CostTagDelRequest request) {
         BaseResponse response = new BaseResponse();
-        if (request.getTagId() == null || StringUtils.isEmpty(request.getTradeNo())) {
-            return ResponseUtil.paramError(response);
-        }
         try {
             CostRecord costRecord = costRecordService.findByTradeNo(request.getTradeNo(), request.getUserId());
             TagInfo tagInfo = tagInfoService.getTagInfoById(request.getTagId());

@@ -1,6 +1,5 @@
 package com.tony.billing.dto;
 
-import com.tony.billing.dto.base.BaseDTO;
 import com.tony.billing.dto.base.VersionedDTO;
 import com.tony.billing.entity.Liability;
 
@@ -27,6 +26,7 @@ public class LiabilityDTO extends VersionedDTO {
             this.name = liability.getName();
             this.repaymentDay = simpleDateFormat.format(liability.getRepaymentDay());
             this.status = liability.getStatus();
+            this.setVersion(liability.getVersion());
         }
     }
 
@@ -42,7 +42,7 @@ public class LiabilityDTO extends VersionedDTO {
             this.name = liability.getName();
             this.repaymentDay = simpleDateFormat.format(liability.getRepaymentDay());
             this.status = liability.getStatus();
-
+            this.setVersion(liability.getVersion());
             this.type = typeDesc;
         }
     }

@@ -14,6 +14,7 @@ import com.tony.billing.util.CodeGeneratorUtil;
 import com.tony.billing.util.ResponseUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -40,13 +41,11 @@ public class AdminController extends BaseController {
     private String pwdSalt;
 
     @RequestMapping(value = "/user/login", method = RequestMethod.POST)
-    public BaseResponse login(@ModelAttribute("request") AdminLoginRequest request, HttpServletRequest httpServletRequest,
+    public BaseResponse login(@ModelAttribute("request") @Validated AdminLoginRequest request,
+                              // 用于AOP获取IP地址等信息
+                              HttpServletRequest httpServletRequest,
                               HttpServletResponse httpServletResponse) {
         BaseResponse response = new BaseResponse();
-        if (StringUtils.isEmpty(request.getUserName())
-                || StringUtils.isEmpty(request.getPassword())) {
-            return ResponseUtil.paramError(response);
-        }
         try {
             Admin loginAdmin = new Admin();
             loginAdmin.setUserName(request.getUserName());
@@ -67,13 +66,9 @@ public class AdminController extends BaseController {
     }
 
     @RequestMapping(value = "/user/register/put", method = RequestMethod.POST)
-    public BaseResponse register(@ModelAttribute("request") AdminRegisterRequest registerRequest) {
+    public BaseResponse register(@ModelAttribute("request") @Validated AdminRegisterRequest registerRequest) {
         BaseResponse response = new BaseResponse();
         try {
-            if (StringUtils.isEmpty(registerRequest.getPassword())
-                    || StringUtils.isEmpty(registerRequest.getUserName())) {
-                return ResponseUtil.paramError(response);
-            }
             Admin admin = new Admin();
             admin.setUserName(registerRequest.getUserName());
             admin.setPassword(registerRequest.getPassword());
@@ -105,7 +100,7 @@ public class AdminController extends BaseController {
     }
 
     @RequestMapping(value = "/user/pwd/modify", method = RequestMethod.POST)
-    public BaseResponse modifyPwd(@ModelAttribute("request") AdminModifyPwdRequest request) {
+    public BaseResponse modifyPwd(@ModelAttribute("request") @Validated AdminModifyPwdRequest request) {
         BaseResponse response = new BaseResponse();
         ModifyAdmin modifyAdmin = new ModifyAdmin();
 
@@ -125,10 +120,7 @@ public class AdminController extends BaseController {
     }
 
     @RequestMapping(value = "/user/pre/reset/password", method = RequestMethod.POST)
-    public BaseResponse preResetPassword(@ModelAttribute("request") ResetPasswordRequest request) {
-        if (StringUtils.isEmpty(request.getUserName())) {
-            return ResponseUtil.paramError();
-        }
+    public BaseResponse preResetPassword(@ModelAttribute("request") @Validated ResetPasswordRequest request) {
         if (adminService.preResetPwd(request.getUserName()) != null) {
             return ResponseUtil.success();
         } else {
@@ -137,11 +129,7 @@ public class AdminController extends BaseController {
     }
 
     @RequestMapping(value = "/user/reset/password", method = RequestMethod.POST)
-    public BaseResponse resetPassword(@ModelAttribute("request") ResetPasswordRequest request) {
-        if (StringUtils.isEmpty(request.getToken())
-                || StringUtils.isEmpty(request.getNewPassword())) {
-            return ResponseUtil.paramError();
-        }
+    public BaseResponse resetPassword(@ModelAttribute("request")  @Validated ResetPasswordRequest request) {
 
         ModifyAdmin modifyAdmin = new ModifyAdmin();
         modifyAdmin.setNewPassword(request.getNewPassword());

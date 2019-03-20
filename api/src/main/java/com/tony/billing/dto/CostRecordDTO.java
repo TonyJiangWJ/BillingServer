@@ -1,7 +1,6 @@
 package com.tony.billing.dto;
 
 import com.tony.billing.dto.base.BaseDTO;
-import com.tony.billing.dto.base.VersionedDTO;
 
 import java.util.List;
 

@@ -2,12 +2,18 @@ package com.tony.billing.request.asset;
 
 import com.tony.billing.request.BaseRequest;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+
 /**
  * @author TonyJiang on 2018/7/12
  */
 public class AssetAddRequest extends BaseRequest {
+    @NotNull
     private Long type;
     private String name;
+    @NotNull
+    @Min(0)
     private Long amount;
     private Boolean available;
 

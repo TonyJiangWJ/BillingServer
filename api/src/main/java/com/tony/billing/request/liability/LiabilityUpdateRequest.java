@@ -1,6 +1,11 @@
 package com.tony.billing.request.liability;
 
-import com.tony.billing.request.BaseRequest;
+import com.tony.billing.constraints.OwnershipCheck;
+import com.tony.billing.constraints.enums.EnumOwnershipCheckTables;
+import com.tony.billing.request.BaseVersionedRequest;
+
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 
 /**
  * <p>
@@ -9,9 +14,13 @@ import com.tony.billing.request.BaseRequest;
  *
  * @author jiangwj20966 2018/2/22
  */
-public class LiabilityUpdateRequest extends BaseRequest {
+public class LiabilityUpdateRequest extends BaseVersionedRequest {
+    @OwnershipCheck(EnumOwnershipCheckTables.LIABILITY)
+    @NotNull
     private Long id;
+    @Min(0)
     private Long amount;
+    @Min(0)
     private Long paid;
 
     public Long getId() {

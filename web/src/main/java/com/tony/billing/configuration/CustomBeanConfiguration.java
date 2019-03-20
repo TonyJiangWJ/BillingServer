@@ -2,11 +2,14 @@ package com.tony.billing.configuration;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tony.billing.service.api.CommonValidateService;
 import com.tony.billing.util.AuthUtil;
 import com.tony.billing.util.RSAUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import javax.annotation.Resource;
 
 /**
  * @author jiangwj20966 8/6/2018
@@ -36,4 +39,5 @@ public class CustomBeanConfiguration {
     public AuthUtil authUtil() {
         return new AuthUtil(new AuthUtil.JavaWebToken(jwtSecretKey));
     }
+
 }

@@ -23,11 +23,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ui.Model;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import javax.validation.Valid;
 
 /**
  * @author TonyJiang on 2018/2/12
@@ -69,7 +71,7 @@ public class AssetManageController extends BaseController {
     }
 
     @RequestMapping("/asset/detail/get")
-    public AssetDetailResponse getAssetDetail(@ModelAttribute("request") AssetDetailRequest request, Model model) {
+    public AssetDetailResponse getAssetDetail(@ModelAttribute("request") @Validated AssetDetailRequest request, Model model) {
         AssetDetailResponse response = ResponseUtil.success(new AssetDetailResponse());
         Asset asset = assetService.getAssetInfoById(request.getId());
         if (asset != null && asset.getUserId().equals(request.getUserId())) {
@@ -81,9 +83,9 @@ public class AssetManageController extends BaseController {
     }
 
     @RequestMapping("/asset/update")
-    public BaseResponse updateAsset(@ModelAttribute("request") AssetUpdateRequest request) {
+    public BaseResponse updateAsset(@ModelAttribute("request") @Validated AssetUpdateRequest request) {
         Asset update = new Asset();
-        if (request.getAmount() == null || request.getId() == null) {
+        if (request.getAmount() == null || request.getId() == null || !commonValidate(request)) {
             return ResponseUtil.paramError();
         }
         update.setId(request.getId());
@@ -101,7 +103,7 @@ public class AssetManageController extends BaseController {
     }
 
     @RequestMapping("/asset/put")
-    public BaseResponse addAsset(@ModelAttribute("request") AssetAddRequest request) {
+    public BaseResponse addAsset(@ModelAttribute("request") @Validated AssetAddRequest request) {
 
         if (request.getAmount() == null
                 || request.getType() == null) {
@@ -127,7 +129,7 @@ public class AssetManageController extends BaseController {
 
 
     @RequestMapping("/asset/delete")
-    public BaseResponse deleteAsset(@ModelAttribute("request") AssetDeleteRequest request) {
+    public BaseResponse deleteAsset(@ModelAttribute("request") @Validated AssetDeleteRequest request) {
         if (request.getAssetId() == null) {
             return ResponseUtil.paramError();
         }

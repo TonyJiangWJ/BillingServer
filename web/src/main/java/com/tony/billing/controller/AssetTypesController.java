@@ -10,6 +10,7 @@ import com.tony.billing.response.asset.AssetTypeResponse;
 import com.tony.billing.service.AssetTypesService;
 import com.tony.billing.util.ResponseUtil;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -80,14 +81,8 @@ public class AssetTypesController extends BaseController {
     }
 
     @RequestMapping("/asset/types/put")
-    public BaseResponse putAssetParentType(@ModelAttribute("request") AssetTypeAddRequest request) {
-        if (StringUtils.isEmpty(request.getParentCode())
-                || StringUtils.isEmpty(request.getTypeIdentify())
-                || StringUtils.isEmpty(request.getTypeCode())
-                || StringUtils.isEmpty(request.getTypeDesc())
-        ) {
-            return ResponseUtil.paramError();
-        }
+    public BaseResponse putAssetParentType(@ModelAttribute("request") @Validated AssetTypeAddRequest request) {
+
         AssetTypes assetTypes = new AssetTypes();
         assetTypes.setUserId(request.getUserId());
         assetTypes.setParentCode(request.getParentCode());
