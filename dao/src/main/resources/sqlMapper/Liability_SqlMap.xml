@@ -144,7 +144,7 @@
                 paid=#{paid,jdbcType=BIGINT},
             </if>
             <if test="version != null">
-                #{version,jdbcType=INTEGER},
+                `version`=#{version,jdbcType=INTEGER},
             </if>
         </trim>
         WHERE id=#{id, jdbcType=BIGINT} AND userId=#{userId,jdbcType=BIGINT} AND isDeleted='0' AND version=#{version,jdbcType=INTEGER}

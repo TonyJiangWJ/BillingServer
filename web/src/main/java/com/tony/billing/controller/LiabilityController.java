@@ -88,6 +88,7 @@ public class LiabilityController extends BaseController {
         update.setAmount(request.getAmount());
         update.setPaid(request.getPaid());
         update.setUserId(request.getUserId());
+        update.setVersion(request.getVersion());
         if (liabilityService.modifyLiabilityInfoById(update)) {
             return ResponseUtil.success();
         }
