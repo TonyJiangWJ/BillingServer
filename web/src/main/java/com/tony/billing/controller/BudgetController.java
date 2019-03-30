@@ -2,15 +2,20 @@ package com.tony.billing.controller;
 
 import com.tony.billing.dto.BudgetDTO;
 import com.tony.billing.entity.Budget;
+import com.tony.billing.model.BudgetReportModel;
+import com.tony.billing.request.budget.BudgetDeleteRequest;
 import com.tony.billing.request.budget.BudgetListRequest;
 import com.tony.billing.request.budget.BudgetPutRequest;
+import com.tony.billing.request.budget.BudgetUpdateRequest;
 import com.tony.billing.response.BaseResponse;
 import com.tony.billing.response.budget.BudgetListResponse;
+import com.tony.billing.response.budget.BudgetOverviewResponse;
 import com.tony.billing.service.BudgetService;
 import com.tony.billing.util.ResponseUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -33,8 +38,9 @@ public class BudgetController extends BaseController {
             Budget budget = new Budget();
             budget.setBelongMonth(request.getMonth());
             budget.setBelongYear(request.getYear());
-            budget.setBudgetMoney(request.getBudgetMoney());
+            budget.setBudgetMoney(request.getAmount());
             budget.setUserId(request.getUserId());
+            budget.setBudgetName(request.getName());
             if (budgetService.insert(budget) > 0) {
                 ResponseUtil.success(response);
             } else {
@@ -45,6 +51,25 @@ public class BudgetController extends BaseController {
             ResponseUtil.sysError(response);
         }
         return response;
+    }
+
+    @PostMapping("/budget/update")
+    public BaseResponse updateBudget(@ModelAttribute("request") @Validated BudgetUpdateRequest request) {
+        Budget updateInfo = new Budget();
+        updateInfo.setId(request.getId());
+        updateInfo.setBudgetName(request.getName());
+        updateInfo.setVersion(request.getVersion());
+        updateInfo.setBudgetMoney(request.getAmount());
+        if (budgetService.updateBudget(updateInfo)) {
+            return ResponseUtil.success();
+        } else {
+            return ResponseUtil.error();
+        }
+    }
+
+    @PostMapping("/budget/delete")
+    public BaseResponse deleteBudget(@ModelAttribute("request") @Validated BudgetDeleteRequest request) {
+        return budgetService.deleteBudget(request.getId()) ? ResponseUtil.success() : ResponseUtil.error();
     }
 
     @RequestMapping("/budget/list")
@@ -65,6 +90,19 @@ public class BudgetController extends BaseController {
         } catch (Exception e) {
             logger.error("/budget/list error", e);
             ResponseUtil.sysError(response);
+        }
+        return response;
+    }
+
+    @RequestMapping("/budget/report/list")
+    public BudgetOverviewResponse getBudgetOverviewInfo() {
+        List<BudgetReportModel> reportModels = budgetService.getNearlySixMonth();
+        BudgetOverviewResponse response;
+        if (CollectionUtils.isNotEmpty(reportModels)) {
+            response = ResponseUtil.success(new BudgetOverviewResponse());
+            response.setReportModelList(reportModels);
+        } else {
+            response = ResponseUtil.dataNotExisting(new BudgetOverviewResponse());
         }
         return response;
     }

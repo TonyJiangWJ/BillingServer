@@ -8,6 +8,7 @@ import java.util.List;
  * @author jiangwj20966 on 2017/6/2.
  */
 public class CostRecordDTO extends BaseDTO {
+    private Long id;
     private String tradeNo;
     private String createTime;
     private String location;
@@ -21,6 +22,14 @@ public class CostRecordDTO extends BaseDTO {
     private Integer isHidden;
     private String target;
     private List<String> tags;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public Integer getIsHidden() {
         return isHidden;

@@ -27,6 +27,14 @@
         version version
     </sql>
 
+    <sql id="moneyOnly">
+         id,
+         money,
+         createTime,
+         isDeleted,
+         isHidden
+    </sql>
+
     <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.tony.billing.entity.CostRecord">
         INSERT INTO t_cost_info (
         <trim suffixOverrides=",">
@@ -92,10 +100,10 @@
                 `version`,
             </if>
             <if test=" createTime!=null ">
-                create_time,
+                createTime,
             </if>
             <if test=" modifyTime!=null ">
-                modify_time,
+                modifyTime,
             </if>
         </trim>
         ) VALUES (
@@ -233,7 +241,7 @@
                 version=#{version,jdbcType=INTEGER} + 1,
             </if>
             <if test=" modifyTime!=null ">
-                modify_time=#{modifyTime,jdbcType=TIMESTAMP},
+                modifyTime=#{modifyTime,jdbcType=TIMESTAMP},
             </if>
         </trim>
         WHERE id=#{id,jdbcType=BIGINT} AND userId=#{userId,jdbcType=BIGINT} and version=#{version,jdbcType=INTEGER}
@@ -300,7 +308,7 @@
                 version=#{version,jdbcType=INTEGER} + 1,
             </if>
             <if test=" modifyTime!=null ">
-                modify_time=#{modifyTime,jdbcType=TIMESTAMP},
+                modifyTime=#{modifyTime,jdbcType=TIMESTAMP},
             </if>
         </trim>
         WHERE tradeNo=#{tradeNo,jdbcType=VARCHAR} AND userId=#{userId,jdbcType=BIGINT} AND version=#{version,jdbcType=INTEGER}
@@ -516,5 +524,40 @@
         <include refid="all"/>
         FROM t_cost_info
         WHERE tradeNo=#{tradeNo,jdbcType=VARCHAR} AND userId=#{userId,jdbcType=BIGINT}
+    </select>
+    <select id="listByMonthAndTagIds" resultType="com.tony.billing.entity.CostRecord">
+        SELECT <include refid="moneyOnly"/>
+        FROM t_cost_info ci
+        WHERE userId=#{userId,jdbcType=BIGINT}
+        AND isDeleted=0 AND isHidden=0
+        AND costCreateTime like concat(#{month,jdbcType=VARCHAR},'%')
+        AND EXISTS (
+          SELECT 1 FROM t_cost_tag ct WHERE ct.costId=ci.id AND ct.isDeleted=0
+          <if test="tagIds != null and tagIds.size() != 0">
+          AND ct.tagId IN
+          <foreach collection="tagIds" open="(" close=")" item="tagId" separator=",">
+              #{tagId, jdbcType=BIGINT}
+          </foreach>
+          </if>
+          <if test="tagIds == null or tagIds.size() == 0">
+              AND 1=2
+          </if>
+        )
+    </select>
+    <select id="listByMonthAndExceptTagIds" resultType="com.tony.billing.entity.CostRecord">
+        SELECT <include refid="moneyOnly"/>
+        FROM t_cost_info ci
+        WHERE userId=#{userId,jdbcType=BIGINT}
+        AND isDeleted=0 AND isHidden=0 AND inOutType='支出'
+        AND costCreateTime like concat(#{month,jdbcType=VARCHAR},'%')
+        <if test="tagIds != null and tagIds.size() != 0">
+        AND NOT EXISTS (
+            SELECT 1 FROM t_cost_tag ct WHERE ct.costId=ci.id AND ct.isDeleted=0
+            AND ct.tagId IN
+            <foreach collection="tagIds" open="(" close=")" item="tagId" separator=",">
+                #{tagId, jdbcType=BIGINT}
+            </foreach>
+        )
+        </if>
     </select>
 </mapper>

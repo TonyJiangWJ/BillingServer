@@ -3,10 +3,10 @@
 <mapper namespace="com.tony.billing.dao.mapper.LiabilityMapper">
     <sql id="all">
         id id,
-        user_id userId,
-        create_time createTime,
-        modify_time modifyTime,
-        repayment_day repaymentDay,
+        userId userId,
+        createTime createTime,
+        modifyTime modifyTime,
+        repaymentDay repaymentDay,
         name name,
         `type` type,
         amount amount,
@@ -14,7 +14,7 @@
         `index` 'index',
         status status,
         paid paid,
-        is_deleted isDeleted,
+        isDeleted isDeleted,
         `version` version
     </sql>
     <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.tony.billing.entity.Liability">
@@ -24,16 +24,16 @@
                 id,
             </if>
             <if test=" userId!=null ">
-                user_id,
+                userId,
             </if>
             <if test=" createTime!=null ">
-                create_time,
+                createTime,
             </if>
             <if test=" modifyTime!=null ">
-                modify_time,
+                modifyTime,
             </if>
             <if test=" repaymentDay!=null ">
-                repayment_day,
+                repaymentDay,
             </if>
             <if test=" name!=null and name!='' ">
                 name,
@@ -57,7 +57,7 @@
                 paid,
             </if>
             <if test="isDeleted != null">
-                is_deleted,
+                isDeleted,
             </if>
             <if test="version != null">
                 `version`,
@@ -114,13 +114,13 @@
         UPDATE t_liability
         <trim prefix="SET" suffixOverrides=",">
             <if test=" createTime!=null ">
-                create_time=#{createTime,jdbcType=TIMESTAMP},
+                createTime=#{createTime,jdbcType=TIMESTAMP},
             </if>
             <if test=" modifyTime!=null ">
-                modify_time=#{modifyTime,jdbcType=TIMESTAMP},
+                modifyTime=#{modifyTime,jdbcType=TIMESTAMP},
             </if>
             <if test=" repaymentDay!=null ">
-                repayment_day=#{repaymentDay,jdbcType=TIMESTAMP},
+                repaymentDay=#{repaymentDay,jdbcType=TIMESTAMP},
             </if>
             <if test=" name!=null and name!='' ">
                 name=#{name,jdbcType=VARCHAR},
@@ -147,27 +147,27 @@
                 #{version,jdbcType=INTEGER},
             </if>
         </trim>
-        WHERE id=#{id, jdbcType=BIGINT} AND user_id=#{userId,jdbcType=BIGINT} AND is_deleted='0' AND version=#{version,jdbcType=INTEGER}
+        WHERE id=#{id, jdbcType=BIGINT} AND userId=#{userId,jdbcType=BIGINT} AND isDeleted='0' AND version=#{version,jdbcType=INTEGER}
     </update>
     <select id="page" parameterType="java.util.Map" resultType="com.tony.billing.entity.Liability">
         SELECT
         <include refid="all"/>
-        FROM t_liability WHERE is_deleted='0'
-        <trim prefixOverrides="and">
+        FROM t_liability WHERE isDeleted='0'
+        <trim>
             <if test=" id!=null ">
                 and id=#{id,jdbcType=BIGINT}
             </if>
             <if test=" userId!=null ">
-                and user_id=#{userId,jdbcType=BIGINT}
+                and userId=#{userId,jdbcType=BIGINT}
             </if>
             <if test=" createTime!=null ">
-                and create_time=#{createTime,jdbcType=TIMESTAMP}
+                and createTime=#{createTime,jdbcType=TIMESTAMP}
             </if>
             <if test=" modifyTime!=null ">
-                and modify_time=#{modifyTime,jdbcType=TIMESTAMP}
+                and modifyTime=#{modifyTime,jdbcType=TIMESTAMP}
             </if>
             <if test=" repaymentDay!=null ">
-                and repayment_day=#{repaymentDay,jdbcType=TIMESTAMP}
+                and repaymentDay=#{repaymentDay,jdbcType=TIMESTAMP}
             </if>
             <if test=" name!=null and name!='' ">
                 and name=#{name,jdbcType=VARCHAR}
@@ -204,22 +204,22 @@
     <select id="list" resultType="com.tony.billing.entity.Liability" parameterType="com.tony.billing.entity.Liability">
         SELECT
         <include refid="all"/>
-        FROM t_liability where is_deleted='0'
-        <trim prefixOverrides="and">
+        FROM t_liability where isDeleted='0'
+        <trim>
             <if test=" id!=null ">
                 and id=#{id,jdbcType=BIGINT}
             </if>
             <if test=" userId!=null ">
-                and user_id=#{userId,jdbcType=BIGINT}
+                and userId=#{userId,jdbcType=BIGINT}
             </if>
             <if test=" createTime!=null ">
-                and create_time=#{createTime,jdbcType=TIMESTAMP}
+                and createTime=#{createTime,jdbcType=TIMESTAMP}
             </if>
             <if test=" modifyTime!=null ">
-                and modify_time=#{modifyTime,jdbcType=TIMESTAMP}
+                and modifyTime=#{modifyTime,jdbcType=TIMESTAMP}
             </if>
             <if test=" repaymentDay!=null ">
-                and repayment_day=#{repaymentDay,jdbcType=TIMESTAMP}
+                and repaymentDay=#{repaymentDay,jdbcType=TIMESTAMP}
             </if>
             <if test=" name!=null and name!='' ">
                 and name=#{name,jdbcType=VARCHAR}
@@ -249,6 +249,11 @@
         SELECT
         <include refid="all"/>
         FROM t_liability
-        WHERE id=#{id, jdbcType=BIGINT} AND is_deleted = '0'
+        WHERE id=#{id, jdbcType=BIGINT} AND isDeleted = '0'
+    </select>
+    <select id="listLiabilityGroupByType" resultType="com.tony.billing.entity.Liability">
+        SELECT name,sum(amount) as amount,sum(paid) as paid, type
+        FROM t_liability WHERE userId=#{userId,jdbcType=BIGINT} AND isDeleted='0' AND status='0'
+        GROUP by type,name
     </select>
 </mapper>

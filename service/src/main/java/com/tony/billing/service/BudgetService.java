@@ -2,6 +2,7 @@ package com.tony.billing.service;
 
 import com.tony.billing.dto.BudgetDTO;
 import com.tony.billing.entity.Budget;
+import com.tony.billing.model.BudgetReportModel;
 
 import java.util.List;
 
@@ -32,12 +33,19 @@ public interface BudgetService {
 
     /**
      * 删除预算信息
-     * @param budget
+     * @param budgetId
      * @return
      */
-    boolean deleteBudget(Budget budget);
+    boolean deleteBudget(Long budgetId);
 
     Budget getById(Long id);
 
 
+    BudgetReportModel getBudgetReportByMonth(String monthInfo);
+
+    /**
+     * 获取最近6个月的预算概述信息
+     * @return
+     */
+    List<BudgetReportModel> getNearlySixMonth();
 }

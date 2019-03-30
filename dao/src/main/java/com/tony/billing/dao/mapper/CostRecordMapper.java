@@ -2,7 +2,7 @@ package com.tony.billing.dao.mapper;
 
 import com.tony.billing.dao.mapper.base.AbstractMapper;
 import com.tony.billing.entity.CostRecord;
-import com.tony.billing.entity.query.CostRecordQuery;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -26,4 +26,27 @@ public interface CostRecordMapper extends AbstractMapper<CostRecord> {
 
     Integer updateByTradeNo(CostRecord record);
 
+    /**
+     * 仅仅返回金额信息
+     *
+     * @param monthPrefix {format yyyy-MM}
+     * @param userId 用户id
+     * @param tagIds 关联所提供的标签id
+     * @return
+     */
+    List<CostRecord> listByMonthAndTagIds(@Param("month") String monthPrefix,
+                                          @Param("userId") Long userId,
+                                          @Param("tagIds") List<Long> tagIds);
+
+    /**
+     * 仅仅返回金额信息
+     *
+     * @param monthPrefix {format yyyy-MM}
+     * @param userId 用户id
+     * @param tagIds 未关联所提供的标签id
+     * @return
+     */
+    List<CostRecord> listByMonthAndExceptTagIds(@Param("month") String monthPrefix,
+                                                @Param("userId") Long userId,
+                                                @Param("tagIds") List<Long> tagIds);
 }

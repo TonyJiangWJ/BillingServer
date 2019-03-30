@@ -10,4 +10,5 @@ public interface LiabilityMapper extends AbstractMapper<Liability> {
 
     List<Liability> page(Map params);
 
+    List<Liability> listLiabilityGroupByType(Liability query);
 }

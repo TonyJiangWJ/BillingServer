@@ -7,12 +7,13 @@ public enum EnumOwnershipCheckTables {
     /**
      *
      */
-    ASSET("t_asset", "user_id", "资产表"),
-    LIABILITY("t_liability", "user_id", "负债表"),
-    ASSET_TYPES("t_asset_types", "user_id", "资产负债类型表"),
+    ASSET("t_asset", "资产表"),
+    LIABILITY("t_liability", "负债表"),
+    ASSET_TYPES("t_asset_types", "资产负债类型表"),
     BUDGET("t_budget", "预算表"),
     COST_RECORD("t_cost_info", "tradeNo","userId","账单表"),
-    TAG_INFO("t_tag_info", "标签信息表")
+    COST_RECORD_WITH_ID("t_cost_info", "id","userId","账单表"),
+    TAG_INFO("t_tag_info", "标签信息表"),
     ;
     private String tableName;
     private String primaryKey;

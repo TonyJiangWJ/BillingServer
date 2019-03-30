@@ -22,13 +22,11 @@ public class LiabilityServiceImplTest extends BaseServiceTest {
     private LiabilityService liabilityService;
 
     @Test
-    public void listLiabilityByUserId() {
-        debugInfo(liabilityService.listLiabilityByUserId(2L));
-    }
-
-    @Test
     public void getLiabilityModelsByUserId() {
+        long start = System.currentTimeMillis();
         debugInfo(liabilityService.getLiabilityModelsByUserId(2L));
+        long end = System.currentTimeMillis();
+        logger.info("cost time:{}", end-start);
     }
 
     @Test

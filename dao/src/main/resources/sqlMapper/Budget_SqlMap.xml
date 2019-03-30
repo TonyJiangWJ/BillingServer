@@ -139,4 +139,25 @@
         update t_budget set isDeleted = '1', modifyTime =sysdate()
          where userId=#{userId, jdbcType=BIGINT} AND id=#{id, jdbcType=BIGINT} AND isDeleted = '0'
     </update>
+
+    <select id="list" parameterType="com.tony.billing.entity.Budget" resultType="com.tony.billing.entity.Budget">
+        SELECT <include refid="all"/> FROM t_budget WHERE IS_DELETED='0'
+        <trim>
+            <if test=" userId!=null ">
+                and userId=#{userId,jdbcType=BIGINT}
+            </if>
+            <if test=" budgetName!=null and budgetName!='' ">
+                and budgetName=#{budgetName,jdbcType=VARCHAR}
+            </if>
+            <if test=" budgetMoney!=null ">
+                and budgetMoney=#{budgetMoney,jdbcType=BIGINT}
+            </if>
+            <if test=" belongYear!=null and belongYear!='' ">
+                and belongYear=#{belongYear,jdbcType=VARCHAR}
+            </if>
+            <if test=" belongMonth!=null ">
+                and belongMonth=#{belongMonth,jdbcType=INTEGER}
+            </if>
+        </trim>
+    </select>
 </mapper>

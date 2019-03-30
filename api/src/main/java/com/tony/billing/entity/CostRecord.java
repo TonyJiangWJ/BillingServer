@@ -2,6 +2,8 @@ package com.tony.billing.entity;
 
 import com.tony.billing.annotation.Table;
 import com.tony.billing.entity.base.BaseVersionedEntity;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
  * @author jiangwj20966 on 2017/6/2.

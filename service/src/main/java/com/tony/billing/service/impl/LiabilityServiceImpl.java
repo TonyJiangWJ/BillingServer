@@ -2,8 +2,6 @@ package com.tony.billing.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.tony.billing.constants.enums.EnumLiabilityStatus;
-import com.tony.billing.constants.enums.EnumTypeIdentify;
-import com.tony.billing.dao.mapper.AssetTypesMapper;
 import com.tony.billing.dao.mapper.LiabilityMapper;
 import com.tony.billing.dao.mapper.base.AbstractMapper;
 import com.tony.billing.dto.LiabilityDTO;
@@ -11,14 +9,13 @@ import com.tony.billing.entity.AssetTypes;
 import com.tony.billing.entity.Liability;
 import com.tony.billing.model.LiabilityModel;
 import com.tony.billing.model.MonthLiabilityModel;
+import com.tony.billing.service.AssetTypesService;
 import com.tony.billing.service.LiabilityService;
 import com.tony.billing.service.base.AbstractService;
-import com.tony.billing.util.UserIdContainer;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,10 +27,9 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Stream;
+import java.util.function.BiFunction;
+import java.util.stream.Collectors;
 
 @Service
 public class LiabilityServiceImpl extends AbstractService<Liability> implements LiabilityService {
@@ -41,7 +37,7 @@ public class LiabilityServiceImpl extends AbstractService<Liability> implements 
     @Resource
     private LiabilityMapper liabilityMapper;
     @Resource
-    private AssetTypesMapper assetTypesMapper;
+    private AssetTypesService assetTypesService;
 
     @Override
     protected AbstractMapper<Liability> getMapper() {
@@ -50,12 +46,6 @@ public class LiabilityServiceImpl extends AbstractService<Liability> implements 
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    @Override
-    public List<Liability> listLiabilityByUserId(Long userId) {
-        Liability query = new Liability();
-        query.setUserId(userId);
-        return super.list(query);
-    }
 
     /**
      * 获取总负债信息
@@ -69,61 +59,97 @@ public class LiabilityServiceImpl extends AbstractService<Liability> implements 
         Liability query = new Liability();
         query.setUserId(userId);
         query.setStatus(0);
-        List<Liability> liabilities = super.list(query);
-        Map<String, AssetTypes> parentTypeMap = new HashMap<>();
-        Map<Long, AssetTypes> assetTypesMap = new HashMap<>();
-        fillAssetTypeMap(liabilities, parentTypeMap, assetTypesMap, userId);
-        List<LiabilityModel> allModels = fillLiabilityModels(liabilities, parentTypeMap, assetTypesMap);
-        return mergeLiabilityByType(allModels);
-    }
-
-    private List<LiabilityModel> mergeLiabilityByType(List<LiabilityModel> allModels) {
-        for (LiabilityModel model : allModels) {
-            Map<String, LiabilityDTO> liabilityDTOMap = new HashMap<>();
-            for (LiabilityDTO liabilityDTO : model.getLiabilityList()) {
-                LiabilityDTO mergedDto = null;
-                if ((mergedDto = liabilityDTOMap.get(liabilityDTO.getType())) != null) {
-                    mergedDto.setAmount(liabilityDTO.getAmount() - liabilityDTO.getPaid() + mergedDto.getAmount());
+        List<Liability> liabilities = liabilityMapper.listLiabilityGroupByType(query);
+        List<LiabilityModel> resultModels = new ArrayList<>();
+        if (CollectionUtils.isNotEmpty(liabilities)) {
+            resultModels = liabilities.stream().collect(Collectors.groupingBy(liability -> {
+                AssetTypes assetTypes = assetTypesService.getAssetTypeByIdWithCache(liability.getType());
+                if (assetTypes != null && StringUtils.isNotEmpty(assetTypes.getParentCode())) {
+                    return assetTypes.getParentCode();
                 } else {
-                    mergedDto = new LiabilityDTO();
-                    BeanUtils.copyProperties(liabilityDTO, mergedDto);
-                    mergedDto.setAmount(liabilityDTO.getAmount() - liabilityDTO.getPaid());
-                    liabilityDTOMap.put(liabilityDTO.getType(), mergedDto);
+                    logger.error("未能获取负债主类别 liabilityId:{} assetTypes:{}", liability.getId(), JSON.toJSONString(assetTypes));
+                    return "UNDEFINED";
                 }
-            }
-            List<LiabilityDTO> mergedList = new ArrayList<>();
-            for (Map.Entry<String, LiabilityDTO> entry : liabilityDTOMap.entrySet()) {
-                mergedList.add(entry.getValue());
-            }
-            model.setLiabilityList(mergedList);
+                // 根据父类型分组
+            })).entrySet()
+                    .stream()
+                    // 分组后继续对每个组别进行统计
+                    .map(stringListEntry -> {
+                        String parentCode = stringListEntry.getKey();
+                        AssetTypes parentType = assetTypesService.getAssetTypeByCodeWithCache(parentCode);
+                        String assetTypeDesc = null;
+                        if (parentType != null) {
+                            assetTypeDesc = parentType.getTypeDesc();
+                        } else {
+                            assetTypeDesc = "未知类型";
+                        }
+                        LiabilityModel liabilityModel = new LiabilityModel();
+                        // 获取负债信息类型子列表统计信息
+                        List<Liability> subLiabilities = stringListEntry.getValue();
+
+                        MultiSumContainer sumContainer = getMultiFieldSums(subLiabilities,
+                                (container, liability) -> new MultiSumContainer(container.getTotal() + liability.getAmount(),
+                                        container.getRemain() + liability.getAmount() - liability.getPaid())
+                        );
+
+                        liabilityModel.setType(assetTypeDesc);
+                        liabilityModel.setTotal(sumContainer.getTotal());
+                        liabilityModel.setRemain(sumContainer.getRemain());
+                        // 将子列表信息转换成liabilityDTO 仅仅需要总金额、已还金额以及名称即可
+                        liabilityModel.setLiabilityList(subLiabilities.stream().map(
+                                subLiability -> {
+                                    LiabilityDTO liabilityDTO = new LiabilityDTO();
+                                    liabilityDTO.setName(subLiability.getName());
+                                    liabilityDTO.setAmount(subLiability.getAmount());
+                                    liabilityDTO.setPaid(subLiability.getPaid());
+                                    return liabilityDTO;
+                                }
+                        ).collect(Collectors.toList()));
+                        return liabilityModel;
+
+                    }).collect(Collectors.toList());
         }
-        return allModels;
+
+        return resultModels;
     }
 
-    private List<LiabilityModel> fillLiabilityModels(List<Liability> liabilities, Map<String, AssetTypes> parentTypeMap, Map<Long, AssetTypes> assetTypesMap) {
-        Map<String, LiabilityModel> modelMap = new HashMap<>();
-        for (Map.Entry<String, AssetTypes> entry : parentTypeMap.entrySet()) {
-            modelMap.put(entry.getKey(), new LiabilityModel(entry.getValue().getTypeDesc()));
-        }
-        List<LiabilityModel> liabilityModels = new ArrayList<>();
-        LiabilityModel model;
-        for (Liability liability : liabilities) {
-            AssetTypes type = assetTypesMap.get(liability.getType());
 
-            if (StringUtils.isNotEmpty(type.getParentCode())) {
-                model = modelMap.get(type.getParentCode());
-            } else {
-                model = modelMap.get(type.getTypeCode());
-            }
-            model.setTotal(liability.getAmount() + model.getTotal() - liability.getPaid());
-            model.getLiabilityList().add(new LiabilityDTO(liability, type.getTypeDesc()));
+    /**
+     * 将负债信息列表根据负债类型分类整合
+     *
+     * @param liabilities 负债信息列表
+     * @return
+     */
+    private List<LiabilityModel> getLiabilityModelsByLiabilityList(List<Liability> liabilities) {
+        List<LiabilityModel> modelResultList = new ArrayList<>();
+        if (CollectionUtils.isNotEmpty(liabilities)) {
+            modelResultList = liabilities.stream()
+                    .collect(Collectors.groupingBy(Liability::getType))
+                    .entrySet()
+                    .stream()
+                    .filter(entry -> CollectionUtils.isNotEmpty(entry.getValue()))
+                    .map(entry -> {
+                        Long assetTypesId = entry.getKey();
+                        AssetTypes type = assetTypesService.getAssetTypeByIdWithCache(assetTypesId);
+                        LiabilityModel liabilityModel = new LiabilityModel();
+                        liabilityModel.setType(type.getTypeDesc());
+                        liabilityModel.setLiabilityList(
+                                entry.getValue().stream().map(LiabilityDTO::new)
+                                        .filter(liabilityDTO -> liabilityDTO.getId() != null)
+                                        .collect(Collectors.toList())
+                        );
+                        MultiSumContainer sumContainer = getMultiFieldSums(
+                                liabilityModel.getLiabilityList(),
+                                (multiSumContainer, liabilityDTO) -> new MultiSumContainer(multiSumContainer.getTotal() + liabilityDTO.getAmount(),
+                                        multiSumContainer.getRemain() + liabilityDTO.getAmount() - (liabilityDTO.getPaid() == null ? 0 : liabilityDTO.getPaid())
+                                )
+                        );
+                        liabilityModel.setTotal(sumContainer.getTotal());
+                        liabilityModel.setRemain(sumContainer.getRemain());
+                        return liabilityModel;
+                    }).collect(Collectors.toList());
         }
-
-        for (Map.Entry<String, LiabilityModel> modelEntry : modelMap.entrySet()) {
-            liabilityModels.add(modelEntry.getValue());
-        }
-
-        return liabilityModels;
+        return modelResultList;
     }
 
     @Override
@@ -133,62 +159,30 @@ public class LiabilityServiceImpl extends AbstractService<Liability> implements 
         query.setStatus(0);
         List<Liability> liabilities = super.list(query);
         Collections.sort(liabilities);
-        SimpleDateFormat monthFormat = new SimpleDateFormat("yyyy-MM");
-        String month = null;
+        final SimpleDateFormat monthFormat = new SimpleDateFormat("yyyy-MM");
+
         List<MonthLiabilityModel> monthLiabilityModels = new ArrayList<>();
-        MonthLiabilityModel monthLiabilityModel = null;
-
-        Map<String, List<Liability>> monthMap = new HashMap<>();
-        for (Liability liability : liabilities) {
-            month = monthFormat.format(liability.getRepaymentDay());
-            monthMap.computeIfAbsent(month, k -> new ArrayList<>());
-            monthMap.get(month).add(liability);
+        if (CollectionUtils.isNotEmpty(liabilities)) {
+            monthLiabilityModels = liabilities.stream()
+                    .collect(Collectors.groupingBy(liability -> monthFormat.format(liability.getRepaymentDay())))
+                    .entrySet()
+                    .stream()
+                    .filter(listEntry -> CollectionUtils.isNotEmpty(listEntry.getValue()))
+                    .map(entry -> {
+                        MonthLiabilityModel monthLiabilityModel = new MonthLiabilityModel(entry.getKey());
+                        monthLiabilityModel.setLiabilityModels(getLiabilityModelsByLiabilityList(entry.getValue()));
+                        MultiSumContainer sumContainer = getMultiFieldSums(monthLiabilityModel.getLiabilityModels(),
+                                (multiSumContainer, liabilityModel) -> new MultiSumContainer(multiSumContainer.getTotal() + liabilityModel.getTotal(),
+                                        multiSumContainer.getRemain() + liabilityModel.getRemain()));
+                        monthLiabilityModel.setTotal(sumContainer.getTotal());
+                        monthLiabilityModel.setRemain(sumContainer.getRemain());
+                        return monthLiabilityModel;
+                    }).collect(Collectors.toList());
+            monthLiabilityModels.sort(Comparator.comparing(MonthLiabilityModel::getMonth));
         }
-
-        for (Map.Entry<String, List<Liability>> entry : monthMap.entrySet()) {
-            month = entry.getKey();
-            monthLiabilityModel = new MonthLiabilityModel(month);
-
-            Map<String, AssetTypes> parentTypeMap = new HashMap<>();
-            Map<Long, AssetTypes> assetTypesMap = new HashMap<>();
-            fillAssetTypeMap(entry.getValue(), parentTypeMap, assetTypesMap, userId);
-            monthLiabilityModel.setLiabilityModels(fillLiabilityModels(entry.getValue(), parentTypeMap, assetTypesMap));
-            countDownMonthAmount(monthLiabilityModel);
-            monthLiabilityModels.add(monthLiabilityModel);
-        }
-        monthLiabilityModels.sort(Comparator.comparing(MonthLiabilityModel::getMonth));
         return monthLiabilityModels;
     }
 
-    public void fillAssetTypeMap(List<Liability> liabilities, Map<String, AssetTypes> parentTypeMap, Map<Long, AssetTypes> assetTypesMap, Long userId) {
-        for (Liability liability : liabilities) {
-            if (assetTypesMap.get(liability.getType()) == null) {
-                AssetTypes assetTypes = assetTypesMapper.getById(liability.getType(), UserIdContainer.getUserId());
-                if (assetTypes != null) {
-                    assetTypesMap.put(liability.getType(), assetTypes);
-                    if (StringUtils.isNotEmpty(assetTypes.getParentCode())) {
-                        if (parentTypeMap.get(assetTypes.getParentCode()) == null) {
-                            String parentCode = assetTypes.getParentCode();
-                            List<AssetTypes> record = assetTypesMapper.list(Stream.generate(() -> {
-                                        AssetTypes condition = new AssetTypes();
-                                        condition.setParentCode(parentCode);
-                                        condition.setTypeIdentify(EnumTypeIdentify.LIABILITY.getIdentify());
-                                        condition.setUserId(userId);
-                                        return condition;
-                                    }
-                            ).findAny().get());
-                            if (CollectionUtils.isNotEmpty(record)) {
-                                assetTypes = record.get(0);
-                                parentTypeMap.put(assetTypes.getTypeCode(), assetTypes);
-                            }
-                        } else {
-                            parentTypeMap.put(assetTypes.getTypeCode(), assetTypes);
-                        }
-                    }
-                }
-            }
-        }
-    }
 
     @Override
     public Liability getLiabilityInfoById(Long id) {
@@ -209,7 +203,7 @@ public class LiabilityServiceImpl extends AbstractService<Liability> implements 
         Date repaymentDay = liability.getRepaymentDay();
         int installment = liability.getInstallment();
 
-        AssetTypes assetTypes = assetTypesMapper.getById(liability.getType(), UserIdContainer.getUserId());
+        AssetTypes assetTypes = assetTypesService.getAssetTypeByIdWithCache(liability.getType());
         if (assetTypes != null && (assetTypes.getUserId().equals(liability.getUserId()) || assetTypes.getUserId().equals(-1L))) {
             liability.setName(assetTypes.getTypeDesc());
         } else {
@@ -257,11 +251,45 @@ public class LiabilityServiceImpl extends AbstractService<Liability> implements 
     }
 
 
-    private void countDownMonthAmount(MonthLiabilityModel model) {
-        long sum = 0;
-        for (LiabilityModel liabilityModel : model.getLiabilityModels()) {
-            sum += liabilityModel.getTotal();
+    private <T> MultiSumContainer getMultiFieldSums(List<T> originList, MultiSumContainerFunction<MultiSumContainer, T> accumulator) {
+        return originList.stream().reduce(
+                new MultiSumContainer(0, 0),
+                // 累加器
+                accumulator,
+                // 组合, 串行操作不受影响
+                (a, b) -> null
+        );
+    }
+
+    private interface MultiSumContainerFunction<R extends MultiSumContainer, U> extends BiFunction<R, U, R> {
+        @Override
+        R apply(R r, U u);
+    }
+
+
+    private class MultiSumContainer {
+        private long total;
+        private long remain;
+
+        MultiSumContainer(long total, long remain) {
+            this.total = total;
+            this.remain = remain;
         }
-        model.setTotal(sum);
+
+        public long getTotal() {
+            return total;
+        }
+
+        public void setTotal(long total) {
+            this.total = total;
+        }
+
+        public long getRemain() {
+            return remain;
+        }
+
+        public void setRemain(long remain) {
+            this.remain = remain;
+        }
     }
 }

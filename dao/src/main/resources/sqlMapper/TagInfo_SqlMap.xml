@@ -236,6 +236,18 @@
         )
     </insert>
 
+    <insert id="batchInsertTagBudgetRef">
+        INSERT INTO t_cost_tag (tagId,costId,createTime,modifyTime,isDeleted)
+        VALUES
+        <foreach collection="recordIds" item="id" open="(" close=")" separator="),(">
+            #{tagId, jdbcType=BIGINT},
+            #{id, jdbcType=BIGINT},
+            #{createTime, jdbcType=TIMESTAMP},
+            #{modifyTime, jdbcType=TIMESTAMP},
+            0
+        </foreach>
+    </insert>
+
 
     <update id="deleteBudgetTag">
       UPDATE t_budget_tag SET isDeleted='1', modifyTime = #{modifyTime, jdbcType=TIMESTAMP}
@@ -249,5 +261,41 @@
         AND bt.budgetId=#{budgetId, jdbcType=BIGINT} AND tag.userId=#{userId, jdbcType=BIGINT}
 
     </select>
+    <select id="listTagIdsByBudgetMonth" resultType="java.lang.Long">
+        SELECT tag.id FROM t_tag_info tag JOIN t_budget_tag bt on tag.id=bt.tagId and bt.isDeleted=0
+        join t_budget bi on bt.budgetId=bi.id and bi.isDeleted=0 and bi.belongYear=#{budgetYear, jdbcType=VARCHAR}
+        and bi.belongMonth=#{budgetMonth, jdbcType=INTEGER} and bi.userId=#{userId, jdbcType=BIGINT}
+        <if test="exceptBudgetId != null">
+            and bi.id &lt;&gt; #{exceptBudgetId, jdbcType=BIGINT}
+        </if>
+    </select>
+    <select id="listAssignableTagsByBudgetId" resultType="com.tony.billing.entity.TagInfo">
+        SELECT * FROM t_tag_info t WHERE userId=2 AND isDeleted=0 AND NOT EXISTS(
+            SELECT 1 FROM t_budget_tag s WHERE s.tagId=t.id AND isDeleted=0 AND EXISTS (
+                SELECT 1 FROM t_budget r WHERE s.budgetId=r.id AND isDeleted=0 AND EXISTS (
+                    SELECT 1 FROM t_budget WHERE id=#{budgetId,jdbcType=BIGINT} AND isDeleted=0 AND r.belongMonth=belongMonth AND r.belongYear=belongYear
+                )
+            )
+        )
+    </select>
+    <select id="countByCostAndTag" resultType="java.lang.Integer">
+        SELECT COUNT(1) FROM t_cost_tag WHERE isDeleted=0 AND tagId=#{tagId, jdbcType=BIGINT} AND costId=#{costId, jdbcType=BIGINT}
+    </select>
+    <select id="listCommonTagInfos" resultType="com.tony.billing.entity.TagInfo">
+        SELECT * FROM t_tag_info WHERE isDeleted=0 AND id IN (
+            SELECT tagId FROM t_cost_tag where isDeleted=0 AND costId IN(
+            <foreach collection="costIds" item="costId" separator=",">
+                #{costId,jdbcType=BIGINT}
+            </foreach>
+            ) GROUP BY tagId HAVING count(1)>=#{size,jdbcType=INTEGER}
+        )
+    </select>
 
+    <update id="batchDeleteCostTag">
+        UPDATE t_cost_tag SET isDeleted=1 WHERE isDeleted=0 AND tagId=#{tagId, jdbcType=BIGINT} AND costId IN (
+            <foreach collection="costIds" item="costId" separator=",">
+                #{costId,jdbcType=BIGINT}
+            </foreach>
+        )
+    </update>
 </mapper>

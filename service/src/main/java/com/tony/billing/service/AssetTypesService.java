@@ -24,4 +24,8 @@ public interface AssetTypesService {
     boolean update(AssetTypes assetTypes);
 
     AssetTypes getById(Long id);
+
+    AssetTypes getAssetTypeByIdWithCache(Long id);
+
+    AssetTypes getAssetTypeByCodeWithCache(String typeCode);
 }

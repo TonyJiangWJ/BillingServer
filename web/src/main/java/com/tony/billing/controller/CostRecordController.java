@@ -107,7 +107,7 @@ public class CostRecordController {
             if (StringUtils.isNotEmpty(request.getOrderBy())) {
                 pagerGrid.setOrderBy(request.getOrderBy());
             } else {
-                pagerGrid.setOrderBy("createTime");
+                pagerGrid.setOrderBy("costCreateTime");
             }
 
             pagerGrid = costRecordService.page(pagerGrid);
@@ -341,6 +341,7 @@ public class CostRecordController {
 
     private CostRecordDetailDTO formatDetailModel(CostRecord record) {
         CostRecordDetailDTO model = new CostRecordDetailDTO();
+        model.setId(record.getId());
         model.setVersion(record.getVersion());
         model.setCreateTime(record.getCostCreateTime());
         model.setGoodsName(record.getGoodsName());
@@ -381,6 +382,7 @@ public class CostRecordController {
             List<TagInfo> tagInfos;
             for (CostRecord entity : list) {
                 model = new CostRecordDTO();
+                model.setId(entity.getId());
                 model.setCreateTime(entity.getCostCreateTime());
                 model.setGoodsName(entity.getGoodsName());
                 model.setInOutType(entity.getInOutType());

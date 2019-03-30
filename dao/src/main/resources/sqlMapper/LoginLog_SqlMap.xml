@@ -3,13 +3,13 @@
 <mapper namespace="com.tony.billing.dao.mapper.LoginLogMapper">
     <sql id="all">
         id id,
-        user_name userName,
-        login_result loginResult,
-        login_ip loginIp,
+        userName userName,
+        loginResult loginResult,
+        loginIp loginIp,
         code code,
         msg msg,
-        create_time createTime,
-        modify_time modifyTime
+        createTime createTime,
+        modifyTime modifyTime
     </sql>
     <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.tony.billing.entity.LoginLog">
         INSERT INTO t_login_log (
@@ -18,13 +18,13 @@
                 id,
             </if>
             <if test=" userName!=null and userName!='' ">
-                user_name,
+                userName,
             </if>
             <if test=" loginResult!=null and loginResult!='' ">
-                login_result,
+                loginResult,
             </if>
             <if test=" loginIp!=null and loginIp!='' ">
-                login_ip,
+                loginIp,
             </if>
             <if test=" code!=null and code!='' ">
                 code,
@@ -33,10 +33,10 @@
                 msg,
             </if>
             <if test=" createTime!=null ">
-                create_time,
+                createTime,
             </if>
             <if test=" modifyTime!=null ">
-                modify_time,
+                modifyTime,
             </if>
         </trim>
         ) VALUES (
@@ -72,13 +72,13 @@
         UPDATE t_login_log
         <trim prefix="SET" suffixOverrides=",">
             <if test=" userName!=null and userName!='' ">
-                user_name=#{userName,jdbcType=VARCHAR},
+                userName=#{userName,jdbcType=VARCHAR},
             </if>
             <if test=" loginResult!=null and loginResult!='' ">
-                login_result=#{loginResult,jdbcType=VARCHAR},
+                loginResult=#{loginResult,jdbcType=VARCHAR},
             </if>
             <if test=" loginIp!=null and loginIp!='' ">
-                login_ip=#{loginIp,jdbcType=VARCHAR},
+                loginIp=#{loginIp,jdbcType=VARCHAR},
             </if>
             <if test=" code!=null and code!='' ">
                 code=#{code,jdbcType=VARCHAR},
@@ -87,10 +87,10 @@
                 msg=#{msg,jdbcType=VARCHAR},
             </if>
             <if test=" createTime!=null ">
-                create_time=#{createTime,jdbcType=TIMESTAMP},
+                createTime=#{createTime,jdbcType=TIMESTAMP},
             </if>
             <if test=" modifyTime!=null ">
-                modify_time=#{modifyTime,jdbcType=TIMESTAMP},
+                modifyTime=#{modifyTime,jdbcType=TIMESTAMP},
             </if>
         </trim>
         WHERE id=#{id, jdbcType=BIGINT}
@@ -98,19 +98,19 @@
     <select id="page" parameterType="java.util.Map" resultType="com.tony.billing.entity.LoginLog">
         SELECT
         <include refid="all"/>
-        FROM t_login_log
-        <trim prefix="WHERE" prefixOverrides="and">
+        FROM t_login_log WHERE IS_DELETED='0'
+        <trim>
             <if test=" id!=null ">
                 and id=#{id,jdbcType=BIGINT}
             </if>
             <if test=" userName!=null and userName!='' ">
-                and user_name=#{userName,jdbcType=VARCHAR}
+                and userName=#{userName,jdbcType=VARCHAR}
             </if>
             <if test=" loginResult!=null and loginResult!='' ">
-                and login_result=#{loginResult,jdbcType=VARCHAR}
+                and loginResult=#{loginResult,jdbcType=VARCHAR}
             </if>
             <if test=" loginIp!=null and loginIp!='' ">
-                and login_ip=#{loginIp,jdbcType=VARCHAR}
+                and loginIp=#{loginIp,jdbcType=VARCHAR}
             </if>
             <if test=" code!=null and code!='' ">
                 and code=#{code,jdbcType=VARCHAR}
@@ -119,10 +119,10 @@
                 and msg=#{msg,jdbcType=VARCHAR}
             </if>
             <if test=" createTime!=null ">
-                and create_time=#{createTime,jdbcType=TIMESTAMP}
+                and createTime=#{createTime,jdbcType=TIMESTAMP}
             </if>
             <if test=" modifyTime!=null ">
-                and modify_time=#{modifyTime,jdbcType=TIMESTAMP}
+                and modifyTime=#{modifyTime,jdbcType=TIMESTAMP}
             </if>
         </trim>
         ORDER BY

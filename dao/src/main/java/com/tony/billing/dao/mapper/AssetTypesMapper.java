@@ -2,6 +2,7 @@ package com.tony.billing.dao.mapper;
 
 import com.tony.billing.dao.mapper.base.AbstractMapper;
 import com.tony.billing.entity.AssetTypes;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -9,5 +10,8 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface AssetTypesMapper extends AbstractMapper<AssetTypes> {
+
+
+    AssetTypes getByTypeCode(@Param("typeCode") String typeCode, @Param("userId") Long userId);
 
 }

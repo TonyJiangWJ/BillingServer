@@ -9,7 +9,6 @@ import java.util.List;
 
 public interface LiabilityService {
 
-    List<Liability> listLiabilityByUserId(Long userId);
 
     /**
      * 获取总负债信息

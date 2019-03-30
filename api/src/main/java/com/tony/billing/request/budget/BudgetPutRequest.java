@@ -13,20 +13,22 @@ import javax.validation.constraints.NotNull;
 public class BudgetPutRequest extends BaseRequest {
 
     @NotNull
-    private Long budgetMoney;
+    private Long amount;
     @NotEmpty
     private String year;
     @NotNull
     @Min(1)
     @Max(12)
     private Integer month;
+    @NotEmpty
+    private String name;
 
-    public Long getBudgetMoney() {
-        return budgetMoney;
+    public Long getAmount() {
+        return amount;
     }
 
-    public void setBudgetMoney(Long budgetMoney) {
-        this.budgetMoney = budgetMoney;
+    public void setAmount(Long amount) {
+        this.amount = amount;
     }
 
     public String getYear() {
@@ -43,5 +45,13 @@ public class BudgetPutRequest extends BaseRequest {
 
     public void setMonth(Integer month) {
         this.month = month;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

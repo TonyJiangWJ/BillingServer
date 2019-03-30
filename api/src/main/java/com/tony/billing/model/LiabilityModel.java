@@ -11,6 +11,7 @@ import java.util.List;
 public class LiabilityModel {
     private String type;
     private Long total;
+    private Long remain;
     private List<LiabilityDTO> liabilityList;
 
     public LiabilityModel() {
@@ -47,5 +48,13 @@ public class LiabilityModel {
 
     public void setLiabilityList(List<LiabilityDTO> liabilityList) {
         this.liabilityList = liabilityList;
+    }
+
+    public Long getRemain() {
+        return remain;
+    }
+
+    public void setRemain(Long remain) {
+        this.remain = remain;
     }
 }

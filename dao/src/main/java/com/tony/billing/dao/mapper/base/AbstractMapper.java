@@ -36,14 +36,6 @@ public interface AbstractMapper<T extends BaseEntity> {
     T getById(@Param("id") Long id, @Param("userId") Long userId);
 
     /**
-     * 根据id获取数据对象
-     *
-     * @param id id
-     * @return 数据对象
-     */
-    T getById(Long id);
-
-    /**
      * 根据id删除记录，set isDeleted=1
      *
      * @param id

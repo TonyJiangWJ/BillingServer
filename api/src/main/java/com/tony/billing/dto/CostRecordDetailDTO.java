@@ -8,6 +8,7 @@ import java.util.List;
  * @author jiangwj20966 on 2017/6/2.
  */
 public class CostRecordDetailDTO extends VersionedDTO {
+    private Long id;
     private String tradeNo;
     private String orderNo;
     private String createTime;
@@ -27,6 +28,14 @@ public class CostRecordDetailDTO extends VersionedDTO {
     private Integer isDeleted;
     private Integer isHidden;
     private List<TagInfoDTO> tagInfos;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public Integer getIsHidden() {
         return isHidden;

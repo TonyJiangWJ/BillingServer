@@ -24,7 +24,9 @@ public class LiabilityDTO extends VersionedDTO {
             this.index = liability.getIndex();
             this.installment = liability.getInstallment();
             this.name = liability.getName();
-            this.repaymentDay = simpleDateFormat.format(liability.getRepaymentDay());
+            if (liability.getRepaymentDay() != null) {
+                this.repaymentDay = simpleDateFormat.format(liability.getRepaymentDay());
+            }
             this.status = liability.getStatus();
             this.setVersion(liability.getVersion());
         }
@@ -40,7 +42,9 @@ public class LiabilityDTO extends VersionedDTO {
             this.index = liability.getIndex();
             this.installment = liability.getInstallment();
             this.name = liability.getName();
-            this.repaymentDay = simpleDateFormat.format(liability.getRepaymentDay());
+            if (liability.getRepaymentDay() != null) {
+                this.repaymentDay = simpleDateFormat.format(liability.getRepaymentDay());
+            }
             this.status = liability.getStatus();
             this.setVersion(liability.getVersion());
             this.type = typeDesc;

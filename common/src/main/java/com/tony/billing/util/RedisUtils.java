@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.serializer.RedisSerializer;
@@ -27,6 +28,8 @@ public class RedisUtils {
 
     private static Logger logger = LoggerFactory.getLogger(RedisUtils.class);
 
+    @Value("${redis.cache.transient.time:300}")
+    private long transientTime;
 
     /**
      * 设置对象持久化
@@ -225,5 +228,13 @@ public class RedisUtils {
             return Optional.of(JSON.parseObject(jsonString, clazz));
         }
         return Optional.empty();
+    }
+
+    public long getTransientTime() {
+        return transientTime;
+    }
+
+    public void setTransientTime(long transientTime) {
+        this.transientTime = transientTime;
     }
 }

@@ -6,6 +6,7 @@ import com.tony.billing.dao.mapper.base.AbstractMapper;
 import com.tony.billing.entity.AssetTypes;
 import com.tony.billing.service.AssetTypesService;
 import com.tony.billing.service.base.AbstractService;
+import com.tony.billing.util.RedisUtils;
 import com.tony.billing.util.UserIdContainer;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +23,8 @@ public class AssetTypesServiceImpl extends AbstractService<AssetTypes> implement
 
     @Resource
     private AssetTypesMapper assetTypesMapper;
+    @Resource
+    private RedisUtils redisUtils;
 
     @Override
     protected AbstractMapper<AssetTypes> getMapper() {
@@ -81,6 +84,32 @@ public class AssetTypesServiceImpl extends AbstractService<AssetTypes> implement
     @Override
     public List<AssetTypes> getAssetTypeByCondition(AssetTypes condition) {
         return super.list(condition);
+    }
+
+    @Override
+    public AssetTypes getAssetTypeByIdWithCache(Long id) {
+        String redisCacheKey = "TRANSIENT_ASSET_TYPE_BY_ID_" + UserIdContainer.getUserId() + "_" + id;
+        AssetTypes assetTypes = redisUtils.get(redisCacheKey, AssetTypes.class).orElse(null);
+        if (assetTypes == null) {
+            assetTypes = assetTypesMapper.getById(id, UserIdContainer.getUserId());
+            if (assetTypes != null) {
+                redisUtils.set(redisCacheKey, assetTypes, redisUtils.getTransientTime());
+            }
+        }
+        return assetTypes;
+    }
+
+    @Override
+    public AssetTypes getAssetTypeByCodeWithCache(String typeCode) {
+        String redisCacheKey = "TRANSIENT_ASSET_TYPE_BY_ID_" + UserIdContainer.getUserId() + "_" + typeCode;
+        AssetTypes assetTypes = redisUtils.get(redisCacheKey, AssetTypes.class).orElse(null);
+        if (assetTypes == null) {
+            assetTypes = assetTypesMapper.getByTypeCode(typeCode, UserIdContainer.getUserId());
+            if (assetTypes != null) {
+                redisUtils.set(redisCacheKey, assetTypes, redisUtils.getTransientTime());
+            }
+        }
+        return assetTypes;
     }
 
 }
