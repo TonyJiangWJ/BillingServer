@@ -270,7 +270,7 @@
         </if>
     </select>
     <select id="listAssignableTagsByBudgetId" resultType="com.tony.billing.entity.TagInfo">
-        SELECT * FROM t_tag_info t WHERE userId=2 AND isDeleted=0 AND NOT EXISTS(
+        SELECT * FROM t_tag_info t WHERE userId=#{userId,jdbcType=BIGINT} AND isDeleted=0 AND NOT EXISTS(
             SELECT 1 FROM t_budget_tag s WHERE s.tagId=t.id AND isDeleted=0 AND EXISTS (
                 SELECT 1 FROM t_budget r WHERE s.budgetId=r.id AND isDeleted=0 AND EXISTS (
                     SELECT 1 FROM t_budget WHERE id=#{budgetId,jdbcType=BIGINT} AND isDeleted=0 AND r.belongMonth=belongMonth AND r.belongYear=belongYear
