@@ -8,10 +8,14 @@ import com.tony.billing.service.AssetTypesService;
 import com.tony.billing.service.base.AbstractService;
 import com.tony.billing.util.RedisUtils;
 import com.tony.billing.util.UserIdContainer;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -33,26 +37,27 @@ public class AssetTypesServiceImpl extends AbstractService<AssetTypes> implement
 
     @Override
     public List<AssetTypes> selectAssetTypeList() {
-        return super.list(
-                Stream.generate(() -> {
-                    AssetTypes condition = new AssetTypes();
-                    condition.setTypeIdentify(EnumTypeIdentify.ASSET.getIdentify());
-                    condition.setUserId(UserIdContainer.getUserId());
-                    return condition;
-                }).findAny().get()
-        );
+        return listTargetParentTypes(EnumTypeIdentify.ASSET);
     }
 
     @Override
     public List<AssetTypes> selectLiabilityTypeList() {
-        return super.list(
+        return listTargetParentTypes(EnumTypeIdentify.LIABILITY);
+    }
+
+    private List<AssetTypes> listTargetParentTypes(EnumTypeIdentify enumTypeIdentify) {
+        List<AssetTypes> assetTypesList = super.list(
                 Stream.generate(() -> {
                     AssetTypes condition = new AssetTypes();
-                    condition.setTypeIdentify(EnumTypeIdentify.LIABILITY.getIdentify());
+                    condition.setTypeIdentify(enumTypeIdentify.getIdentify());
                     condition.setUserId(UserIdContainer.getUserId());
                     return condition;
                 }).findAny().get()
         );
+        if (CollectionUtils.isNotEmpty(assetTypesList)) {
+            return assetTypesList.stream().filter(assetTypes -> StringUtils.isEmpty(assetTypes.getParentCode())).collect(Collectors.toList());
+        }
+        return Collections.emptyList();
     }
 
     @Override
