@@ -22,18 +22,16 @@ public class LiabilityServiceImplTest extends BaseServiceTest {
     private LiabilityService liabilityService;
 
     @Test
-    public void listLiabilityByUserId() {
-        debug(liabilityService.listLiabilityByUserId(2L));
-    }
-
-    @Test
     public void getLiabilityModelsByUserId() {
-        debug(liabilityService.getLiabilityModelsByUserId(2L));
+        long start = System.currentTimeMillis();
+        debugInfo(liabilityService.getLiabilityModelsByUserId(2L));
+        long end = System.currentTimeMillis();
+        logger.info("cost time:{}", end-start);
     }
 
     @Test
     public void getMonthLiabilityModelsByUserId() {
-        debug(liabilityService.getMonthLiabilityModelsByUserId(2L));
+        debugInfo(liabilityService.getMonthLiabilityModelsByUserId(2L));
     }
 
     @Test
@@ -47,6 +45,6 @@ public class LiabilityServiceImplTest extends BaseServiceTest {
 
         liabilityService.createLiabilityInfo(liability);
 
-        debug(liabilityService.getMonthLiabilityModelsByUserId(1L));
+        debugInfo(liabilityService.getMonthLiabilityModelsByUserId(1L));
     }
 }

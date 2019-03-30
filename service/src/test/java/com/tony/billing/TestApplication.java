@@ -13,7 +13,6 @@ import org.springframework.context.annotation.ComponentScan;
  */
 @SpringBootApplication
 @MapperScan("com.tony.billing.dao.mapper")
-@ComponentScan
 public class TestApplication {
 
     @Value("${rsa.key.path}")

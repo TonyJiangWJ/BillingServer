@@ -19,11 +19,13 @@ public interface AssetTypesService {
 
     List<AssetTypes> getAssetTypeByCondition(AssetTypes condition);
 
-    Integer insert(AssetTypes assetTypes);
+    Long insert(AssetTypes assetTypes);
 
     boolean update(AssetTypes assetTypes);
 
-    boolean deleteById(Integer id);
+    AssetTypes getById(Long id);
 
-    AssetTypes selectById(Integer id);
+    AssetTypes getAssetTypeByIdWithCache(Long id);
+
+    AssetTypes getAssetTypeByCodeWithCache(String typeCode);
 }

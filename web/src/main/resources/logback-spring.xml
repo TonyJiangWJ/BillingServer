@@ -120,6 +120,6 @@
         <appender-ref ref="asyncFileAppenderError"/>
     </root>
     <!-- 打印sql -->
-    <logger name="com.tony.billing.dao" level="DEBUG">
-    </logger>
+    <logger name="com.tony.billing.dao.mapper" level="DEBUG"/>
+    <logger name="druid.sql" level="DEBUG"/>
 </configuration>

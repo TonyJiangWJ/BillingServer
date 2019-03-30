@@ -1,6 +1,7 @@
 package com.tony.billing.entity;
 
 import com.tony.billing.annotation.Table;
+import com.tony.billing.entity.base.BaseEntity;
 
 import java.util.Date;
 
@@ -8,21 +9,10 @@ import java.util.Date;
  * @author by TonyJiang on 2017/6/15.
  */
 @Table("t_cost_tag")
-public class TagCostRef {
-    private Long id;
+public class TagCostRef extends BaseEntity {
     private Long tagId;
     private Long costId;
-    private Date createTime;
-    private Date modifyTime;
-    private Integer isDelete;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public Long getTagId() {
         return tagId;
@@ -40,27 +30,4 @@ public class TagCostRef {
         this.costId = costId;
     }
 
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
-
-    public Date getModifyTime() {
-        return modifyTime;
-    }
-
-    public void setModifyTime(Date modifyTime) {
-        this.modifyTime = modifyTime;
-    }
-
-    public Integer getIsDelete() {
-        return isDelete;
-    }
-
-    public void setIsDelete(Integer isDelete) {
-        this.isDelete = isDelete;
-    }
 }

@@ -1,11 +1,9 @@
 package com.tony.billing.controller;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.tony.billing.constants.TradeStatus;
-import com.tony.billing.constants.enums.EnumHidden;
 import com.tony.billing.dto.CostRecordDTO;
 import com.tony.billing.dto.CostRecordDetailDTO;
+import com.tony.billing.dto.TagInfoDTO;
 import com.tony.billing.entity.CostRecord;
 import com.tony.billing.entity.PagerGrid;
 import com.tony.billing.entity.TagInfo;
@@ -30,6 +28,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -48,6 +47,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author jiangwj20966 on 2017/6/2.
@@ -69,13 +69,13 @@ public class CostRecordController {
      * @param request
      * @return
      */
-    @RequestMapping(value = "/page/get")
+    @RequestMapping(value = "/cost/record/page/get")
     public CostRecordPageResponse getPage(@ModelAttribute("request") CostRecordPageRequest request) {
         CostRecordPageResponse response = new CostRecordPageResponse();
         try {
             CostRecordQuery costRecord = new CostRecordQuery();
-            if (request.getIsDelete() != null) {
-                costRecord.setIsDelete(request.getIsDelete());
+            if (request.getIsDeleted() != null) {
+                costRecord.setIsDeleted(request.getIsDeleted());
             }
             if (StringUtils.isNotEmpty(request.getInOutType())) {
                 costRecord.setInOutType(request.getInOutType());
@@ -94,7 +94,7 @@ public class CostRecordController {
             }
             costRecord.setStartDate(request.getStartDate());
             costRecord.setUserId(request.getUserId());
-            PagerGrid<CostRecordQuery> pagerGrid = new PagerGrid<CostRecordQuery>(costRecord);
+            PagerGrid<CostRecord> pagerGrid = new PagerGrid<>(costRecord);
             if (request.getPageSize() != null && !request.getPageSize().equals(0)) {
                 pagerGrid.setOffset(request.getPageSize());
             }
@@ -107,12 +107,12 @@ public class CostRecordController {
             if (StringUtils.isNotEmpty(request.getOrderBy())) {
                 pagerGrid.setOrderBy(request.getOrderBy());
             } else {
-                pagerGrid.setOrderBy("createTime");
+                pagerGrid.setOrderBy("costCreateTime");
             }
 
             pagerGrid = costRecordService.page(pagerGrid);
-//            logger.info(JSON.toJSONString(pagerGrid.getResult()));
-            response.setCostRecordList(formatModelList(pagerGrid.getResult()));
+            boolean showTags = Boolean.TRUE.equals(request.getShowTags());
+            response.setCostRecordList(formatModelList(pagerGrid.getResult(), showTags));
             response.setCurrentAmount(calculateCurrentAmount(pagerGrid.getResult()));
             response.setPageNo(pagerGrid.getPage());
             response.setPageSize(pagerGrid.getOffset());
@@ -128,11 +128,8 @@ public class CostRecordController {
         return response;
     }
 
-    private String calculateCurrentAmount(List<CostRecordQuery> result) {
-        long total = 0L;
-        for (CostRecord entity : result) {
-            total += entity.getMoney();
-        }
+    private String calculateCurrentAmount(List<CostRecord> result) {
+        long total = result.stream().map(CostRecord::getMoney).reduce((a, b) -> a + b).orElse(0L);
         return MoneyUtil.fen2Yuan(total);
     }
 
@@ -142,12 +139,9 @@ public class CostRecordController {
      * @param request
      * @return
      */
-    @RequestMapping(value = "/detail/get")
-    public CostRecordDetailResponse getDetail(@ModelAttribute("request") CostRecordDetailRequest request) {
+    @RequestMapping(value = "/record/detail/get")
+    public CostRecordDetailResponse getDetail(@ModelAttribute("request") @Validated CostRecordDetailRequest request) {
         CostRecordDetailResponse response = new CostRecordDetailResponse();
-        if (StringUtils.isEmpty(request.getTradeNo())) {
-            return ResponseUtil.paramError(response);
-        }
         ResponseUtil.error(response);
         try {
             CostRecord record = costRecordService.findByTradeNo(request.getTradeNo(), request.getUserId());
@@ -169,17 +163,16 @@ public class CostRecordController {
      * @return
      */
     @RequestMapping(value = "/record/update")
-    public BaseResponse updateRecord(@ModelAttribute("request") CostRecordUpdateRequest request) {
+    public BaseResponse updateRecord(@ModelAttribute("request") @Validated CostRecordUpdateRequest request) {
         BaseResponse response = new BaseResponse();
-        if (StringUtils.isEmpty(request.getTradeNo())) {
-            return ResponseUtil.paramError(response);
-        }
+
         CostRecord record = new CostRecord();
         record.setLocation(request.getLocation());
         record.setGoodsName(request.getGoodsName());
         record.setMemo(request.getMemo());
         record.setTradeNo(request.getTradeNo());
         record.setUserId(request.getUserId());
+        record.setOrderType(request.getOrderType());
         if (costRecordService.updateByTradeNo(record) > 0) {
             return ResponseUtil.success(response);
         }
@@ -192,17 +185,15 @@ public class CostRecordController {
      * @param request
      * @return
      */
-    @RequestMapping(value = "/delete")
-    public CostRecordDeleteResponse deleteRecord(@ModelAttribute("request") CostRecordDeleteRequest request) {
+    @RequestMapping(value = "/record/toggle/delete")
+    public CostRecordDeleteResponse deleteRecord(@ModelAttribute("request") @Validated CostRecordDeleteRequest request) {
         CostRecordDeleteResponse response = new CostRecordDeleteResponse();
         try {
-            if (StringUtils.isEmpty(request.getTradeNo()) || request.getNowStatus() == null) {
-                return ResponseUtil.paramError(response);
-            }
+
             Map<String, Object> params = new HashMap<String, Object>();
             params.put("tradeNo", request.getTradeNo());
             params.put("nowStatus", request.getNowStatus());
-            params.put("isDelete", request.getNowStatus().equals(0) ? 1 : 0);
+            params.put("isDeleted", request.getNowStatus().equals(0) ? 1 : 0);
             params.put("userId", request.getUserId());
             if (costRecordService.toggleDeleteStatus(params) > 0) {
                 ResponseUtil.success(response);
@@ -216,19 +207,14 @@ public class CostRecordController {
         return response;
     }
 
-    @RequestMapping(value = "/toggle/hide")
-    public BaseResponse toggleHiddenStatus(@ModelAttribute("request") CostRecordHideRequest request) {
+    @RequestMapping(value = "/record/toggle/hide")
+    public BaseResponse toggleHiddenStatus(@ModelAttribute("request") @Validated CostRecordHideRequest request) {
         BaseResponse response = new BaseResponse();
         try {
-            if (StringUtils.isEmpty(request.getNowStatus()) || StringUtils.isEmpty(request.getTradeNo())) {
-                return ResponseUtil.paramError(response);
-            }
             Map<String, Object> params = new HashMap<>();
             params.put("tradeNo", request.getTradeNo());
-            params.put("nowStatus", EnumHidden.getHiddenEnum(request.getNowStatus()).val());
-            params.put("isHidden",
-                    EnumHidden.getHiddenEnum(request.getNowStatus()).val().equals(EnumHidden.HIDDEN.val())
-                            ? EnumHidden.NOT_HIDDEN.val() : EnumHidden.HIDDEN.val());
+            params.put("nowStatus", request.getNowStatus());
+            params.put("isHidden", request.getNowStatus().equals(0) ? 1 : 0);
             params.put("userId", request.getUserId());
             if (costRecordService.toggleHideStatus(params) > 0) {
                 ResponseUtil.success(response);
@@ -249,17 +235,10 @@ public class CostRecordController {
      * @return
      */
     @RequestMapping(value = "/record/put")
-    public BaseResponse putDetail(@ModelAttribute("request") CostRecordPutRequest request) {
+    public BaseResponse putDetail(@ModelAttribute("request") @Validated CostRecordPutRequest request) {
 
         BaseResponse response = new BaseResponse();
         try {
-            if (StringUtils.isEmpty(request.getCreateTime())
-                    || StringUtils.isEmpty(request.getInOutType())
-                    || StringUtils.isEmpty(request.getMoney())
-                    || StringUtils.isEmpty(request.getTarget())) {
-                return ResponseUtil.paramError(response);
-            }
-
             CostRecord record = new CostRecord();
             record.setTradeStatus(TradeStatus.TRADE_SUCCESS);
             record.setTradeNo(generateTradeNo(request.getCreateTime()));
@@ -267,8 +246,8 @@ public class CostRecordController {
             record.setPaidTime(request.getCreateTime());
             record.setOrderType(request.getOrderType());
             record.setMoney(MoneyUtil.yuan2fen(request.getMoney()));
-            record.setCreateTime(request.getCreateTime());
-            record.setIsDelete(0);
+            record.setCostCreateTime(request.getCreateTime());
+            record.setIsDeleted(0);
             record.setOrderStatus(TradeStatus.TRADE_SUCCESS);
             record.setInOutType(request.getInOutType());
             record.setMemo(request.getMemo());
@@ -287,23 +266,24 @@ public class CostRecordController {
         return response;
     }
 
-    @RequestMapping("/csv/convert")
-    public JSON doConvert(@ModelAttribute("file") MultipartFile file, @ModelAttribute("request") BaseRequest request) {
-        JSONObject json = new JSONObject();
+    @RequestMapping("/record/csv/convert")
+    public BaseResponse doConvert(@ModelAttribute("file") MultipartFile file, @ModelAttribute("request") BaseRequest request) {
+
         try {
             if (alipayBillCsvConvertService.convertToPOJO(file, request.getUserId())) {
-                json.put("msg", "转换成功");
+                return ResponseUtil.success();
             } else {
-                json.put("msg", "转换失败");
+                return ResponseUtil.error();
             }
         } catch (Exception e) {
             logger.error("backup/csv/put error", e);
-            json.put("msg", "文件错误请检查");
+            BaseResponse response = ResponseUtil.error();
+            response.setMsg("文件错误请检查");
+            return response;
         }
-        return json;
     }
 
-    @RequestMapping("/backup/csv/get")
+    @RequestMapping("/record/backup/csv/get")
     public void backUp(HttpServletResponse response, @ModelAttribute("request") BaseRequest request) {
         CostRecord requestParam = new CostRecord();
         requestParam.setUserId(request.getUserId());
@@ -329,24 +309,25 @@ public class CostRecordController {
             bufferedWriter.close();
             outputStream.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("创建备份文件失败", e);
         }
     }
 
-    @RequestMapping("/backup/csv/put")
-    public JSON getFromBackUp(@ModelAttribute("file") MultipartFile file, @ModelAttribute("request") BaseRequest request) {
-        JSONObject json = new JSONObject();
+    @RequestMapping("/record/backup/csv/put")
+    public BaseResponse getFromBackUp(@ModelAttribute("file") MultipartFile file, @ModelAttribute("request") BaseRequest request) {
+
         try {
             if (alipayBillCsvConvertService.getFromBackUp(file, request.getUserId())) {
-                json.put("msg", "备份恢复成功");
+                return ResponseUtil.success();
             } else {
-                json.put("msg", "转换失败");
+                return ResponseUtil.error();
             }
         } catch (Exception e) {
             logger.error("backup/csv/put error", e);
-            json.put("msg", "文件错误请检查");
+            BaseResponse response = ResponseUtil.error();
+            response.setMsg("文件错误请检查");
+            return response;
         }
-        return json;
     }
 
     private String generateTradeNo(String createTime) throws ParseException {
@@ -360,14 +341,16 @@ public class CostRecordController {
 
     private CostRecordDetailDTO formatDetailModel(CostRecord record) {
         CostRecordDetailDTO model = new CostRecordDetailDTO();
-        model.setCreateTime(record.getCreateTime());
+        model.setId(record.getId());
+        model.setVersion(record.getVersion());
+        model.setCreateTime(record.getCostCreateTime());
         model.setGoodsName(record.getGoodsName());
         model.setInOutType(record.getInOutType());
-        model.setIsDelete(record.getIsDelete());
+        model.setIsDeleted(record.getIsDeleted());
         model.setLocation(record.getLocation());
         model.setMemo(record.getMemo());
         model.setMoney(MoneyUtil.fen2Yuan(record.getMoney()));
-        model.setModifyTime(record.getModifyTime());
+        model.setModifyTime(record.getCostModifyTime());
         model.setOrderNo(record.getOrderNo());
         model.setOrderStatus(record.getOrderStatus());
         model.setOrderType(record.getOrderType());
@@ -377,22 +360,33 @@ public class CostRecordController {
         model.setTarget(record.getTarget());
         model.setTradeNo(record.getTradeNo());
         model.setTradeStatus(record.getTradeStatus());
-        model.setIsHidden(EnumHidden.getHiddenEnum(record.getIsHidden()).desc());
+        model.setIsHidden(record.getIsHidden());
+        List<TagInfo> tagInfos = tagInfoService.listTagInfoByTradeNo(record.getTradeNo());
+        if (!CollectionUtils.isEmpty(tagInfos)) {
+            model.setTagInfos(tagInfos.stream().map(tagInfo -> {
+                        TagInfoDTO tagInfoDTO = new TagInfoDTO();
+                        tagInfoDTO.setTagId(tagInfo.getId());
+                        tagInfoDTO.setTagName(tagInfo.getTagName());
+                        return tagInfoDTO;
+                    }).collect(Collectors.toList())
+            );
+        }
         return model;
     }
 
 
-    private List<CostRecordDTO> formatModelList(List<CostRecordQuery> list) {
+    private List<CostRecordDTO> formatModelList(List<CostRecord> list, boolean showTags) {
         if (!CollectionUtils.isEmpty(list)) {
-            List<CostRecordDTO> models = new ArrayList<CostRecordDTO>();
+            List<CostRecordDTO> models = new ArrayList<>();
             CostRecordDTO model;
             List<TagInfo> tagInfos;
             for (CostRecord entity : list) {
                 model = new CostRecordDTO();
-                model.setCreateTime(entity.getCreateTime());
+                model.setId(entity.getId());
+                model.setCreateTime(entity.getCostCreateTime());
                 model.setGoodsName(entity.getGoodsName());
                 model.setInOutType(entity.getInOutType());
-                model.setIsDelete(entity.getIsDelete());
+                model.setIsDeleted(entity.getIsDeleted());
                 model.setMoney(MoneyUtil.fen2Yuan(entity.getMoney()));
                 model.setLocation(entity.getLocation());
                 model.setOrderStatus(entity.getOrderStatus());
@@ -400,12 +394,11 @@ public class CostRecordController {
                 model.setTradeNo(entity.getTradeNo());
                 model.setTarget(entity.getTarget());
                 model.setMemo(entity.getMemo());
-                model.setIsHidden(EnumHidden.getHiddenEnum(entity.getIsHidden()).desc());
-                tagInfos = tagInfoService.listTagInfoByTradeNo(entity.getTradeNo());
-                if (!CollectionUtils.isEmpty(tagInfos)) {
-                    model.setTags(new ArrayList<>());
-                    for (TagInfo tagInfo : tagInfos) {
-                        model.getTags().add(tagInfo.getTagName());
+                model.setIsHidden(entity.getIsHidden());
+                if (showTags) {
+                    tagInfos = tagInfoService.listTagInfoByTradeNo(entity.getTradeNo());
+                    if (!CollectionUtils.isEmpty(tagInfos)) {
+                        model.setTags(tagInfos.stream().map(TagInfo::getTagName).collect(Collectors.toList()));
                     }
                 }
                 models.add(model);

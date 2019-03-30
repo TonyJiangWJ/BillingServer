@@ -1,5 +1,6 @@
 package com.tony.billing.dto;
 
+import com.tony.billing.dto.base.BaseDTO;
 import com.tony.billing.model.AssetModel;
 import com.tony.billing.model.LiabilityModel;
 import com.tony.billing.model.MonthLiabilityModel;
@@ -9,7 +10,7 @@ import java.util.List;
 /**
  * @author TonyJiang on 2018/2/12
  */
-public class AssetManageDTO {
+public class AssetManageDTO extends BaseDTO {
 
     private Long totalAsset;
     private Long totalLiability;

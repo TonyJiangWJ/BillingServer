@@ -1,18 +1,14 @@
 package com.tony.billing.dao.mapper;
 
+import com.tony.billing.dao.mapper.base.AbstractMapper;
 import com.tony.billing.entity.Liability;
 
 import java.util.List;
 import java.util.Map;
 
-public interface LiabilityMapper {
-    Long insert(Liability liability);
-
-    Long update(Liability liability);
+public interface LiabilityMapper extends AbstractMapper<Liability> {
 
     List<Liability> page(Map params);
 
-    List<Liability> list(Liability liability);
-
-    Liability getById(Long id);
+    List<Liability> listLiabilityGroupByType(Liability query);
 }

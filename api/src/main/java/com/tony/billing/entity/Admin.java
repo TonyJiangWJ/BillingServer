@@ -1,30 +1,20 @@
 package com.tony.billing.entity;
 
+import com.tony.billing.entity.base.BaseVersionedEntity;
+
 import java.util.Date;
 
 /**
  * @author by TonyJiang on 2017/5/18.
  */
-public class Admin {
-    private Long id;
+public class Admin extends BaseVersionedEntity {
     private String tokenId;
     private Long tokenVerify;
     private String code;
     private String userName;
+    private String email;
     private String password;
     private Date lastLogin;
-    private Date createTime;
-    private Date modifyTime;
-    private Integer isDeleted;
-    private Integer version;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public String getTokenId() {
         return tokenId;
@@ -58,6 +48,14 @@ public class Admin {
         this.userName = userName;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     public String getPassword() {
         return password;
     }
@@ -74,35 +72,4 @@ public class Admin {
         this.lastLogin = lastLogin;
     }
 
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
-
-    public Date getModifyTime() {
-        return modifyTime;
-    }
-
-    public void setModifyTime(Date modifyTime) {
-        this.modifyTime = modifyTime;
-    }
-
-    public Integer getIsDeleted() {
-        return isDeleted;
-    }
-
-    public void setIsDeleted(Integer isDeleted) {
-        this.isDeleted = isDeleted;
-    }
-
-    public Integer getVersion() {
-        return version;
-    }
-
-    public void setVersion(Integer version) {
-        this.version = version;
-    }
 }

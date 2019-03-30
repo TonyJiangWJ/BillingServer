@@ -8,7 +8,7 @@ import com.tony.billing.entity.AssetTypes;
 public class AssetTypeModel {
     private String typeCode;
     private String typeDesc;
-    private Integer id;
+    private Long id;
 
     public AssetTypeModel() {
     }
@@ -35,11 +35,11 @@ public class AssetTypeModel {
         this.typeDesc = typeDesc;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 }

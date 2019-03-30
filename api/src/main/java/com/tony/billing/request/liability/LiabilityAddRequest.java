@@ -1,7 +1,10 @@
 package com.tony.billing.request.liability;
 
 import com.tony.billing.request.BaseRequest;
+import org.hibernate.validator.constraints.NotEmpty;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 /**
@@ -10,16 +13,21 @@ import java.util.Date;
  */
 public class LiabilityAddRequest extends BaseRequest {
 
-    private Integer type;
+    @NotNull
+    private Long type;
+    @NotNull
     private Date repaymentDay;
+    @NotNull
+    @Min(0)
     private Long amount;
+    @NotNull
     private Integer installment;
 
-    public Integer getType() {
+    public Long getType() {
         return type;
     }
 
-    public void setType(Integer type) {
+    public void setType(Long type) {
         this.type = type;
     }
 

@@ -1,28 +1,17 @@
 package com.tony.billing.entity;
 
-import java.util.Date;
+import com.tony.billing.entity.base.BaseVersionedEntity;
 
 /**
  * 资产
  */
-public class Asset {
-    private Long id;
+public class Asset extends BaseVersionedEntity {
     private Long userId;
     private String name;
     private String extName;
-    private Integer type;
+    private Long type;
     private String available;
     private Long amount;
-    private Date createTime;
-    private Date modifyTime;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public Long getUserId() {
         return userId;
@@ -48,11 +37,11 @@ public class Asset {
         this.name = name;
     }
 
-    public Integer getType() {
+    public Long getType() {
         return type;
     }
 
-    public void setType(Integer type) {
+    public void setType(Long type) {
         this.type = type;
     }
 
@@ -70,22 +59,6 @@ public class Asset {
 
     public void setAmount(Long amount) {
         this.amount = amount;
-    }
-
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
-
-    public Date getModifyTime() {
-        return modifyTime;
-    }
-
-    public void setModifyTime(Date modifyTime) {
-        this.modifyTime = modifyTime;
     }
 
 }

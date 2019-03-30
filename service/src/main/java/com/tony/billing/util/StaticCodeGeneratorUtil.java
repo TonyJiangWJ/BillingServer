@@ -2,6 +2,7 @@ package com.tony.billing.util;
 
 
 import com.tony.billing.annotation.Table;
+import com.tony.billing.entity.Budget;
 import com.tony.billing.entity.LoginLog;
 
 import java.lang.reflect.Field;
@@ -13,7 +14,7 @@ import java.util.Date;
  */
 public class StaticCodeGeneratorUtil {
     public static void main(String[] args) {
-        generateAll(LoginLog.class, false);
+        generateAll(Budget.class, true);
     }
 
     public static void generateAll(Class clz, boolean isSqlCamelCase) {

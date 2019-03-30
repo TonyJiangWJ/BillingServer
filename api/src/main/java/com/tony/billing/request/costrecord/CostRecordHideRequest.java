@@ -1,13 +1,21 @@
 package com.tony.billing.request.costrecord;
 
+import com.tony.billing.constraints.OwnershipCheck;
+import com.tony.billing.constraints.enums.EnumOwnershipCheckTables;
 import com.tony.billing.request.BaseRequest;
+import org.hibernate.validator.constraints.NotEmpty;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * @author by TonyJiang on 2017/6/10.
  */
 public class CostRecordHideRequest extends BaseRequest {
+    @OwnershipCheck(EnumOwnershipCheckTables.COST_RECORD)
+    @NotEmpty
     private String tradeNo;
-    private String nowStatus;
+    @NotNull
+    private Integer nowStatus;
 
     public String getTradeNo() {
         return tradeNo;
@@ -17,11 +25,11 @@ public class CostRecordHideRequest extends BaseRequest {
         this.tradeNo = tradeNo;
     }
 
-    public String getNowStatus() {
+    public Integer getNowStatus() {
         return nowStatus;
     }
 
-    public void setNowStatus(String nowStatus) {
+    public void setNowStatus(Integer nowStatus) {
         this.nowStatus = nowStatus;
     }
 }

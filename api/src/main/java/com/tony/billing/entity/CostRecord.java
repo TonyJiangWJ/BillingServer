@@ -1,17 +1,20 @@
 package com.tony.billing.entity;
 
 import com.tony.billing.annotation.Table;
+import com.tony.billing.entity.base.BaseVersionedEntity;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
  * @author jiangwj20966 on 2017/6/2.
  */
 @Table("t_cost_info")
-public class CostRecord {
+public class CostRecord extends BaseVersionedEntity {
     private String tradeNo;
     private String orderNo;
-    private String createTime;
+    private String costCreateTime;
     private String paidTime;
-    private String modifyTime;
+    private String costModifyTime;
     private String location;
     private String orderType;
     private String target;
@@ -23,10 +26,24 @@ public class CostRecord {
     private Long refundMoney;
     private String memo;
     private String tradeStatus;
-    private Integer isDelete;
-    private Long id;
     private Integer isHidden;
     private Long userId;
+
+    public String getCostCreateTime() {
+        return costCreateTime;
+    }
+
+    public void setCostCreateTime(String costCreateTime) {
+        this.costCreateTime = costCreateTime;
+    }
+
+    public String getCostModifyTime() {
+        return costModifyTime;
+    }
+
+    public void setCostModifyTime(String costModifyTime) {
+        this.costModifyTime = costModifyTime;
+    }
 
     public Integer getIsHidden() {
         return isHidden;
@@ -52,28 +69,12 @@ public class CostRecord {
         this.orderNo = orderNo;
     }
 
-    public String getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(String createTime) {
-        this.createTime = createTime;
-    }
-
     public String getPaidTime() {
         return paidTime;
     }
 
     public void setPaidTime(String paidTime) {
         this.paidTime = paidTime;
-    }
-
-    public String getModifyTime() {
-        return modifyTime;
-    }
-
-    public void setModifyTime(String modifyTime) {
-        this.modifyTime = modifyTime;
     }
 
     public String getLocation() {
@@ -162,22 +163,6 @@ public class CostRecord {
 
     public void setTradeStatus(String tradeStatus) {
         this.tradeStatus = tradeStatus;
-    }
-
-    public Integer getIsDelete() {
-        return isDelete;
-    }
-
-    public void setIsDelete(Integer isDelete) {
-        this.isDelete = isDelete;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public Long getUserId() {

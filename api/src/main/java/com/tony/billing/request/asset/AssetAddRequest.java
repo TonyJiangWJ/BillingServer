@@ -2,20 +2,26 @@ package com.tony.billing.request.asset;
 
 import com.tony.billing.request.BaseRequest;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+
 /**
  * @author TonyJiang on 2018/7/12
  */
 public class AssetAddRequest extends BaseRequest {
-    private Integer type;
+    @NotNull
+    private Long type;
     private String name;
+    @NotNull
+    @Min(0)
     private Long amount;
     private Boolean available;
 
-    public Integer getType() {
+    public Long getType() {
         return type;
     }
 
-    public void setType(Integer type) {
+    public void setType(Long type) {
         this.type = type;
     }
 

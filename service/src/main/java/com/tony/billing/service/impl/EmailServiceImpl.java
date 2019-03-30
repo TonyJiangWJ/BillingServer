@@ -1,8 +1,9 @@
 package com.tony.billing.service.impl;
 
+import com.tony.billing.constants.enums.EnumMailTemplateName;
+import com.tony.billing.exceptions.BaseBusinessException;
 import com.tony.billing.service.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -42,7 +43,10 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
-    public void sendThymeleafMail(String sendTo, String title, Map<String, Object> contents) throws MessagingException {
+    public void sendThymeleafMail(String sendTo, String title, Map<String, Object> contents, String templateName) throws MessagingException {
+        if (EnumMailTemplateName.getByName(templateName) == null) {
+            throw new BaseBusinessException("邮件模板不存在");
+        }
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper messageHelper = new MimeMessageHelper(message, true);
         messageHelper.setFrom(from);
@@ -54,7 +58,7 @@ public class EmailServiceImpl implements EmailService {
                 context.setVariable(content.getKey(), content.getValue());
             }
         }
-        String emailText = thymeleaf.process("mail.html", context);
+        String emailText = thymeleaf.process(templateName, context);
         messageHelper.setText(emailText, true);
         mailSender.send(message);
     }

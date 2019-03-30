@@ -1,9 +1,14 @@
 package com.tony.billing.dto;
 
+import com.tony.billing.dto.base.VersionedDTO;
+
+import java.util.List;
+
 /**
  * @author jiangwj20966 on 2017/6/2.
  */
-public class CostRecordDetailDTO {
+public class CostRecordDetailDTO extends VersionedDTO {
+    private Long id;
     private String tradeNo;
     private String orderNo;
     private String createTime;
@@ -20,14 +25,23 @@ public class CostRecordDetailDTO {
     private String refundMoney;
     private String memo;
     private String tradeStatus;
-    private Integer isDelete;
-    private String isHidden;
+    private Integer isDeleted;
+    private Integer isHidden;
+    private List<TagInfoDTO> tagInfos;
 
-    public String getIsHidden() {
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Integer getIsHidden() {
         return isHidden;
     }
 
-    public void setIsHidden(String isHidden) {
+    public void setIsHidden(Integer isHidden) {
         this.isHidden = isHidden;
     }
 
@@ -159,11 +173,19 @@ public class CostRecordDetailDTO {
         this.tradeStatus = tradeStatus;
     }
 
-    public Integer getIsDelete() {
-        return isDelete;
+    public Integer getIsDeleted() {
+        return isDeleted;
     }
 
-    public void setIsDelete(Integer isDelete) {
-        this.isDelete = isDelete;
+    public void setIsDeleted(Integer isDeleted) {
+        this.isDeleted = isDeleted;
+    }
+
+    public List<TagInfoDTO> getTagInfos() {
+        return tagInfos;
+    }
+
+    public void setTagInfos(List<TagInfoDTO> tagInfos) {
+        this.tagInfos = tagInfos;
     }
 }

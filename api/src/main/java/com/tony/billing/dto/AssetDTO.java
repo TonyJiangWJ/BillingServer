@@ -1,12 +1,13 @@
 package com.tony.billing.dto;
 
+import com.tony.billing.dto.base.VersionedDTO;
 import com.tony.billing.entity.Asset;
 import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author TonyJiang on 2018/2/12
  */
-public class AssetDTO {
+public class AssetDTO extends VersionedDTO {
     private String name;
     private String type;
     private String available;
@@ -23,6 +24,7 @@ public class AssetDTO {
             this.id = asset.getId();
             this.name = StringUtils.isNotEmpty(asset.getExtName()) ? asset.getExtName() : asset.getName();
             this.available = asset.getAvailable();
+            this.setVersion(asset.getVersion());
         }
     }
 
@@ -33,6 +35,7 @@ public class AssetDTO {
             this.name = StringUtils.isNotEmpty(asset.getExtName()) ? asset.getExtName() : asset.getName();
             this.available = asset.getAvailable();
             this.type = typeDesc;
+            this.setVersion(asset.getVersion());
         }
     }
 

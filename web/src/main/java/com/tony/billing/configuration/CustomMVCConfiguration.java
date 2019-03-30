@@ -27,21 +27,17 @@ public class CustomMVCConfiguration extends WebMvcConfigurerAdapter {
 
     @Bean
     public HttpMessageConverter<String> responseBodyConverter() {
-        StringHttpMessageConverter converter = new StringHttpMessageConverter(
-                Charset.forName("UTF-8"));
-        return converter;
+        return new StringHttpMessageConverter(Charset.forName("UTF-8"));
     }
 
     @Override
-    public void configureMessageConverters(
-            List<HttpMessageConverter<?>> converters) {
+    public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
         super.configureMessageConverters(converters);
         converters.add(responseBodyConverter());
     }
 
     @Override
-    public void configureContentNegotiation(
-            ContentNegotiationConfigurer configurer) {
+    public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
         configurer.favorPathExtension(false);
     }
 
@@ -50,6 +46,8 @@ public class CustomMVCConfiguration extends WebMvcConfigurerAdapter {
         registry.addInterceptor(authorityInterceptor)
                 .excludePathPatterns("/bootDemo/user/login*")
                 .excludePathPatterns("/bootDemo/user/register/put*")
+                .excludePathPatterns("/bootDemo/user/pre/reset/password")
+                .excludePathPatterns("/bootDemo/user/reset/password")
                 .excludePathPatterns("/thymeleaf/login*")
                 .excludePathPatterns("/thymeleaf/login/put*")
                 .excludePathPatterns("/thymeleaf/register/put*")

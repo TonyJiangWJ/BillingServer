@@ -12,19 +12,29 @@ import java.util.Map;
 public class PagerGrid<T> implements Serializable {
 
     private List<T> result;
-    // 查询条件
+    /**
+     * 查询条件
+     */
     private T t;
-    // 记录总数
+    /**
+     *  记录总数
+     */
     private int count;
 
     private int index;
 
     private int offset;
-    // 排序的字段
+    /**
+     * 排序的字段
+     */
     private String orderBy;
-    // 排序顺序
+    /**
+     * 排序顺序
+     */
     private String sort;
-    // easyui分页
+    /**
+     * easyui分页
+     */
     private int page;
 
     private int totalPage;

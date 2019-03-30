@@ -2,13 +2,24 @@ package com.tony.billing.util;
 
 
 import org.apache.commons.codec.binary.Base64;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
-import java.io.*;
-import java.security.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.KeyFactory;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.InvalidKeySpecException;
@@ -19,6 +30,8 @@ import java.security.spec.X509EncodedKeySpec;
  * @author jiangwj20966 on 2017/11/24.
  */
 public class RSAEncrypt {
+
+    private final static Logger logger = LoggerFactory.getLogger(RSAEncrypt.class);
     /**
      * 字节数据转字符串专用集合
      */
@@ -78,22 +91,25 @@ public class RSAEncrypt {
      * @throws Exception 加载公钥时产生的异常
      */
     public static byte[] loadPublicKeyByFile(String path) throws Exception {
-        try {
-            BufferedInputStream br = new BufferedInputStream(new FileInputStream(path
-                    + "/publicKey.keystore"));
-            byte[] buffer = new byte[1024];
-            int length = -1;
-            StringBuilder stringBuilder = new StringBuilder();
-            while ((length = br.read(buffer)) != -1) {
-                stringBuilder.append(new String(buffer, 0, length));
-            }
-            br.close();
-            return Base64.decodeBase64(stringBuilder.toString());
+        try (BufferedInputStream br = new BufferedInputStream(new FileInputStream(path
+                + "/publicKey.keystore"))
+        ) {
+            return getBytes(br);
         } catch (IOException e) {
             throw new Exception("公钥数据流读取错误");
         } catch (NullPointerException e) {
             throw new Exception("公钥输入流为空");
         }
+    }
+
+    private static byte[] getBytes(BufferedInputStream br) throws IOException {
+        byte[] buffer = new byte[1024];
+        int length = -1;
+        StringBuilder stringBuilder = new StringBuilder();
+        while ((length = br.read(buffer)) != -1) {
+            stringBuilder.append(new String(buffer, 0, length));
+        }
+        return Base64.decodeBase64(stringBuilder.toString());
     }
 
     /**
@@ -106,7 +122,7 @@ public class RSAEncrypt {
     public static RSAPublicKey loadPublicKeyByByteArray(byte[] buffer)
             throws Exception {
         try {
-            System.out.println("公钥长度：" + buffer.length);
+            logger.info("公钥长度：{}", buffer.length);
             KeyFactory keyFactory = KeyFactory.getInstance("RSA");
             X509EncodedKeySpec keySpec = new X509EncodedKeySpec(buffer);
             return (RSAPublicKey) keyFactory.generatePublic(keySpec);
@@ -128,17 +144,11 @@ public class RSAEncrypt {
      * @throws Exception
      */
     public static byte[] loadPrivateKeyByFile(String path) throws Exception {
-        try {
-            BufferedInputStream br = new BufferedInputStream(new FileInputStream(path
-                    + "/privateKey.keystore"));
-            byte[] buffer = new byte[1024];
-            int length = -1;
-            StringBuilder sb = new StringBuilder();
-            while ((length = br.read(buffer)) != -1) {
-                sb.append(new String(buffer, 0, length));
-            }
-            br.close();
-            return Base64.decodeBase64(sb.toString());
+        try (
+                BufferedInputStream br = new BufferedInputStream(new FileInputStream(path
+                        + "/privateKey.keystore"))
+        ) {
+            return getBytes(br);
         } catch (IOException e) {
             throw new Exception("私钥数据读取错误");
         } catch (NullPointerException e) {
@@ -149,7 +159,7 @@ public class RSAEncrypt {
     public static RSAPrivateKey loadPrivateKeyByByteArray(byte[] buffer)
             throws Exception {
         try {
-            System.out.println("私钥长度：" + buffer.length);
+            logger.info("私钥长度：{}", buffer.length);
             PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(buffer);
             KeyFactory keyFactory = KeyFactory.getInstance("RSA");
             return (RSAPrivateKey) keyFactory.generatePrivate(keySpec);
@@ -179,10 +189,8 @@ public class RSAEncrypt {
         try {
             // 使用默认RSA
             cipher = Cipher.getInstance("RSA");
-            // cipher= Cipher.getInstance("RSA", new BouncyCastleProvider());
             cipher.init(Cipher.ENCRYPT_MODE, publicKey);
-            byte[] output = cipher.doFinal(plainTextData);
-            return output;
+            return cipher.doFinal(plainTextData);
         } catch (NoSuchAlgorithmException e) {
             throw new Exception("无此加密算法");
         } catch (NoSuchPaddingException e) {
@@ -215,8 +223,7 @@ public class RSAEncrypt {
             // 使用默认RSA
             cipher = Cipher.getInstance("RSA");
             cipher.init(Cipher.ENCRYPT_MODE, privateKey);
-            byte[] output = cipher.doFinal(plainTextData);
-            return output;
+            return cipher.doFinal(plainTextData);
         } catch (NoSuchAlgorithmException e) {
             throw new Exception("无此加密算法");
         } catch (NoSuchPaddingException e) {
@@ -248,10 +255,8 @@ public class RSAEncrypt {
         try {
             // 使用默认RSA
             cipher = Cipher.getInstance("RSA");
-            // cipher= Cipher.getInstance("RSA", new BouncyCastleProvider());
             cipher.init(Cipher.DECRYPT_MODE, privateKey);
-            byte[] output = cipher.doFinal(cipherData);
-            return output;
+            return cipher.doFinal(cipherData);
         } catch (NoSuchAlgorithmException e) {
             throw new Exception("无此解密算法");
         } catch (NoSuchPaddingException e) {
@@ -283,10 +288,8 @@ public class RSAEncrypt {
         try {
             // 使用默认RSA
             cipher = Cipher.getInstance("RSA");
-            // cipher= Cipher.getInstance("RSA", new BouncyCastleProvider());
             cipher.init(Cipher.DECRYPT_MODE, publicKey);
-            byte[] output = cipher.doFinal(cipherData);
-            return output;
+            return cipher.doFinal(cipherData);
         } catch (NoSuchAlgorithmException e) {
             throw new Exception("无此解密算法");
         } catch (NoSuchPaddingException e) {

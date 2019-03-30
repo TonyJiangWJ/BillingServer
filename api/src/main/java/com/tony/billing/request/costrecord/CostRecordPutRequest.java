@@ -1,18 +1,23 @@
 package com.tony.billing.request.costrecord;
 
 import com.tony.billing.request.BaseRequest;
+import org.hibernate.validator.constraints.NotEmpty;
 
 /**
  * @author by TonyJiang on 2017/6/5.
  */
 public class CostRecordPutRequest extends BaseRequest {
+    @NotEmpty
     private String createTime;
     private String tradeNo;
     private String orderNo;
+    @NotEmpty
     private String money;
     private String location;
+    @NotEmpty
     private String target;
     private String memo;
+    @NotEmpty
     private String inOutType;
     private String orderType;
 

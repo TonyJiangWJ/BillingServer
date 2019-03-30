@@ -1,31 +1,21 @@
 package com.tony.billing.entity;
 
+import com.tony.billing.entity.base.BaseVersionedEntity;
+
 import java.util.Date;
 
 /**
  * @author TonyJiang 2018/6/21
  */
-public class AssetTypes {
-    private Integer id;
+public class AssetTypes extends BaseVersionedEntity {
     private Long userId;
     private String parentCode;
     private String typeIdentify;
     private String typeCode;
     private String typeDesc;
-    private Date createTime;
-    private Date modifyTime;
-    private Integer isDeleted;
 
     public boolean isParentType() {
         return this.parentCode == null;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
     }
 
     public String getParentCode() {
@@ -58,30 +48,6 @@ public class AssetTypes {
 
     public void setTypeDesc(String typeDesc) {
         this.typeDesc = typeDesc;
-    }
-
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
-
-    public Date getModifyTime() {
-        return modifyTime;
-    }
-
-    public void setModifyTime(Date modifyTime) {
-        this.modifyTime = modifyTime;
-    }
-
-    public Integer getIsDeleted() {
-        return isDeleted;
-    }
-
-    public void setIsDeleted(Integer isDeleted) {
-        this.isDeleted = isDeleted;
     }
 
     public Long getUserId() {

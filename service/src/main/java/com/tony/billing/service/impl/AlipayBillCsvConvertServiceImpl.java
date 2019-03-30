@@ -1,8 +1,10 @@
 package com.tony.billing.service.impl;
 
-import com.tony.billing.dao.CostRecordDao;
+import com.tony.billing.dao.mapper.CostRecordMapper;
+import com.tony.billing.dao.mapper.base.AbstractMapper;
 import com.tony.billing.entity.CostRecord;
 import com.tony.billing.service.AlipayBillCsvConvertService;
+import com.tony.billing.service.base.AbstractService;
 import com.tony.billing.util.CsvParser;
 import com.tony.billing.util.MoneyUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -16,7 +18,6 @@ import javax.annotation.Resource;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,11 +29,16 @@ import java.util.zip.ZipInputStream;
  * @author by TonyJiang on 2017/6/3.
  */
 @Service
-public class AlipayBillCsvConvertServiceImpl implements AlipayBillCsvConvertService {
+public class AlipayBillCsvConvertServiceImpl extends AbstractService<CostRecord> implements AlipayBillCsvConvertService {
 
     private Logger logger = LoggerFactory.getLogger(AlipayBillCsvConvertService.class);
     @Resource
-    private CostRecordDao costRecordDao;
+    private CostRecordMapper costRecordMapper;
+
+    @Override
+    protected AbstractMapper<CostRecord> getMapper() {
+        return costRecordMapper;
+    }
 
     private final String ALIPAY_RECORD_FLAG = "支付宝交易记录明细查询";
 
@@ -153,11 +159,11 @@ public class AlipayBillCsvConvertServiceImpl implements AlipayBillCsvConvertServ
         Map<String, Object> params = new HashMap<>();
         params.put("tradeNo", entity.getTradeNo());
         params.put("userId", userId);
-        CostRecord record = costRecordDao.findByTradeNo(params);
+        CostRecord record = costRecordMapper.findByTradeNo(params);
         if (record == null) {
             entity.setId(null);
             entity.setUserId(userId);
-            if (costRecordDao.insert(entity) > 0) {
+            if (super.insert(entity) > 0) {
                 logger.debug("record insert success");
             } else {
                 logger.error("record insert fail");
@@ -172,18 +178,18 @@ public class AlipayBillCsvConvertServiceImpl implements AlipayBillCsvConvertServ
         Map<String, Object> params = new HashMap<>();
         params.put("tradeNo", entity.getTradeNo());
         params.put("userId", userId);
-        CostRecord record = costRecordDao.findByTradeNo(params);
+        CostRecord record = costRecordMapper.findByTradeNo(params);
         if (record == null) {
             record = new CostRecord();
 
 
-            record.setIsDelete(0);
-            record.setCreateTime(entity.createTime);
+            record.setIsDeleted(0);
+            record.setCostCreateTime(entity.createTime);
             record.setGoodsName(entity.getGoodsName());
             record.setInOutType(entity.getInOutType());
             record.setLocation(entity.getLocation());
             record.setMemo(entity.getMemo());
-            record.setModifyTime(entity.getModifyTime());
+            record.setCostModifyTime(entity.getModifyTime());
             record.setMoney(MoneyUtil.yuan2fen(entity.getMoney()));
             record.setOrderNo(entity.getOrderNo());
             record.setOrderStatus(entity.getOrderStatus());
@@ -195,7 +201,7 @@ public class AlipayBillCsvConvertServiceImpl implements AlipayBillCsvConvertServ
             record.setTradeNo(entity.getTradeNo());
             record.setTradeStatus(entity.getTradeStatus());
             record.setUserId(userId);
-            if (costRecordDao.insert(record) > 0) {
+            if (super.insert(record) > 0) {
                 logger.debug("record insert success");
             } else {
                 logger.error("record insert fail");
@@ -208,7 +214,7 @@ public class AlipayBillCsvConvertServiceImpl implements AlipayBillCsvConvertServ
     }
 
     private static class RecordRefUtil<T> {
-        private T convertCsv2POJO(String csvLine, Class t) throws IllegalAccessException, InstantiationException {
+        private T convertCsv2POJO(String csvLine, Class<T> t) throws IllegalAccessException, InstantiationException {
             String[] strings = csvLine.split(",");
             Object record = t.newInstance();
             Class clazz = record.getClass();

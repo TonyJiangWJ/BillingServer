@@ -1,0 +1,1570 @@
+swagger: "2.0"
+info:
+  description: "个人资产管理后端服务接口说明文档"
+  version: "1.0.0"
+  title: "资产管理"
+  contact:
+    email: "tonyjiangwj@gmail.com"
+  license:
+    name: "Apache 2.0"
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+
+host: "localhost:1310"
+basePath: "/bootDemo"
+
+tags:
+  - name: "user"
+    description: "用户管理"
+  - name: "asset"
+    description: "资产管理"
+  - name: "liability"
+    description: "负债管理"
+  - name: "budget"
+    description: "预算管理"
+  - name: "costRecord"
+    description: "账单管理"
+  - name: "costReport"
+    description: "账单报表"
+  - name: "tag"
+    description: "标签管理"
+  - name: "assetType"
+    description: "资产类别管理"
+schemes:
+  # - "https"
+  - "http"
+paths:
+  /user/login:
+    post:
+      tags:
+        - "user"
+      summary: "用户登录"
+      description: "登录成功后会将jwt生成的token放到response中"
+      operationId: "userLogin"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "userName"
+          in: "query"
+          type: "string"
+          required: true
+          description: "用户名"
+        - name: "password"
+          in: "query"
+          type: "string"
+          required: true
+          description: "密码，需要经过RSA公钥加密"
+      responses:
+        200:
+          description: "操作成功"
+          schema:
+            $ref: "#/definitions/BaseResponse"
+        500:
+          description: "请求失败"
+
+  /user/register/put:
+    post:
+      tags:
+        - "user"
+      summary: "注册用户"
+      description: ""
+      operationId: "userRegister"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "userName"
+          in: "query"
+          type: "string"
+          required: true
+          description: "用户名"
+        - name: "password"
+          in: "query"
+          type: "string"
+          required: true
+          description: "密码，需要经过RSA公钥加密"
+      responses:
+        200:
+          description: "操作成功"
+          schema:
+            $ref: "#/definitions/BaseResponse"
+        500:
+          description: "请求失败"
+
+  /user/logout:
+    post:
+      tags:
+        - "user"
+      summary: "退出登录"
+      description: ""
+      operationId: "userLogout"
+      produces:
+        - "application/json"
+      security:
+        - cookie: []
+      responses:
+        200:
+          description: "操作成功"
+          schema:
+            $ref: "#/definitions/BaseResponse"
+        500:
+          description: "请求失败"
+
+  /user/pwd/modify:
+    post:
+      tags:
+        - "user"
+      summary: "修改密码"
+      description: ""
+      produces:
+        - "application/json"
+      parameters:
+        - name: "newPassword"
+          description: "新密码"
+          in: "query"
+          type: "string"
+          required: true
+        - name: "oldPassword"
+          description: "原密码"
+          in: "query"
+          type: "string"
+          required: true
+      security:
+        - cookie: []
+      responses:
+        200:
+          description: "操作成功"
+          schema:
+            $ref: '#/definitions/BaseResponse'
+        500:
+          description: "请求失败"
+
+  /login/status:
+    post:
+      tags:
+        - "user"
+      summary: "登录状态检测"
+      description: ""
+      responses:
+        200:
+          description: "操作成功"
+          schema:
+            $ref: '#/definitions/BaseResponse'
+        500:
+          description: "请求失败"
+      security:
+        - cookie: []
+
+  /user/pre/reset/password:
+    post:
+      tags:
+        - "user"
+      summary: "初始化重置密码"
+      description: "发送重置密码请求链接到邮箱"
+      parameters:
+        - name: "userName"
+          in: "query"
+          type: "string"
+          description: "用户名"
+      responses:
+        200:
+          description: "操作成功"
+          schema:
+            $ref: "#/definitions/BaseResponse"
+        500:
+          description: "请求失败"
+
+  /user/reset/password:
+    post:
+      tags:
+        - "user"
+      summary: "重置密码"
+      parameters:
+        - name: "newPassword"
+          in: "query"
+          type: "string"
+          description: "新密码"
+        - name: "token"
+          in: "query"
+          type: "string"
+          description: "邮箱中收到的临时token"
+      responses:
+        200:
+          description: "操作成功"
+          schema:
+            $ref: '#/definitions/BaseResponse'
+        500:
+          description: "请求失败"
+
+  /asset/manage:
+    get:
+      tags:
+        - "asset"
+      summary: "获取资产概览信息"
+      description: ""
+      security:
+        - cookie: []
+      responses:
+        200:
+          description: "操作成功"
+          schema:
+            $ref: '#/definitions/AssetManageResponse'
+        500:
+          description: "请求失败"
+
+  /asset/detail/get:
+    get:
+      tags:
+        - "asset"
+      summary: "获取资产详情"
+      description: ""
+      security:
+        - cookie: []
+      parameters:
+        - name: "id"
+          in: "query"
+          type: "integer"
+          description: "资产id"
+          required: true
+      responses:
+        200:
+          description: "操作成功"
+          schema:
+            $ref: '#/definitions/AssetDetailResponse'
+        500:
+          description: "请求失败"
+
+  /asset/update:
+    post:
+      tags:
+        - 'asset'
+      summary: "更新资产信息"
+      security:
+        - cookie: []
+      parameters:
+        - name: 'id'
+          type: "integer"
+          description: "资产id"
+          in: "query"
+          required: true
+        - name: "amount"
+          in: "query"
+          type: "integer"
+          description: "资产总额"
+          required: true
+        - name: "name"
+          type: "string"
+          in: "query"
+          description: "资产别称"
+        - name: "available"
+          in: "query"
+          type: "string"
+          description: "是否流动可用 true or false"
+      responses:
+        200:
+          description: "操作成功"
+          schema:
+            $ref: '#/definitions/BaseResponse'
+        500:
+          description: "请求失败"
+
+  /asset/put:
+    post:
+      tags:
+        - 'asset'
+      summary: '添加资产'
+      description: ''
+      security:
+        - cookie: []
+      parameters:
+        - name: 'type'
+          type: "integer"
+          description: "资产类别"
+          in: "query"
+          required: true
+        - name: "amount"
+          in: "query"
+          type: "integer"
+          description: "资产总额"
+          required: true
+        - name: "name"
+          type: "string"
+          in: "query"
+          description: "资产别称"
+        - name: "available"
+          in: "query"
+          type: "boolean"
+          description: "是否流动可用 true or false"
+      responses:
+        200:
+          description: '操作成功'
+          schema:
+            $ref: '#/definitions/BaseResponse'
+        500:
+          description: '请求失败'
+
+  /asset/delete:
+    post:
+      tags:
+        - 'asset'
+      summary: '删除资产'
+      description: ''
+      security:
+        - cookie: []
+      parameters:
+        - name: 'assetId'
+          in: "query"
+          type: "integer"
+          required: true
+          description: "资产id"
+      responses:
+        200:
+          description: '操作成功'
+          schema:
+            $ref: '#/definitions/BaseResponse'
+        500:
+          description: '请求失败'
+
+  /liability/detail/get:
+    get:
+      tags:
+        - 'liability'
+      summary: '获取负债详情'
+      description: ''
+      security:
+        - cookie: []
+      parameters:
+        - name: 'id'
+          type: 'integer'
+          in: "query"
+          required: true
+          description: "负债信息id"
+      responses:
+        200:
+          description: "操作成功"
+          schema:
+            $ref: '#/definitions/LiabilityDetailResponse'
+        500:
+          description: "请求失败"
+
+  /liability/put:
+    post:
+      tags:
+        - 'liability'
+      summary: '添加负债信息'
+      description: ''
+      security:
+        - cookie: []
+      parameters:
+        - name: 'repaymentDay'
+          in: 'query'
+          required: true
+          type: 'string'
+          description: '还款日'
+        - name: 'type'
+          in: 'query'
+          type: 'integer'
+          description: '负债类别'
+          required: true
+        - name: 'amount'
+          in: "query"
+          type: 'integer'
+          description: '负债总额'
+          required: true
+        - name: 'installment'
+          in: 'query'
+          type: 'integer'
+          description: '分期期数'
+          required: true
+      responses:
+        200:
+          description: '操作成功'
+          schema:
+            $ref: '#/definitions/BaseResponse'
+        500:
+          description: '请求失败'
+
+  /liability/update:
+    post:
+      tags:
+        - 'liability'
+      summary: '更新负债信息'
+      description: ''
+      security:
+        - cookie: []
+      parameters:
+        - name: "id"
+          in: "query"
+          type: "integer"
+          description: "负债信息id"
+          required: true
+        - name: 'amount'
+          in: "query"
+          type: 'integer'
+          description: '负债总额'
+          required: true
+        - name: 'paid'
+          in: "query"
+          type: 'integer'
+          description: '已还金额'
+      responses:
+        200:
+          description: '操作成功'
+          schema:
+            $ref: '#/definitions/BaseResponse'
+        500:
+          description: '请求失败'
+
+  /budget/put:
+    post:
+      tags:
+        - 'budget'
+      summary: '添加预算'
+      description: ''
+      security:
+        - cookie: []
+      parameters:
+        - name: 'tagId'
+          in: 'query'
+          type: 'integer'
+          description: '标签id'
+          required: true
+        - name: 'budgetMoney'
+          in: 'query'
+          type: 'integer'
+          description: '预算额度'
+          required: true
+        - name: 'year'
+          type: 'string'
+          in: 'query'
+          description: '年'
+          required: true
+        - name: 'month'
+          in: 'query'
+          type: 'integer'
+          description: '月份'
+          required: true
+      responses:
+        200:
+          description: '操作成功'
+          schema:
+            $ref: '#/definitions/BaseResponse'
+        500:
+          description: '请求失败'
+
+  /budget/list:
+    get:
+      tags:
+        - 'budget'
+      summary: '预算列表'
+      description: ''
+      security:
+        - cookie: []
+      parameters:
+        - name: 'year'
+          in: 'query'
+          type: 'string'
+          required: true
+          description: '所属年份'
+        - name: 'month'
+          in: 'query'
+          type: 'integer'
+          description: '月份'
+          required: true
+      responses:
+        200:
+          description: '操作成功'
+          schema:
+            $ref: '#/definitions/BudgetListResponse'
+        500:
+          description: '请求失败'
+
+  /cost/record/page/get:
+    get:
+      tags:
+        - 'costRecord'
+      summary: '账单列表分页'
+      description: ''
+      security:
+        - cookie: []
+      parameters:
+        - name: 'pageNo'
+          in: 'query'
+          type: 'integer'
+          description: '当前页码'
+          default: '0'
+        - name: 'pageSize'
+          in: 'query'
+          type: 'integer'
+          description: '分页页面大小'
+          default: '10'
+        - name: 'isDeleted'
+          in: 'query'
+          description: '是否已删除'
+          type: 'integer'
+          enum:
+            [0, 1]
+        - name: 'isHidden'
+          in: 'query'
+          description: '是否隐藏'
+          type: 'integer'
+          enum:
+            [0, 1]
+        - name: 'inOutType'
+          in: 'query'
+          type: 'string'
+          description: '收入或支出'
+          enum:
+            ['收入', '支出']
+        - name: 'startDate'
+          in: 'query'
+          type: 'string'
+          description: '开始时间'
+          format: 'yyyy-MM-dd'
+        - name: 'endDate'
+          in: 'query'
+          type: 'string'
+          description: '截止时间'
+          format: 'yyyy-MM-dd'
+        - name: 'sort'
+          in: 'query'
+          type: 'string'
+          description: '排序方式'
+          enum:
+            ['asc', 'desc']
+        - name: 'orderBy'
+          in: 'query'
+          type: 'string'
+          description: '排序列字段名称'
+        - name: 'content'
+          in: 'query'
+          type: 'string'
+          description: '查询内容'
+        - name: 'showTags'
+          in: 'query'
+          type: 'boolean'
+          description: '是否显示标签'
+      responses:
+        200:
+          description: '操作成功'
+          schema:
+            $ref: '#/definitions/CostRecordPageResponse'
+
+  /record/detail/get:
+    get:
+      tags:
+        - 'costRecord'
+      summary: '获取账单详情'
+      description: ''
+      security:
+        - cookie: []
+      parameters:
+        - name: 'tradeNo'
+          in: 'query'
+          required: true
+          type: 'string'
+          description: '交易编号'
+
+      responses:
+        200:
+          description: '操作成功'
+          schema:
+            $ref: '#/definitions/CostRecordDetailResponse'
+
+  /record/update:
+    post:
+      tags:
+        - 'costRecord'
+      summary: '更新账单信息'
+      description: ''
+      security:
+        - cookie: []
+      parameters:
+        - name: 'tradeNo'
+          in: 'query'
+          type: 'string'
+          required: true
+          description: '交易编码'
+        - name: 'location'
+          in: 'query'
+          type: 'string'
+          description: '交易地点'
+        - name: 'memo'
+          in: 'query'
+          type: 'string'
+          description: '备注'
+        - name: 'goodsName'
+          in: 'query'
+          type: 'string'
+          description: '商品名称'
+      responses:
+        200:
+          description: '操作成功'
+          schema:
+            $ref: '#/definitions/BaseResponse'
+
+  /record/toggle/delete:
+    post:
+      tags:
+        - 'costRecord'
+      summary: '切换删除状态'
+      description: ''
+      security:
+        - cookie: []
+      parameters:
+        - name: 'tradeNo'
+          in: 'query'
+          type: 'string'
+          required: true
+          description: '交易编码'
+        - name: 'nowStatus'
+          in: 'query'
+          type: 'integer'
+          enum: [0, 1]
+          description: '当前状态'
+      responses:
+        200:
+          description: '操作成功'
+          schema:
+            $ref: '#/definitions/BaseResponse'
+
+  /record/toggle/hide:
+    post:
+      tags:
+        - 'costRecord'
+      summary: '切换隐藏状态'
+      description: ''
+      security:
+        - cookie: []
+      parameters:
+        - name: 'tradeNo'
+          in: 'query'
+          type: 'string'
+          required: true
+          description: '交易编码'
+        - name: 'nowStatus'
+          in: 'query'
+          type: 'integer'
+          enum: [0, 1]
+          description: '当前状态'
+      responses:
+        200:
+          description: '操作成功'
+          schema:
+            $ref: '#/definitions/BaseResponse'
+
+  /record/put:
+    post:
+      tags:
+        - 'costRecord'
+      summary: '添加账单信息'
+      description: ''
+      security:
+        - cookie: []
+      parameters:
+        - name: 'createTime'
+          in: 'query'
+          required: true
+          type: 'string'
+          format: 'yyyy-MM-dd HH:mm:ss'
+          description: '交易创建时间'
+        - name: 'inOutType'
+          in: 'query'
+          required: true
+          type: 'string'
+          description: '收入 或 支出'
+          enum:
+            ['收入', '支出']
+        - name: 'money'
+          in: 'query'
+          type: 'integer'
+          required: true
+          description: '交易金额'
+        - name: 'target'
+          in: 'query'
+          type: 'string'
+          required: true
+          description: '交易对方'
+        - name: 'location'
+          in: 'query'
+          type: 'string'
+          description: '交易地点'
+        - name: 'memo'
+          in: 'query'
+          type: 'string'
+          description: '备注'
+        - name: 'orderType'
+          in: 'query'
+          type: 'string'
+          description: '交易类型'
+      responses:
+        200:
+          description: '操作成功'
+          schema:
+            $ref: '#/definitions/BaseResponse'
+
+  /record/csv/convert:
+    post:
+      tags:
+        - 'costRecord'
+      summary: '支付宝账单上传'
+      description: ''
+      consumes:
+        - 'multipart/form-data'
+      security:
+        - cookie: []
+      parameters:
+        - name: "file"
+          in: 'formData'
+          type: 'file'
+          required: true
+          description: '支付宝下载的交易记录文件，Excel文件解压后的csv或者未解压的zip'
+      responses:
+        200:
+          description: '操作成功'
+          schema:
+            $ref: '#/definitions/BaseResponse'
+
+  /record/backup/csv/get:
+    get:
+      tags:
+        - 'costRecord'
+      summary: '获取账单备份csv文件'
+      description: ''
+      security:
+        - cookie: []
+      responses:
+        200:
+          description: '操作成功'
+          schema:
+            type: 'file'
+
+  /record/backup/csv/put:
+    post:
+      tags:
+        - 'costRecord'
+      summary: '备份文件恢复'
+      description: ''
+      consumes:
+        - 'multipart/form-data'
+      security:
+        - cookie: []
+      parameters:
+        - name: "file"
+          in: 'formData'
+          type: 'file'
+          required: true
+          description: '本系统下载的csv备份文件'
+      responses:
+        200:
+          description: '操作成功'
+          schema:
+            $ref: '#/definitions/BaseResponse'
+  /report/get:
+    get:
+      tags:
+        - 'costReport'
+      summary: '获取每月收支报告'
+      description: ''
+      security:
+        - cookie: []
+      parameters:
+        - name: 'startMonth'
+          in: 'query'
+          type: 'string'
+          format: 'yyyy-MM'
+          description: '开始月份'
+        - name: 'endMonth'
+          in: 'query'
+          type: 'string'
+          format: 'yyyy-MM'
+          description: '结束月份'
+      responses:
+        200:
+          description: '操作成功'
+          schema:
+            $ref: '#/definitions/ReportResponse'
+
+  /daily/report/get:
+    get:
+      tags:
+        - 'costReport'
+      summary: '每日支出统计'
+      description: ''
+      security:
+        - cookie: []
+      parameters:
+        - name: 'startDate'
+          in: 'query'
+          type: 'string'
+          format: 'yyyy-MM-dd'
+          description: '开始时间'
+        - name: 'endDate'
+          in: 'query'
+          type: 'string'
+          format: 'yyyy-MM-dd'
+          description: '结束时间'
+      responses:
+        200:
+          description: '操作成功'
+          schema:
+            $ref: '#/definitions/ReportResponse'
+
+  /tag/list:
+    get:
+      tags:
+        - 'tag'
+      summary: '获取标签列表'
+      security:
+        - cookie: []
+      responses:
+        200:
+          description: '操作成功'
+          schema:
+            $ref: '#/definitions/TagInfoListResponse'
+
+  /tag/name/unique:
+    get:
+      tags:
+        - 'tag'
+      summary: '标签名称唯一性校验'
+      security:
+        - cookie: []
+      parameters:
+        - name: 'tagName'
+          in: 'query'
+          type: 'string'
+          description: '标签名称'
+          required: true
+      responses:
+        200:
+          description: '操作成功'
+          schema:
+            $ref: '#/definitions/BaseResponse'
+
+
+  /tag/put:
+    post:
+      tags:
+        - 'tag'
+      summary: '添加标签'
+      security:
+        - cookie: []
+      parameters:
+        - name: 'tagName'
+          in: 'query'
+          type: 'string'
+          required: true
+          description: '标签名称'
+      responses:
+        200:
+          description: '操作成功'
+          schema:
+            $ref: '#/definitions/BaseResponse'
+
+  /tag/delete:
+    post:
+      tags:
+        - 'tag'
+      summary: '删除标签'
+      security:
+        - cookie: []
+      parameters:
+        - name: 'tagId'
+          in: 'query'
+          type: 'integer'
+          required: true
+          description: '标签id'
+      responses:
+        200:
+          description: '操作成功'
+          schema:
+            $ref: '#/definitions/BaseResponse'
+
+  /cost/tag/list:
+    get:
+      tags:
+        - 'tag'
+        - 'costRecord'
+      summary: '获取账单标签列表'
+      security:
+        - cookie: []
+      parameters:
+        - name: 'tradeNo'
+          in: 'query'
+          type: 'string'
+          description: '交易编号'
+          required: true
+      responses:
+        200:
+          description: '操作成功'
+          schema:
+            $ref: '#/definitions/CostTagListResponse'
+
+  /cost/tag/put:
+    post:
+      tags:
+        - 'tag'
+        - 'costRecord'
+      summary: '账单绑定标签'
+      security:
+        - cookie: []
+      parameters:
+        - name: 'tradeNo'
+          in: 'query'
+          type: 'string'
+          description: '交易编号'
+          required: true
+        - name: 'tagId'
+          in: 'query'
+          type: 'integer'
+          description: '标签id'
+          required: true
+      responses:
+        200:
+          description: '操作成功'
+          schema:
+            $ref: '#/definitions/BaseResponse'
+
+  /cost/tag/delete:
+    post:
+      tags:
+        - 'tag'
+        - 'costRecord'
+      summary: '账单删除标签'
+      security:
+        - cookie: []
+      parameters:
+        - name: 'tradeNo'
+          in: 'query'
+          type: 'string'
+          description: '交易编号'
+          required: true
+        - name: 'tagId'
+          in: 'query'
+          type: 'integer'
+          description: '标签id'
+          required: true
+      responses:
+        200:
+          description: '操作成功'
+          schema:
+            $ref: '#/definitions/BaseResponse'
+
+
+  /list/asset/type/by/{identify}/{parentType}:
+    get:
+      tags:
+        - 'assetType'
+      summary: '根据父类型获取子类别列表'
+      description: ''
+      security:
+        - cookie: []
+      parameters:
+        - name: 'identify'
+          in: 'path'
+          type: 'string'
+          required: true
+          description: '类别：资产或者负债 A or L'
+          enum:
+            ['A','L']
+        - name: 'parentType'
+          in: 'path'
+          type: 'integer'
+          required: true
+          description: '父类型id'
+      responses:
+        200:
+          description: '操作成功'
+          schema:
+            $ref: '#/definitions/AssetTypeResponse'
+
+  /list/asset/type/by/parent/id:
+    get:
+      tags:
+        - 'assetType'
+      summary: '根据类别父级id获取类目信息'
+      description: ''
+      security:
+        - cookie: []
+      parameters:
+        - name: 'id'
+          in: 'query'
+          type: 'integer'
+          description: '父类id'
+          required: true
+      responses:
+        200:
+          description: '操作成功'
+          schema:
+            $ref: '#/definitions/AssetTypeResponse'
+
+  /list/asset/parent/types/{identify}:
+    get:
+      tags:
+        - 'assetType'
+      summary: '根据父类型获取父类别列表'
+      description: ''
+      security:
+        - cookie: []
+      parameters:
+        - name: 'identify'
+          in: 'path'
+          type: 'string'
+          required: true
+          description: '类别：资产或者负债 A or L'
+          enum:
+            ['A','L']
+      responses:
+        200:
+          description: '操作成功'
+          schema:
+            $ref: '#/definitions/AssetTypeResponse'
+
+  /asset/types/put:
+    post:
+      tags:
+        - 'assetType'
+      summary: '添加类别'
+      description: ''
+      security:
+        - cookie: []
+      parameters:
+        - name: 'parentCode'
+          in: 'query'
+          type: 'string'
+          required: true
+          description: "父类别编码"
+        - name: 'typeIdentify'
+          in: 'query'
+          type: 'string'
+          description: '资产或负债'
+          required: true
+          enum:
+            [A, L]
+        - name: 'typeCode'
+          in: 'query'
+          type: 'string'
+          description: '类别编码'
+          required: true
+        - name: 'typeDesc'
+          in: 'query'
+          type: 'string'
+          description: '类别名称'
+          required: true
+      responses:
+        200:
+          description: '操作成功'
+          schema:
+            $ref: '#/definitions/BaseResponse'
+
+
+securityDefinitions:
+  # petstore_auth:
+  #   type: "oauth2"
+  #   authorizationUrl: "http://petstore.swagger.io/oauth/dialog"
+  #   flow: "implicit"
+  #   scopes:
+  #     write:pets: "modify pets in your account"
+  #     read:pets: "read your pets"
+  # api_key:
+  #   type: "apiKey"
+  #   name: "api_key"
+  #   in: "header"
+  cookie:
+    type: "apiKey"
+    name: "Cookie"
+    description: "cookie内容为jwt加密的token，token="
+    in: "header"
+
+definitions:
+
+  BaseResponse:
+    type: "object"
+    properties:
+      code:
+        type: "string"
+        enum:
+          - "0001"
+          - "0002"
+          - "0003"
+          - "0004"
+          - "0005"
+          - "0006"
+        description: "0001: 成功\n 0002: 参数错误\n 0003: 系统异常 \n0004: 数据不存在 \n0005: 操作失败 \n0006: 用户未登录"
+      msg:
+        type: "string"
+        description: "操作结果的中文描述"
+  AssetManageResponse:
+    type: "object"
+    properties:
+      code:
+        type: "string"
+        description: "same as BaseResponse"
+      msg:
+        type: "string"
+        description: "same as BaseResponse"
+      assetManage:
+        $ref: "#/definitions/AssetManageDTO"
+
+  AssetDetailResponse:
+    type: "object"
+    properties:
+      code:
+        type: "string"
+      msg:
+        type: "string"
+      assetInfo:
+        $ref: '#/definitions/AssetDTO'
+
+  LiabilityDetailResponse:
+    type: "object"
+    properties:
+      code:
+        type: "string"
+      msg:
+        type: "string"
+      liability:
+        $ref: '#/definitions/LiabilityDTO'
+
+  BudgetListResponse:
+    type: 'object'
+    properties:
+      code:
+        type: "string"
+        description: "same as BaseResponse"
+      msg:
+        type: "string"
+        description: "same as BaseResponse"
+      budgetList:
+        type: 'array'
+        items:
+          $ref: '#/definitions/BudgetDTO'
+
+  AssetTypeResponse:
+    type: 'object'
+    properties:
+      code:
+        type: "string"
+        description: "same as BaseResponse"
+      msg:
+        type: "string"
+        description: "same as BaseResponse"
+      assetTypes:
+        type: 'array'
+        items:
+          $ref: '#/definitions/AssetTypeModel'
+
+  CostRecordPageResponse:
+    type: 'object'
+    properties:
+      code:
+        type: "string"
+        description: "same as BaseResponse"
+      msg:
+        type: "string"
+        description: "same as BaseResponse"
+      totalPage:
+        type: 'integer'
+        description: '总页数'
+      pageSize:
+        type: 'integer'
+        description: '页面大小'
+      pageNo:
+        type: 'integer'
+        description: '页码'
+      totalItem:
+        type: 'integer'
+        description: '总数'
+      currentAmount:
+        type: 'integer'
+        description: '当前页面总金额'
+      costRecordList:
+        type: 'array'
+        items:
+          $ref: '#/definitions/CostRecordDTO'
+        description: '交易订单列表'
+
+  CostRecordDetailResponse:
+    type: 'object'
+    properties:
+      code:
+        type: "string"
+        description: "same as BaseResponse"
+      msg:
+        type: "string"
+        description: "same as BaseResponse"
+      recordDetail:
+        $ref: '#/definitions/CostRecordDetailDTO'
+
+  ReportResponse:
+    type: 'object'
+    properties:
+      code:
+        type: "string"
+        description: "same as BaseResponse"
+      msg:
+        type: "string"
+        description: "same as BaseResponse"
+      reportList:
+        description: '报告列表'
+        type: 'array'
+        items:
+          $ref: '#/definitions/ReportDTO'
+
+  TagInfoListResponse:
+    type: 'object'
+    properties:
+      code:
+        type: "string"
+        description: "same as BaseResponse"
+      msg:
+        type: "string"
+        description: "same as BaseResponse"
+      tagInfoList:
+        type: 'array'
+        description: '标签列表'
+        items:
+          $ref: '#/definitions/TagInfoDTO'
+
+  CostTagListResponse:
+    type: 'object'
+    properties:
+      code:
+        type: "string"
+        description: "same as BaseResponse"
+      msg:
+        type: "string"
+        description: "same as BaseResponse"
+      tagInfoModels:
+        type: 'array'
+        description: '标签列表'
+        items:
+          $ref: '#/definitions/TagInfoDTO'
+
+  AssetManageDTO:
+    type: "object"
+    properties:
+      totalAsset:
+        type: "integer"
+        description: "总资产"
+      totalLiability:
+        type: "integer"
+        description: "总负债"
+      cleanAsset:
+        type: "integer"
+        description: "净资产"
+      availableAsset:
+        type: "integer"
+        description: "流动资金"
+      assetModels:
+        type: "array"
+        items:
+          $ref: '#/definitions/AssetModel'
+        description: "资产项目列表"
+      liabilitModels:
+        type: "array"
+        items:
+          $ref: '#/definitions/LiabilityModel'
+        description: "负债项目列表"
+      monthLiabilityModels:
+        type: "array"
+        items:
+          $ref: '#/definitions/MonthLiabilityModel'
+        description: "每月分期还款信息"
+  AssetModel:
+    type: "object"
+    properties:
+      type:
+        type: "string"
+        description: "资产总类别"
+      total:
+        type: "integer"
+        description: "资产总额"
+      totalAvailable:
+        type: "integer"
+        description: "流动资产总额"
+      assetList:
+        type: 'array'
+        items:
+          $ref: '#/definitions/AssetDTO'
+  AssetDTO:
+    type: "object"
+    properties:
+      name:
+        type: "string"
+        description: "资产名称"
+      type:
+        type: "string"
+        description: "资产类别"
+      available:
+        type: "string"
+        description: "是否流动可用"
+      id:
+        type: "integer"
+        description: "id"
+      amount:
+        type: "integer"
+        description: "总额"
+
+  LiabilityModel:
+    type: "object"
+    properties:
+      type:
+        type: "string"
+        description: "负债总类别"
+      total:
+        type: "integer"
+        description: "负债总额"
+      liabilityList:
+        type: "array"
+        description: "负债信息列表"
+        items:
+          $ref: '#/definitions/LiabilityDTO'
+
+  LiabilityDTO:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+        description: "id"
+      name:
+        type: "string"
+        description: "负债名称"
+      type:
+        type: "string"
+        description: "负债类型"
+      amount:
+        type: "integer"
+        description: "负债金额"
+      paid:
+        type: "integer"
+        description: "已还金额"
+      status:
+        type: "integer"
+        description: "状态"
+      installment:
+        type: "integer"
+        description: "分期期数"
+      index:
+        type: "integer"
+        description: "当前期数"
+      repaymentDay:
+        type: "string"
+        description: "还款日期"
+  MonthLiabilityModel:
+    type: "object"
+    properties:
+      month:
+        type: "string"
+        description: "月份"
+      total:
+        type: "integer"
+        description: "总金额"
+      assetAfterThisMonth:
+        type: "integer"
+        description: "剩余资产额度"
+      liabilityModels:
+        type: "array"
+        items:
+          $ref: '#/definitions/LiabilityModel'
+  BudgetDTO:
+    type: 'object'
+    properties:
+      tagName:
+        type: 'string'
+        description: '标签名称'
+      budgetMoney:
+        type: 'integer'
+        description: '预算额度'
+      yearMonth:
+        type: 'string'
+        description: '年月'
+  AssetTypeModel:
+    type: 'object'
+    properties:
+      typeCode:
+        type: 'string'
+        description: '类型编码'
+      typeDesc:
+        type: 'string'
+        description: '类型描述'
+      id:
+        type: 'integer'
+        description: '类型id'
+  CostRecordDTO:
+    type: 'object'
+    properties:
+      tradeNo:
+        type: 'string'
+        description: '交易编码'
+      createTime:
+        type: 'string'
+        description: '创建时间'
+        format: 'yyyy-MM-dd HH:mm:ss'
+      location:
+        type: 'string'
+        description: '交易地点'
+      orderType:
+        type: 'string'
+        description: '交易类型'
+      goodsName:
+        type: 'string'
+        description: '商品名称'
+      memo:
+        type: 'string'
+        description: '备注'
+      money:
+        type: 'string'
+        description: '交易金额'
+      inOutType:
+        type: 'string'
+        description: '收入 或 支出'
+      orderStatus:
+        type: 'string'
+        description: '交易状态'
+      isDeleted:
+        type: 'integer'
+        description: '是否已删除'
+        enum: [0,1]
+      isHidden:
+        type: 'integer'
+        description: '是否已隐藏'
+        enum: [0,1]
+      target:
+        type: 'string'
+        description: '交易对方'
+      tags:
+        type: 'array'
+        items:
+          type: 'string'
+        description: '标签'
+  CostRecordDetailDTO:
+    type: 'object'
+    properties:
+      tradeNo:
+        type: 'string'
+        description: '交易编码'
+      orderNo:
+        type: 'string'
+        description: '订单编码'
+      createTime:
+        type: 'string'
+        description: '创建时间'
+        format: 'yyyy-MM-dd HH:mm:ss'
+      paidTime:
+        type: 'string'
+        description: '支付时间'
+        format: 'yyyy-MM-dd HH:mm:ss'
+      modifyTime:
+        type: 'string'
+        description: '修改时间'
+        format: 'yyyy-MM-dd HH:mm:ss'
+      location:
+        type: 'string'
+        description: '交易地点'
+      orderType:
+        type: 'string'
+        description: '交易类型'
+      goodsName:
+        type: 'string'
+        description: '商品名称'
+      memo:
+        type: 'string'
+        description: '备注'
+      money:
+        type: 'string'
+        description: '交易金额'
+      inOutType:
+        type: 'string'
+        description: '收入 或 支出'
+      orderStatus:
+        type: 'string'
+        description: '交易状态'
+      serviceCost:
+        type: 'string'
+        description: '服务手续费'
+      refundMoney:
+        type: 'string'
+        description: '退款金额'
+      isDeleted:
+        type: 'integer'
+        description: '是否已删除'
+        enum: [0,1]
+      isHidden:
+        type: 'integer'
+        description: '是否已隐藏'
+        enum: [0,1]
+      target:
+        type: 'string'
+        description: '交易对方'
+      tags:
+        type: 'array'
+        items:
+          $ref: '#/definitions/TagInfoDTO'
+        description: '标签'
+  ReportDTO:
+    type: 'object'
+    properties:
+      month:
+        type: 'string'
+        format: 'yyyy-MM'
+        description: '月份'
+      totalCost:
+        type: 'string'
+        description: '总支出'
+      totalCostExceptDeleted:
+        type: 'string'
+        description: '未删除的支出'
+      totalCostExceptHidden:
+        type: 'string'
+        description: '未隐藏的支出'
+      totalCostExceptDeletedAndHidden:
+        type: 'string'
+        description: '未删除和隐藏的支出'
+      totalCostDeleted:
+        type: 'string'
+        description: '已删除的支出'
+      totalCostHidden:
+        type: 'string'
+        description: '已隐藏的支出'
+      totalCostDeletedAndHidden:
+        type: 'string'
+        description: '已删除和隐藏的支出'
+      totalIncome:
+        type: 'string'
+        description: '总收入'
+      totalIncomeExceptDeleted:
+        type: 'string'
+        description: '未删除的收入'
+      totalIncomeExceptHidden:
+        type: 'string'
+        description: '未隐藏的收入'
+      totalIncomeExceptDeletedAndHidden:
+        type: 'string'
+        description: '未删除和隐藏的收入'
+      totalIncomeDeleted:
+        type: 'string'
+        description: '已删除的收入'
+      totalIncomeHidden:
+        type: 'string'
+        description: '已隐藏的收入'
+      totalIncomeDeletedAndHidden:
+        type: 'string'
+        description: '已删除和隐藏的收入'
+
+  TagInfoDTO:
+    type: 'object'
+    properties:
+      tagName:
+        type: 'string'
+        description: '标签名称'
+      tagId:
+        type: 'integer'
+        description: 'id'
+
+externalDocs:
+  description: "Find out more about Swagger"
+  url: "http://swagger.io"

@@ -8,6 +8,7 @@
         tokenVerify tokenVerify,
         code code,
         userName userName,
+        email email,
         password password,
         lastLogin lastLogin,
         createTime createTime,

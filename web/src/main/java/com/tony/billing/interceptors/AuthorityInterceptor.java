@@ -19,7 +19,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Map;
+import java.util.Optional;
 
 /**
  * @author by TonyJiang on 2017/7/1.
@@ -62,9 +62,10 @@ public class AuthorityInterceptor implements HandlerInterceptor {
         Cookie tokenCok = CookieUtil.getCookie("token", request);
         if (tokenCok != null) {
             String tokenId = authUtil.getUserTokenId(tokenCok.getValue());
-            Map store = redisUtils.get(tokenId, Admin.class);
-            Admin admin;
-            if (store != null && (admin = (Admin) store.get(tokenId)) != null) {
+            Optional<Admin> store = redisUtils.get(tokenId, Admin.class);
+
+            if (store.isPresent()) {
+                Admin admin = store.get();
                 UserIdContainer.setUserId(admin.getId());
                 if (request instanceof TokenServletRequestWrapper) {
                     ((TokenServletRequestWrapper) request).addParameter("tokenId", tokenId);

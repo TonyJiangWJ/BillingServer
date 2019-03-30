@@ -135,19 +135,19 @@
             });
 
             $('#hideDeleted').on('click', function(){
-               $('#isDelete').val('0');
+               $('#isDeleted').val('0');
                resetPageInfo();
                doSubmit();
             });
 
             $('#showDeleted').on('click', function () {
-                $('#isDelete').val('');
+                $('#isDeleted').val('');
                 resetPageInfo();
                 doSubmit();
             });
 
             $('#deletedOnly').on('click', function(){
-                $('#isDelete').val('1');
+                $('#isDeleted').val('1');
                 resetPageInfo();
                 doSubmit();
             });
@@ -165,7 +165,7 @@
             });
 
             $('#showDisplayOnly').on('click', function(){
-                $('#isDelete').val('显示');
+                $('#isDeleted').val('显示');
                 resetPageInfo();
                 doSubmit();
             });
@@ -242,7 +242,7 @@
                         <div><label>备注：</label><span th:text="${record.memo}"></span></div>
                         <div th:text="${record.orderType}">即时到账交易</div>
                         <div th:text="${record.orderStatus}">交易成功</div>
-                        <div th:if="${record.isDelete eq 0 ? '未删除' : '已删除'}">未删除</div>
+                        <div th:if="${record.isDeleted eq 0 ? '未删除' : '已删除'}">未删除</div>
                         <div th:text="${record.isHidden}">显示</div>
                     </td>
                 </tr>
@@ -382,7 +382,7 @@
     <form id="billListForm" action="/thymeleaf/bill/billList" method="post" th:object="${request}">
         <input type="hidden" name="pageNo" id="pageNo" th:value="*{pageNo}"/>
         <input type="hidden" name="pageSize" id="pageSize" th:value="*{pageSize}"/>
-        <input type="hidden" name="isDelete" id="isDelete" th:value="*{isDelete}"/>
+        <input type="hidden" name="isDeleted" id="isDeleted" th:value="*{isDeleted}"/>
         <input type="hidden" name="isHidden" id="isHidden" th:value="*{isHidden}"/>
         <input type="hidden" name="inOutType" id="inOutType" th:value="*{inOutType}"/>
         <input type="hidden" name="startDate" id="startDate" th:value="*{startDate}"/>

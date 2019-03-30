@@ -1,31 +1,34 @@
 package com.tony.billing.request.budget;
 
 import com.tony.billing.request.BaseRequest;
+import org.hibernate.validator.constraints.NotEmpty;
+
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 
 /**
  * @author jiangwj20966 on 2017/7/13.
  */
 public class BudgetPutRequest extends BaseRequest {
 
-    private Long tagId;
-    private Long budgetMoney;
+    @NotNull
+    private Long amount;
+    @NotEmpty
     private String year;
+    @NotNull
+    @Min(1)
+    @Max(12)
     private Integer month;
+    @NotEmpty
+    private String name;
 
-    public Long getTagId() {
-        return tagId;
+    public Long getAmount() {
+        return amount;
     }
 
-    public void setTagId(Long tagId) {
-        this.tagId = tagId;
-    }
-
-    public Long getBudgetMoney() {
-        return budgetMoney;
-    }
-
-    public void setBudgetMoney(Long budgetMoney) {
-        this.budgetMoney = budgetMoney;
+    public void setAmount(Long amount) {
+        this.amount = amount;
     }
 
     public String getYear() {
@@ -42,5 +45,13 @@ public class BudgetPutRequest extends BaseRequest {
 
     public void setMonth(Integer month) {
         this.month = month;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

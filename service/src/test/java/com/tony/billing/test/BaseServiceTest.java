@@ -1,7 +1,9 @@
 package com.tony.billing.test;
 
-import com.alibaba.fastjson.JSON;
 import com.tony.billing.TestApplication;
+import com.tony.billing.util.UserIdContainer;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,12 +16,22 @@ import org.springframework.test.context.junit4.SpringRunner;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = TestApplication.class)
-public class BaseServiceTest extends AbstractTransactionalJUnit4SpringContextTests {
+public class BaseServiceTest extends AbstractTransactionalJUnit4SpringContextTests implements CommonTest {
 
     protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    protected void debug(Object result) {
-        logger.info("result: {}", JSON.toJSONString(result));
+    @Override
+    public Logger getLogger() {
+        return logger;
     }
 
+    @Before
+    public void setCommonUp() {
+        UserIdContainer.setUserId(2L);
+    }
+
+    @After
+    public void afterTest() {
+        UserIdContainer.removeUserId();
+    }
 }

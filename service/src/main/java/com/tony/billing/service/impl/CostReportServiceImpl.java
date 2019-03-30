@@ -1,6 +1,6 @@
 package com.tony.billing.service.impl;
 
-import com.tony.billing.dao.CostReportDao;
+import com.tony.billing.dao.mapper.CostReportMapper;
 import com.tony.billing.entity.RawReportEntity;
 import com.tony.billing.entity.ReportEntity;
 import com.tony.billing.entity.query.ReportEntityQuery;
@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 public class CostReportServiceImpl implements CostReportService {
 
     @Resource
-    private CostReportDao costReportDao;
+    private CostReportMapper costReportMapper;
 
     @Override
     public List<ReportEntity> getReportByDatePrefix(List<String> datePrefixes, Long userId) {
@@ -33,7 +33,7 @@ public class CostReportServiceImpl implements CostReportService {
         ReportEntityQuery query = new ReportEntityQuery();
         query.setDatePrefix(datePrefix);
         query.setUserId(userId);
-        RawReportEntity reportEntity = costReportDao.getReportTypeAmountByCondition(query);
+        RawReportEntity reportEntity = costReportMapper.getReportTypeAmountByCondition(query);
         if (reportEntity != null) {
             return new ReportEntity(datePrefix, reportEntity);
         } else {

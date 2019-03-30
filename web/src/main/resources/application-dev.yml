@@ -1,16 +1,17 @@
 # SPRING PROFILES
 spring:
     datasource:
-      driver-class-name: com.mysql.cj.jdbc.Driver
-      url: jdbc:mysql://192.168.139.138:3306/my_daily_cost?serverTimezone=CTT&characterEncoding=utf8&useUnicode=true&useSSL=false
-      username: root
-      password: 123456
+      druid:
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        url: jdbc:mysql://127.0.0.1:3306/my_daily_cost?serverTimezone=CTT&characterEncoding=utf8&useUnicode=true&useSSL=false&zeroDateTimeBehavior=convertToNull
+        username: root
+        password:
 
     redis:
       database: 0
-      host: 192.168.139.138
+      host: 127.0.0.1
       port: 6379
-      password: 123456
+      password:
       pool:
         max-active: 8
         max-wait: -1
@@ -21,7 +22,7 @@ spring:
 # server properties
 rsa:
     key:
-        path: D:/
+        path: /Users/jiangwenjie/
 
 logback:
-    path: D:/logForBilling/
+    path: /Users/jiangwenjie/logs/logForBilling/

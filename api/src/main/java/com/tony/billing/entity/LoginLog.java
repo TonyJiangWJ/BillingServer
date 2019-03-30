@@ -1,6 +1,7 @@
 package com.tony.billing.entity;
 
 import com.tony.billing.annotation.Table;
+import com.tony.billing.entity.base.BaseEntity;
 
 import java.util.Date;
 
@@ -8,23 +9,12 @@ import java.util.Date;
  * @author: jiangwj20966 on 2018/1/25
  */
 @Table("t_login_log")
-public class LoginLog {
-    private Long id;
+public class LoginLog extends BaseEntity {
     private String userName;
     private String loginResult;
     private String loginIp;
     private String code;
     private String msg;
-    private Date createTime;
-    private Date modifyTime;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public String getUserName() {
         return userName;
@@ -48,22 +38,6 @@ public class LoginLog {
 
     public void setLoginIp(String loginIp) {
         this.loginIp = loginIp;
-    }
-
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
-
-    public Date getModifyTime() {
-        return modifyTime;
-    }
-
-    public void setModifyTime(Date modifyTime) {
-        this.modifyTime = modifyTime;
     }
 
     public String getCode() {

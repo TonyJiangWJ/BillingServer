@@ -4,9 +4,9 @@
     <sql id="all">
         tradeNo tradeNo,
         orderNo orderNo,
-        createTime createTime,
+        costCreateTime costCreateTime,
         paidTime paidTime,
-        modifyTime modifyTime,
+        costModifyTime costModifyTime,
         location location,
         orderType orderType,
         target target,
@@ -18,10 +18,21 @@
         refundMoney refundMoney,
         memo memo,
         tradeStatus tradeStatus,
-        isDelete isDelete,
+        isDeleted isDeleted,
         id id,
         userId userId,
-        isHidden isHidden
+        createTime createTime,
+        modifyTime modifyTime,
+        isHidden isHidden,
+        version version
+    </sql>
+
+    <sql id="moneyOnly">
+         id,
+         money,
+         createTime,
+         isDeleted,
+         isHidden
     </sql>
 
     <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.tony.billing.entity.CostRecord">
@@ -34,14 +45,14 @@
             <if test=" orderNo!=null and orderNo!='' ">
                 orderNo,
             </if>
-            <if test=" createTime!=null and createTime!='' ">
-                createTime,
+            <if test=" costCreateTime!=null and costCreateTime!='' ">
+                costCreateTime,
             </if>
             <if test=" paidTime!=null and paidTime!='' ">
                 paidTime,
             </if>
-            <if test=" modifyTime!=null and modifyTime!='' ">
-                modifyTime,
+            <if test=" costModifyTime!=null and costModifyTime!='' ">
+                costModifyTime,
             </if>
             <if test=" location!=null and location!='' ">
                 location,
@@ -76,8 +87,8 @@
             <if test=" tradeStatus!=null and tradeStatus!='' ">
                 tradeStatus,
             </if>
-            <if test=" isDelete!=null ">
-                isDelete,
+            <if test=" isDeleted!=null ">
+                isDeleted,
             </if>
             <if test=" isHidden!=null ">
                 isHidden,
@@ -85,7 +96,15 @@
             <if test=" id!=null ">
                 id,
             </if>
-
+            <if test="version != null">
+                `version`,
+            </if>
+            <if test=" createTime!=null ">
+                createTime,
+            </if>
+            <if test=" modifyTime!=null ">
+                modifyTime,
+            </if>
         </trim>
         ) VALUES (
         <trim suffixOverrides=",">
@@ -96,14 +115,14 @@
             <if test=" orderNo!=null and orderNo!='' ">
                 #{orderNo,jdbcType=VARCHAR},
             </if>
-            <if test=" createTime!=null and createTime!='' ">
-                #{createTime,jdbcType=VARCHAR},
+            <if test=" costCreateTime!=null and costCreateTime!='' ">
+                #{costCreateTime,jdbcType=VARCHAR},
             </if>
             <if test=" paidTime!=null and paidTime!='' ">
                 #{paidTime,jdbcType=VARCHAR},
             </if>
-            <if test=" modifyTime!=null and modifyTime!='' ">
-                #{modifyTime,jdbcType=VARCHAR},
+            <if test=" costModifyTime!=null and costModifyTime!='' ">
+                #{costModifyTime,jdbcType=VARCHAR},
             </if>
             <if test=" location!=null and location!='' ">
                 #{location,jdbcType=VARCHAR},
@@ -138,8 +157,8 @@
             <if test=" tradeStatus!=null and tradeStatus!='' ">
                 #{tradeStatus,jdbcType=VARCHAR},
             </if>
-            <if test=" isDelete!=null ">
-                #{isDelete,jdbcType=INTEGER},
+            <if test=" isDeleted!=null ">
+                #{isDeleted,jdbcType=INTEGER},
             </if>
             <if test=" isHidden!=null ">
                 #{isHidden,jdbcType=INTEGER},
@@ -147,7 +166,15 @@
             <if test=" id!=null ">
                 #{id,jdbcType=BIGINT},
             </if>
-
+            <if test="version != null">
+               #{version,jdbcType=INTEGER},
+            </if>
+            <if test=" createTime!=null ">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test=" modifyTime!=null ">
+                #{modifyTime,jdbcType=TIMESTAMP},
+            </if>
         </trim>
         )
 
@@ -162,14 +189,14 @@
             <if test=" orderNo!=null and orderNo!='' ">
                 orderNo=#{orderNo,jdbcType=VARCHAR},
             </if>
-            <if test=" createTime!=null and createTime!='' ">
-                createTime=#{createTime,jdbcType=VARCHAR},
+            <if test=" costCreateTime!=null and costCreateTime!='' ">
+                costCreateTime=#{costCreateTime,jdbcType=VARCHAR},
             </if>
             <if test=" paidTime!=null and paidTime!='' ">
                 paidTime=#{paidTime,jdbcType=VARCHAR},
             </if>
-            <if test=" modifyTime!=null and modifyTime!='' ">
-                modifyTime=#{modifyTime,jdbcType=VARCHAR},
+            <if test=" costModifyTime!=null and costModifyTime!='' ">
+                costModifyTime=#{costModifyTime,jdbcType=VARCHAR},
             </if>
             <if test=" location!=null and location!='' ">
                 location=#{location,jdbcType=VARCHAR},
@@ -204,14 +231,20 @@
             <if test=" tradeStatus!=null and tradeStatus!='' ">
                 tradeStatus=#{tradeStatus,jdbcType=VARCHAR},
             </if>
-            <if test=" isDelete!=null ">
-                isDelete=#{isDelete,jdbcType=INTEGER},
+            <if test=" isDeleted!=null ">
+                isDeleted=#{isDeleted,jdbcType=INTEGER},
             </if>
             <if test=" isHidden!=null ">
                 isHidden=#{isHidden,jdbcType=INTEGER},
             </if>
+            <if test="version != null">
+                version=#{version,jdbcType=INTEGER} + 1,
+            </if>
+            <if test=" modifyTime!=null ">
+                modifyTime=#{modifyTime,jdbcType=TIMESTAMP},
+            </if>
         </trim>
-        WHERE id=#{id,jdbcType=BIGINT} AND userId=#{userId,jdbcType=BIGINT}
+        WHERE id=#{id,jdbcType=BIGINT} AND userId=#{userId,jdbcType=BIGINT} and version=#{version,jdbcType=INTEGER}
     </update>
 
     <update id="updateByTradeNo" parameterType="com.tony.billing.entity.CostRecord">
@@ -223,14 +256,14 @@
             <if test=" orderNo!=null and orderNo!='' ">
                 orderNo=#{orderNo,jdbcType=VARCHAR},
             </if>
-            <if test=" createTime!=null and createTime!='' ">
-                createTime=#{createTime,jdbcType=VARCHAR},
+            <if test=" costCreateTime!=null and costCreateTime!='' ">
+                costCreateTime=#{costCreateTime,jdbcType=VARCHAR},
             </if>
             <if test=" paidTime!=null and paidTime!='' ">
                 paidTime=#{paidTime,jdbcType=VARCHAR},
             </if>
-            <if test=" modifyTime!=null and modifyTime!='' ">
-                modifyTime=#{modifyTime,jdbcType=VARCHAR},
+            <if test=" costModifyTime!=null and costModifyTime!='' ">
+                costModifyTime=#{costModifyTime,jdbcType=VARCHAR},
             </if>
             <if test=" location!=null and location!='' ">
                 location=#{location,jdbcType=VARCHAR},
@@ -265,22 +298,28 @@
             <if test=" tradeStatus!=null and tradeStatus!='' ">
                 tradeStatus=#{tradeStatus,jdbcType=VARCHAR},
             </if>
-            <if test=" isDelete!=null ">
-                isDelete=#{isDelete,jdbcType=INTEGER},
+            <if test=" isDeleted!=null ">
+                isDeleted=#{isDeleted,jdbcType=INTEGER},
             </if>
             <if test=" isHidden!=null ">
                 isHidden=#{isHidden,jdbcType=INTEGER},
             </if>
+            <if test="version != null">
+                version=#{version,jdbcType=INTEGER} + 1,
+            </if>
+            <if test=" modifyTime!=null ">
+                modifyTime=#{modifyTime,jdbcType=TIMESTAMP},
+            </if>
         </trim>
-        WHERE tradeNo=#{tradeNo,jdbcType=VARCHAR} AND userId=#{userId,jdbcType=BIGINT}
+        WHERE tradeNo=#{tradeNo,jdbcType=VARCHAR} AND userId=#{userId,jdbcType=BIGINT} AND version=#{version,jdbcType=INTEGER}
     </update>
 
     <update id="toggleDeleteStatus" parameterType="java.util.Map">
         UPDATE t_cost_info
         SET
-            isDelete = #{isDelete,jdbcType=INTEGER}
+            isDeleted = #{isDeleted,jdbcType=INTEGER}
         WHERE tradeNo = #{tradeNo,jdbcType=VARCHAR} AND userId = #{userId,jdbcType=BIGINT}
-              AND isDelete = #{nowStatus,jdbcType=INTEGER}
+              AND isDeleted = #{nowStatus,jdbcType=INTEGER}
     </update>
 
     <update id="toggleHideStatus" parameterType="java.util.Map">
@@ -291,7 +330,7 @@
               AND isHidden = #{nowStatus,jdbcType=INTEGER}
     </update>
 
-    <select id="find" parameterType="com.tony.billing.entity.CostRecord"
+    <select id="list" parameterType="com.tony.billing.entity.CostRecord"
             resultType="com.tony.billing.entity.CostRecord">
         SELECT
         <include refid="all"/>
@@ -303,14 +342,14 @@
         <if test=" orderNo!=null and orderNo!='' ">
             and orderNo=#{orderNo,jdbcType=VARCHAR}
         </if>
-        <if test=" createTime!=null and createTime!='' ">
-            and createTime=#{createTime,jdbcType=VARCHAR}
+        <if test=" costCreateTime!=null and costCreateTime!='' ">
+            and costCreateTime=#{costCreateTime,jdbcType=VARCHAR}
         </if>
         <if test=" paidTime!=null and paidTime!='' ">
             and paidTime=#{paidTime,jdbcType=VARCHAR}
         </if>
-        <if test=" modifyTime!=null and modifyTime!='' ">
-            and modifyTime=#{modifyTime,jdbcType=VARCHAR}
+        <if test=" costModifyTime!=null and costModifyTime!='' ">
+            and costModifyTime=#{costModifyTime,jdbcType=VARCHAR}
         </if>
         <if test=" location!=null and location!='' ">
             and location=#{location,jdbcType=VARCHAR}
@@ -345,8 +384,8 @@
         <if test=" tradeStatus!=null and tradeStatus!='' ">
             and tradeStatus=#{tradeStatus,jdbcType=VARCHAR}
         </if>
-        <if test=" isDelete!=null ">
-            and isDelete=#{isDelete,jdbcType=INTEGER}
+        <if test=" isDeleted!=null ">
+            and isDeleted=#{isDeleted,jdbcType=INTEGER}
         </if>
         <if test=" id!=null ">
             and id=#{id,jdbcType=BIGINT}
@@ -364,14 +403,14 @@
         <if test=" orderNo!=null and orderNo!='' ">
             and orderNo=#{orderNo,jdbcType=VARCHAR}
         </if>
-        <if test=" createTime!=null and createTime!='' ">
-            and createTime=#{createTime,jdbcType=VARCHAR}
+        <if test=" costCreateTime!=null and costCreateTime!='' ">
+            and costCreateTime=#{costCreateTime,jdbcType=VARCHAR}
         </if>
         <if test=" paidTime!=null and paidTime!='' ">
             and paidTime=#{paidTime,jdbcType=VARCHAR}
         </if>
-        <if test=" modifyTime!=null and modifyTime!='' ">
-            and modifyTime=#{modifyTime,jdbcType=VARCHAR}
+        <if test=" costModifyTime!=null and costModifyTime!='' ">
+            and costModifyTime=#{costModifyTime,jdbcType=VARCHAR}
         </if>
         <if test=" location!=null and location!='' ">
             and location=#{location,jdbcType=VARCHAR}
@@ -406,17 +445,17 @@
         <if test=" tradeStatus!=null and tradeStatus!='' ">
             and tradeStatus=#{tradeStatus,jdbcType=VARCHAR}
         </if>
-        <if test=" isDelete!=null ">
-            and isDelete=#{isDelete,jdbcType=INTEGER}
+        <if test=" isDeleted!=null ">
+            and isDeleted=#{isDeleted,jdbcType=INTEGER}
         </if>
         <if test=" id!=null ">
             and id=#{id,jdbcType=BIGINT}
         </if>
         <if test=" startDate!=null and startDate!=''">
-            and createTime &gt; #{startDate,jdbcType=VARCHAR}
+            and costCreateTime &gt; #{startDate,jdbcType=VARCHAR}
         </if>
         <if test=" endDate!=null and endDate!=''">
-            and createTime &lt; #{endDate, jdbcType=VARCHAR}
+            and costCreateTime &lt; #{endDate, jdbcType=VARCHAR}
         </if>
         <if test=" isHidden!=null ">
             and isHidden=#{isHidden,jdbcType=INTEGER}
@@ -430,15 +469,15 @@
             <include refid="all"/>
             from t_cost_info tci where id in(
             select distinct ct.costId id from t_cost_tag ct join t_tag_info t on ct.tagId=t.id
-            where t.tagName like CONCAT('%',#{content,jdbcType=VARCHAR},'%') and t.isDelete='0' and ct.isDelete='0'
+            where t.tagName like CONCAT('%',#{content,jdbcType=VARCHAR},'%') and t.isDeleted='0' and ct.isDeleted='0'
             and t.userId=#{userId,jdbcType=BIGINT}
             )
 
             <if test=" startDate!=null and startDate!=''">
-                and createTime &gt; #{startDate,jdbcType=VARCHAR}
+                and costCreateTime &gt; #{startDate,jdbcType=VARCHAR}
             </if>
             <if test=" endDate!=null and endDate!=''">
-                and createTime &lt; #{endDate, jdbcType=VARCHAR}
+                and costCreateTime &lt; #{endDate, jdbcType=VARCHAR}
             </if>
             <if test=" orderType!=null and orderType!='' ">
                 and tci.orderType=#{orderType,jdbcType=VARCHAR}
@@ -446,8 +485,8 @@
             <if test=" inOutType!=null and inOutType!='' ">
                 and tci.inOutType=#{inOutType,jdbcType=VARCHAR}
             </if>
-            <if test=" isDelete!=null ">
-                and tci.isDelete=#{isDelete,jdbcType=INTEGER}
+            <if test=" isDeleted!=null ">
+                and tci.isDeleted=#{isDeleted,jdbcType=INTEGER}
             </if>
             <if test=" isHidden!=null ">
                 and tci.isHidden=#{isHidden,jdbcType=INTEGER}
@@ -485,5 +524,40 @@
         <include refid="all"/>
         FROM t_cost_info
         WHERE tradeNo=#{tradeNo,jdbcType=VARCHAR} AND userId=#{userId,jdbcType=BIGINT}
+    </select>
+    <select id="listByMonthAndTagIds" resultType="com.tony.billing.entity.CostRecord">
+        SELECT <include refid="moneyOnly"/>
+        FROM t_cost_info ci
+        WHERE userId=#{userId,jdbcType=BIGINT}
+        AND isDeleted=0 AND isHidden=0
+        AND costCreateTime like concat(#{month,jdbcType=VARCHAR},'%')
+        AND EXISTS (
+          SELECT 1 FROM t_cost_tag ct WHERE ct.costId=ci.id AND ct.isDeleted=0
+          <if test="tagIds != null and tagIds.size() != 0">
+          AND ct.tagId IN
+          <foreach collection="tagIds" open="(" close=")" item="tagId" separator=",">
+              #{tagId, jdbcType=BIGINT}
+          </foreach>
+          </if>
+          <if test="tagIds == null or tagIds.size() == 0">
+              AND 1=2
+          </if>
+        )
+    </select>
+    <select id="listByMonthAndExceptTagIds" resultType="com.tony.billing.entity.CostRecord">
+        SELECT <include refid="moneyOnly"/>
+        FROM t_cost_info ci
+        WHERE userId=#{userId,jdbcType=BIGINT}
+        AND isDeleted=0 AND isHidden=0 AND inOutType='支出'
+        AND costCreateTime like concat(#{month,jdbcType=VARCHAR},'%')
+        <if test="tagIds != null and tagIds.size() != 0">
+        AND NOT EXISTS (
+            SELECT 1 FROM t_cost_tag ct WHERE ct.costId=ci.id AND ct.isDeleted=0
+            AND ct.tagId IN
+            <foreach collection="tagIds" open="(" close=")" item="tagId" separator=",">
+                #{tagId, jdbcType=BIGINT}
+            </foreach>
+        )
+        </if>
     </select>
 </mapper>

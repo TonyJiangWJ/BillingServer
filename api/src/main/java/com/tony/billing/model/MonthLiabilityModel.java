@@ -17,6 +17,7 @@ public class MonthLiabilityModel {
     private Long total;
     private Long assetAfterThisMonth;
     private List<LiabilityModel> liabilityModels;
+    private Long remain;
 
     public MonthLiabilityModel() {
         liabilityModels = new ArrayList<>();
@@ -59,5 +60,13 @@ public class MonthLiabilityModel {
 
     public void setAssetAfterThisMonth(Long assetAfterThisMonth) {
         this.assetAfterThisMonth = assetAfterThisMonth;
+    }
+
+    public Long getRemain() {
+        return remain;
+    }
+
+    public void setRemain(Long remain) {
+        this.remain = remain;
     }
 }
