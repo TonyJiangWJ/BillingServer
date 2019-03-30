@@ -29,7 +29,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
-import javax.validation.Valid;
 
 /**
  * @author TonyJiang on 2018/2/12
@@ -92,6 +91,7 @@ public class AssetManageController extends BaseController {
         update.setAmount(request.getAmount());
         update.setExtName(request.getName());
         update.setUserId(request.getUserId());
+        update.setVersion(request.getVersion());
         if (StringUtils.isNotEmpty(request.getAvailable())) {
             update.setAvailable("true".equalsIgnoreCase(request.getAvailable()) ? EnumYesOrNo.YES.getCode() : EnumYesOrNo.NO.getCode());
         }

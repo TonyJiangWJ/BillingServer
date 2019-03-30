@@ -173,6 +173,7 @@ public class CostRecordController {
         record.setTradeNo(request.getTradeNo());
         record.setUserId(request.getUserId());
         record.setOrderType(request.getOrderType());
+        record.setVersion(request.getVersion());
         if (costRecordService.updateByTradeNo(record) > 0) {
             return ResponseUtil.success(response);
         }
